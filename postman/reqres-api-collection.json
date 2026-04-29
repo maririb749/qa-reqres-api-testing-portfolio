@@ -8,8 +8,303 @@
     "item": [{
             "name": "01 - Smoke Tests",
             "description": "Contains the minimum critical API checks used to confirm that the main Reqres endpoints are available before running the full test suite.",
-            "item": []
+            "item": [{
+                    "name": "GET - Smoke - List users from page 2",
+                    "description": "Related IDs:\n- Endpoint ID: EP-002\n- Test Case ID: TC-002\n- Smoke ID: SMK-001\n\nPurpose:\nValidates that the user list endpoint is available and returns users from page 2.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains pagination fields\n- Response contains a data array\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users?page={{pageTwo}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users"
+                            ],
+                            "query": [{
+                                "key": "page",
+                                "value": "{{pageTwo}}"
+                            }]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "const response = pm.response.json();",
+                                "",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test('Content-Type includes application/json', function () {",
+                                "        pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                                "    });",
+                                "};",
+                                "",
+                                "expectStatus(200);",
+                                "expectJsonContentType();",
+                                "",
+                                "pm.test('Response contains pagination fields and data array', function () {",
+                                "    pm.expect(response).to.be.an('object');",
+                                "    pm.expect(response.page).to.be.a('number');",
+                                "    pm.expect(Number.isInteger(response.page)).to.be.true;",
+                                "    pm.expect(response.per_page).to.be.a('number');",
+                                "    pm.expect(Number.isInteger(response.per_page)).to.be.true;",
+                                "    pm.expect(response.total).to.be.a('number');",
+                                "    pm.expect(Number.isInteger(response.total)).to.be.true;",
+                                "    pm.expect(response.total_pages).to.be.a('number');",
+                                "    pm.expect(Number.isInteger(response.total_pages)).to.be.true;",
+                                "    pm.expect(response.data).to.be.an('array');",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "GET - Smoke - Get existing user by ID",
+                    "description": "Related IDs:\n- Endpoint ID: EP-010\n- Test Case ID: TC-006\n- Smoke ID: SMK-002\n\nPurpose:\nValidates that an existing user can be retrieved successfully.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains user data\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/{{validUserId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "{{validUserId}}"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "const response = pm.response.json();",
+                                "",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test('Content-Type includes application/json', function () {",
+                                "        pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                                "    });",
+                                "};",
+                                "",
+                                "expectStatus(200);",
+                                "expectJsonContentType();",
+                                "",
+                                "pm.test('Response contains expected user contract', function () {",
+                                "    pm.expect(response).to.be.an('object');",
+                                "    pm.expect(response).to.have.property('data');",
+                                "    pm.expect(response.data.id).to.be.a('number');",
+                                "    pm.expect(Number.isInteger(response.data.id)).to.be.true;",
+                                "    pm.expect(response.data.email).to.be.a('string').and.not.empty;",
+                                "    pm.expect(response.data.first_name).to.be.a('string').and.not.empty;",
+                                "    pm.expect(response.data.last_name).to.be.a('string').and.not.empty;",
+                                "    pm.expect(response.data.avatar).to.be.a('string').and.not.empty;",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "POST - Smoke - Create user with valid data",
+                    "description": "Related IDs:\n- Endpoint ID: EP-015\n- Test Case ID: TC-007\n- Smoke ID: SMK-003\n\nPurpose:\nValidates that the create user endpoint accepts valid data and returns a simulated created user response.\n\nExpected:\n- Status code 201\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains name, job, id and createdAt\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"{{testUserName}}\",\n  \"job\": \"{{testUserJob}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "const response = pm.response.json();",
+                                "const expectedName = pm.environment.get('testUserName');",
+                                "const expectedJob = pm.environment.get('testUserJob');",
+                                "",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test('Content-Type includes application/json', function () {",
+                                "        pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                                "    });",
+                                "};",
+                                "",
+                                "expectStatus(201);",
+                                "expectJsonContentType();",
+                                "",
+                                "pm.test('Response contains created user data', function () {",
+                                "    pm.expect(response).to.be.an('object');",
+                                "    pm.expect(response.name).to.eql(expectedName);",
+                                "    pm.expect(response.job).to.eql(expectedJob);",
+                                "    pm.expect(response.id).to.be.a('string').and.not.empty;",
+                                "    pm.expect(response.createdAt).to.be.a('string').and.not.empty;",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "POST - Smoke - Login with valid credentials",
+                    "description": "Related IDs:\n- Endpoint ID: EP-023\n- Test Case ID: TC-013\n- Smoke ID: SMK-004\n\nPurpose:\nValidates that the login endpoint accepts valid credentials and returns an authentication token.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains token\n- Token is not empty\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"{{validEmail}}\",\n  \"password\": \"{{validPassword}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "login"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "const response = pm.response.json();",
+                                "",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test('Content-Type includes application/json', function () {",
+                                "        pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+                                "    });",
+                                "};",
+                                "",
+                                "expectStatus(200);",
+                                "expectJsonContentType();",
+                                "",
+                                "pm.test('Response contains non-empty authentication token', function () {",
+                                "    pm.expect(response).to.be.an('object');",
+                                "    pm.expect(response.token).to.be.a('string').and.not.empty;",
+                                "});"
+                            ]
+                        }
+                    }]
+                }
+            ]
         },
+
         {
             "name": "02 - Users - List and Pagination",
             "description": "Contains user listing requests used to validate pagination, custom page size, JSON body structure and list-user contracts.",
