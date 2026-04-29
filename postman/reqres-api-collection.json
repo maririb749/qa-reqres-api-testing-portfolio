@@ -1,0 +1,99 @@
+{
+    "info": {
+        "_postman_id": "7c6d3a3e-4d70-4b4b-9a50-reqres-collection-001",
+        "name": "Reqres API Testing Portfolio",
+        "description": "API testing portfolio collection for the Reqres Demo API. This collection is organized to demonstrate smoke testing, positive scenarios, negative scenarios, boundary testing, contract testing, regression testing and basic response time observation. Requests should use the Reqres API Environment and reusable variables such as {{baseUrl}}, {{validUserId}}, {{validEmail}} and {{validPassword}}.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [{
+            "name": "01 - Smoke Tests",
+            "description": "Contains the minimum critical API checks used to confirm that the main Reqres endpoints are available before running the full test suite.",
+            "item": []
+        },
+        {
+            "name": "02 - Users - List and Pagination",
+            "description": "Contains user listing requests used to validate pagination, custom page size, JSON body structure and list-user contracts.",
+            "item": []
+        },
+        {
+            "name": "03 - Users - Single User",
+            "description": "Contains requests for retrieving existing and non-existing users, including not found behavior.",
+            "item": []
+        },
+        {
+            "name": "04 - Users - Create Update Delete",
+            "description": "Contains simulated CRUD requests for creating, updating, partially updating and deleting users.",
+            "item": []
+        },
+        {
+            "name": "05 - Authentication",
+            "description": "Contains login and registration requests, including valid and invalid authentication scenarios.",
+            "item": []
+        },
+        {
+            "name": "06 - Resources",
+            "description": "Contains Reqres resource/color endpoints used to validate resource list, single resource and not found behavior.",
+            "item": []
+        },
+        {
+            "name": "07 - Boundary Tests",
+            "description": "Contains edge case requests using zero values, negative values, non-numeric values, empty bodies, empty fields, special characters and long strings.",
+            "item": []
+        },
+        {
+            "name": "08 - Contract Tests",
+            "description": "Contains response structure validations used to confirm expected JSON types, value constraints, success contracts and error contracts.",
+            "item": []
+        },
+        {
+            "name": "09 - Delayed Response",
+            "description": "Contains delayed response scenarios used for basic response time observation. These tests should not be included in the smoke suite.",
+            "item": []
+        },
+        {
+            "name": "10 - Regression Tests",
+            "description": "Contains selected high-value scenarios used to confirm existing API behavior after changes in scripts, environment, collection structure, Newman setup or CI workflow.",
+            "item": []
+        }
+    ],
+    "event": [{
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "pm.collectionVariables.set('collectionName', 'Reqres API Testing Portfolio');",
+                    "",
+                    "const baseUrl = pm.environment.get('baseUrl');",
+                    "",
+                    "if (!baseUrl) {",
+                    "    throw new Error('Missing required environment variable: baseUrl');",
+                    "}"
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    "pm.test('Response does not expose internal implementation details', function () {",
+                    "    const responseText = pm.response.text().toLowerCase();",
+                    "",
+                    "    pm.expect(responseText).to.not.include('stack');",
+                    "    pm.expect(responseText).to.not.include('trace');",
+                    "    pm.expect(responseText).to.not.include('exception');",
+                    "    pm.expect(responseText).to.not.include('sql');",
+                    "    pm.expect(responseText).to.not.include('database');",
+                    "    pm.expect(responseText).to.not.include('internal server');",
+                    "    pm.expect(responseText).to.not.include('node_modules');",
+                    "});"
+                ]
+            }
+        }
+    ],
+    "variable": [{
+        "key": "collectionName",
+        "value": "Reqres API Testing Portfolio",
+        "type": "string"
+    }]
+}
