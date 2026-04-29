@@ -1,0 +1,188 @@
+{
+    "id": "b6f2e4b8-9a72-4b7d-8f8f-reqres-env-001",
+    "name": "Reqres API Environment",
+    "values": [{
+            "key": "baseUrl",
+            "value": "https://reqres.in",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "apiKey",
+            "value": "YOUR_API_KEY",
+            "type": "secret",
+            "enabled": true
+        },
+        {
+            "key": "reqresEnv",
+            "value": "prod",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "firstUserId",
+            "value": "1",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "validUserId",
+            "value": "2",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "invalidUserId",
+            "value": "23",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "zeroUserId",
+            "value": "0",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "negativeUserId",
+            "value": "-1",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "nonNumericUserId",
+            "value": "abc",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "validResourceId",
+            "value": "2",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "invalidResourceId",
+            "value": "23",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "validEmail",
+            "value": "eve.holt@reqres.in",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "validPassword",
+            "value": "cityslicka",
+            "type": "secret",
+            "enabled": true
+        },
+        {
+            "key": "invalidEmail",
+            "value": "invalid-email",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "pageOne",
+            "value": "1",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "pageTwo",
+            "value": "2",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "pageZero",
+            "value": "0",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "negativePage",
+            "value": "-1",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "highPage",
+            "value": "999",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "nonNumericPage",
+            "value": "abc",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "perPage",
+            "value": "3",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "delaySeconds",
+            "value": "3",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "maxResponseTimeMs",
+            "value": "1000",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "delayedMaxResponseTimeMs",
+            "value": "5000",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "testUserName",
+            "value": "Mariana",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "testUserJob",
+            "value": "QA Tester",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "updatedUserJob",
+            "value": "Senior QA Tester",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "patchedUserJob",
+            "value": "QA Automation Tester",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "longString",
+            "value": "This is a very long string used to validate how the API handles unusually large input values in boundary test scenarios.",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "specialCharsName",
+            "value": "Mariana @#$%",
+            "type": "default",
+            "enabled": true
+        }
+    ],
+    "_postman_variable_scope": "environment",
+    "_postman_exported_at": "2026-04-29T00:00:00.000Z",
+    "_postman_exported_using": "Postman"
+}
