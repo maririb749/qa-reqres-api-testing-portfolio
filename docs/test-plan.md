@@ -80,7 +80,9 @@ The following areas are included in this project:
 - Validating expected HTTP status codes
 - Validating JSON response body
 - Validating required fields
-- Validating response data types
+- Validating response JSON data types
+- Validating value constraints such as integer values, non-empty strings and arrays
+- Validating response JSON data types and value      constraints
 - Validating error responses
 - Creating positive test scenarios
 - Creating negative test scenarios
@@ -341,7 +343,7 @@ A test case will be marked as passed when:
 - The API returns the expected status code
 - The response body matches the expected structure
 - Required fields are present
-- Field data types are correct
+- Field JSON data types and value constraints are correct
 - Error messages match the expected behavior
 - Response time is within the defined limit
 - No unexpected behavior is observed

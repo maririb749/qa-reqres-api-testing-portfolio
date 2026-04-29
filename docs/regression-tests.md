@@ -392,11 +392,11 @@ Validation focus:
 - Response is valid JSON
 - Content-Type includes application/json
 - data object exists
-- data.id is a number
-- data.email is a string
-- data.first_name is a string
-- data.last_name is a string
-- data.avatar is a string
+- data.id is a number with integer value
+- data.email is a non-empty string
+- data.first_name is a non-empty string
+- data.last_name is a non-empty string
+- data.avatar is a non-empty string
 - support object exists
 - Response does not expose internal errors
 

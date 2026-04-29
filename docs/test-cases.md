@@ -123,7 +123,7 @@ This document includes:
 | TC-040 | EP-001 | GET | /api/users?page=1 | Validate list users response contract | Contract | High | N/A | 200 | Response contains page, per_page, total, total_pages, data array and support object | Not Run | To be updated |
 | TC-041 | EP-002 | GET | /api/users?page=2 | Validate list users page 2 response contract | Contract, Regression | High | N/A | 200 | Response contains valid pagination fields and data array | Not Run | To be updated |
 | TC-042 | EP-009 | GET | /api/users/1 | Validate single user response contract | Contract | High | N/A | 200 | Response contains data object with id, email, first_name, last_name and avatar | Not Run | To be updated |
-| TC-043 | EP-010 | GET | /api/users/2 | Validate existing user response contract | Contract, Regression | High | N/A | 200 | Response contains expected user fields with correct data types | Not Run | To be updated |
+| TC-043 | EP-010 | GET | /api/users/2 | Validate existing user response contract | Contract, Regression | High | N/A | 200 | Response contains expected user fields with correct JSON data types and value constraints | Not Run | To be updated |
 | TC-044 | EP-020 | GET | /api/unknown | Validate resource list response contract | Contract | Medium | N/A | 200 | Response contains pagination fields, data array and support object | Not Run | To be updated |
 | TC-045 | EP-021 | GET | /api/unknown/2 | Validate single resource response contract | Contract | Medium | N/A | 200 | Response contains resource fields id, name, year, color and pantone_value | Not Run | To be updated |
 

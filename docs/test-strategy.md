@@ -81,7 +81,7 @@ The following test design techniques will be applied:
 | Negative Testing | Validate API behavior with missing, invalid or incomplete data |
 | Boundary Value Analysis | Validate edge cases such as zero, negative values, high values and empty fields |
 | Error Guessing | Try inputs that could commonly cause failures |
-| Contract Testing | Validate response structure, fields and data types |
+| Contract Testing | Validate response structure, JSON data types and value constraints |
 | Risk-Based Testing | Prioritize critical endpoints such as login, register and user retrieval |
 | Regression Testing | Re-run selected tests after changes in collection, scripts or CI pipeline |
 
@@ -254,13 +254,13 @@ Contract tests will validate the expected structure of API responses.
 
 For user-related responses, the following fields may be validated:
 
-| Field | Expected Type |
-|---|---|
-| data.id | number |
-| data.email | string |
-| data.first_name | string |
-| data.last_name | string |
-| data.avatar | string |
+| Field | Expected JSON Type | Value Constraint |
+|---|---|---|
+| data.id | number | Integer value |
+| data.email | string | Non-empty, email-like value |
+| data.first_name | string | Non-empty |
+| data.last_name | string | Non-empty |
+| data.avatar | string | Non-empty, URL-like value |
 | support.url | string |
 | support.text | string |
 

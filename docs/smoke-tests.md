@@ -102,7 +102,7 @@ Validation focus:
 - HTTP status is 200
 - Response is valid JSON
 - Content-Type includes application/json
-- Response contains pagination fields
+- Response contains pagination fields with numeric integer values
 - Response contains data array
 - Response does not expose internal errors
 
@@ -128,7 +128,7 @@ Validation focus:
 - Response is valid JSON
 - Content-Type includes application/json
 - Response contains data object
-- User object contains id, email, first_name, last_name and avatar
+- User object contains id, email, first_name, last_name and avatar with expected JSON types and value constraints
 - Response does not expose internal errors
 
 ---
