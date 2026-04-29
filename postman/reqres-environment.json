@@ -38,6 +38,12 @@
             "enabled": true
         },
         {
+            "key": "veryHighUserId",
+            "value": "999999",
+            "type": "default",
+            "enabled": true
+        },
+        {
             "key": "zeroUserId",
             "value": "0",
             "type": "default",
