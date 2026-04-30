@@ -1254,8 +1254,366 @@
 
         {
             "name": "04 - Users - Create Update Delete",
-            "item": [],
-            "description": "Contains simulated CRUD requests for creating, updating, partially updating and deleting users."
+            "description": "Contains simulated CRUD requests for creating, updating, partially updating and deleting users.\n\nThis folder covers positive API scenarios for user creation, full update, partial update and deletion using Reqres simulated endpoints.\n\nThese requests validate HTTP status codes, JSON Content-Type when applicable, response body contracts, request-response data consistency, empty response behavior for DELETE and absence of internal implementation details.",
+            "item": [{
+                    "name": "POST - Create user with valid data",
+                    "description": "Related IDs:\n- Endpoint ID: EP-015\n- Test Case ID: TC-007\n\nPurpose:\nValidates that the API accepts valid user creation data and returns a simulated created user response.\n\nExpected:\n- Status code 201\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains name, job, id and createdAt\n- name matches the request body\n- job matches the request body\n- id is a non-empty string\n- createdAt is a non-empty string\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"{{testUserName}}\",\n  \"job\": \"{{testUserJob}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the response body only once and reuse it in all assertions.",
+                                "// This follows the project standard and avoids repeated pm.response.json() calls.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Read expected request values from the selected Postman environment.",
+                                "// This allows the test to validate that the response matches the submitted data.",
+                                "const expectedName = pm.environment.get(\"testUserName\");",
+                                "const expectedJob = pm.environment.get(\"testUserJob\");",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "// It confirms that the API returned the status required by this scenario.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "// This is required before validating the response body contract.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate required string fields that must not be empty.",
+                                "// It confirms both JSON type and minimum value constraint.",
+                                "const expectNonEmptyString = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a string`).to.be.a(\"string\");",
+                                "    pm.expect(value.trim(), `${fieldName} should not be empty`).to.not.eql(\"\");",
+                                "};",
+                                "",
+                                "// Validate that the create user endpoint returns the expected created status.",
+                                "expectStatus(201);",
+                                "",
+                                "// Validate that the API response can be safely treated as JSON.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the simulated create user response contract.",
+                                "// This confirms that Reqres returned the submitted values plus generated metadata.",
+                                "pm.test(\"Response contains created user data\", function () {",
+                                "    pm.expect(response).to.be.an(\"object\");",
+                                "    pm.expect(response.name).to.eql(expectedName);",
+                                "    pm.expect(response.job).to.eql(expectedJob);",
+                                "    expectNonEmptyString(\"id\", response.id);",
+                                "    expectNonEmptyString(\"createdAt\", response.createdAt);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "PUT - Update user with valid data",
+                    "description": "Related IDs:\n- Endpoint ID: EP-016\n- Test Case ID: TC-008\n\nPurpose:\nValidates that the API accepts a full user update request and returns the updated user data.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains name, job and updatedAt\n- name matches the request body\n- job matches the request body\n- updatedAt is a non-empty string\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "PUT",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"{{testUserName}}\",\n  \"job\": \"{{updatedUserJob}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/{{validUserId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "{{validUserId}}"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the response body only once and reuse it in all assertions.",
+                                "// This follows the project standard and avoids repeated pm.response.json() calls.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Read expected update values from the selected Postman environment.",
+                                "// This allows the test to validate that the response matches the full update request.",
+                                "const expectedName = pm.environment.get(\"testUserName\");",
+                                "const expectedJob = pm.environment.get(\"updatedUserJob\");",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "// It confirms that the API returned the status required by this scenario.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "// This is required before validating the response body contract.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate required string fields that must not be empty.",
+                                "// It confirms both JSON type and minimum value constraint.",
+                                "const expectNonEmptyString = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a string`).to.be.a(\"string\");",
+                                "    pm.expect(value.trim(), `${fieldName} should not be empty`).to.not.eql(\"\");",
+                                "};",
+                                "",
+                                "// Validate that the full update endpoint returns the expected success status.",
+                                "expectStatus(200);",
+                                "",
+                                "// Validate that the API response can be safely treated as JSON.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the full update response contract.",
+                                "// This confirms that Reqres returned the submitted values plus an update timestamp.",
+                                "pm.test(\"Response contains updated user data\", function () {",
+                                "    pm.expect(response).to.be.an(\"object\");",
+                                "    pm.expect(response.name).to.eql(expectedName);",
+                                "    pm.expect(response.job).to.eql(expectedJob);",
+                                "    expectNonEmptyString(\"updatedAt\", response.updatedAt);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "PATCH - Partially update user job",
+                    "description": "Related IDs:\n- Endpoint ID: EP-017\n- Test Case ID: TC-009\n\nPurpose:\nValidates that the API accepts a partial update request and returns the updated field.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains job and updatedAt\n- job matches the request body\n- updatedAt is a non-empty string\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"job\": \"{{patchedUserJob}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/{{validUserId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "{{validUserId}}"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the response body only once and reuse it in all assertions.",
+                                "// This follows the project standard and avoids repeated pm.response.json() calls.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Read the expected patched value from the selected Postman environment.",
+                                "// This allows the test to validate that the response matches the partial update request.",
+                                "const expectedJob = pm.environment.get(\"patchedUserJob\");",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "// It confirms that the API returned the status required by this scenario.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "// This is required before validating the response body contract.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate required string fields that must not be empty.",
+                                "// It confirms both JSON type and minimum value constraint.",
+                                "const expectNonEmptyString = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a string`).to.be.a(\"string\");",
+                                "    pm.expect(value.trim(), `${fieldName} should not be empty`).to.not.eql(\"\");",
+                                "};",
+                                "",
+                                "// Validate that the partial update endpoint returns the expected success status.",
+                                "expectStatus(200);",
+                                "",
+                                "// Validate that the API response can be safely treated as JSON.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the partial update response contract.",
+                                "// This confirms that Reqres returned the updated field plus an update timestamp.",
+                                "pm.test(\"Response contains partially updated user data\", function () {",
+                                "    pm.expect(response).to.be.an(\"object\");",
+                                "    pm.expect(response.job).to.eql(expectedJob);",
+                                "    expectNonEmptyString(\"updatedAt\", response.updatedAt);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "DELETE - Delete existing user",
+                    "description": "Related IDs:\n- Endpoint ID: EP-018\n- Test Case ID: TC-010\n\nPurpose:\nValidates that the API accepts a delete request for an existing user and returns an empty successful response.\n\nExpected:\n- Status code 204\n- Response body is empty\n- No JSON parsing is forced\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/{{validUserId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "{{validUserId}}"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Read the response body as text because DELETE 204 should not return JSON.",
+                                "// This avoids forcing JSON parsing on an empty response body.",
+                                "const responseText = pm.response.text();",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "// It confirms that the API returned the expected no-content status.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Validate that the delete endpoint returns the expected no-content status.",
+                                "expectStatus(204);",
+                                "",
+                                "// Validate that the DELETE response body is empty.",
+                                "// This is the expected behavior for a successful 204 No Content response.",
+                                "pm.test(\"Response body is empty\", function () {",
+                                "    pm.expect(responseText).to.eql(\"\");",
+                                "});"
+                            ]
+                        }
+                    }]
+                }
+            ]
         },
         {
             "name": "05 - Authentication",
