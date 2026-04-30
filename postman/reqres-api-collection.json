@@ -1617,8 +1617,831 @@
         },
         {
             "name": "05 - Authentication",
-            "item": [],
-            "description": "Contains login and registration requests, including valid and invalid authentication scenarios."
+            "description": "Contains authentication requests for login and registration scenarios using Reqres API.\n\nThis folder covers successful authentication flows and negative validation scenarios for missing required fields and empty request bodies.\n\nThese requests validate HTTP status codes, JSON Content-Type when applicable, authentication success contracts, error response contracts, absence of success payload in error responses and absence of internal implementation details.",
+            "item": [{
+                    "name": "POST - Login with valid credentials",
+                    "description": "Related IDs:\n- Endpoint ID: EP-023\n- Test Case ID: TC-013\n\nPurpose:\nValidates that the API accepts valid login credentials and returns an authentication token.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains token\n- token is a non-empty string\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"{{validEmail}}\",\n  \"password\": \"{{validPassword}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "login"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the response body only once and reuse it in all assertions.",
+                                "// This follows the project standard and avoids repeated pm.response.json() calls.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "// It confirms that the API returned the status required by this scenario.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "// This is required before validating the authentication success contract.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate required string fields that must not be empty.",
+                                "// It confirms both JSON type and minimum value constraint.",
+                                "const expectNonEmptyString = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a string`).to.be.a(\"string\");",
+                                "    pm.expect(value.trim(), `${fieldName} should not be empty`).to.not.eql(\"\");",
+                                "};",
+                                "",
+                                "// Validate that valid credentials return a successful login status.",
+                                "expectStatus(200);",
+                                "",
+                                "// Validate that the API response can be safely treated as JSON.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the successful login response contract.",
+                                "// The token must exist and be usable as a non-empty string.",
+                                "pm.test(\"Response contains non-empty authentication token\", function () {",
+                                "    pm.expect(response).to.be.an(\"object\");",
+                                "    expectNonEmptyString(\"token\", response.token);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "POST - Login without password",
+                    "description": "Related IDs:\n- Endpoint ID: EP-024\n- Test Case ID: TC-017\n\nPurpose:\nValidates that the API rejects a login request when the password field is missing.\n\nExpected:\n- Status code 400\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains error field\n- error is a non-empty string\n- error message is coherent with missing password scenario\n- Response does not contain success-only fields\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"{{validEmail}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "login"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the error response body only once and reuse it in all assertions.",
+                                "// This follows the project standard and avoids repeated pm.response.json() calls.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "// It confirms that the API returned the expected bad request status.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "// Negative authentication scenarios are expected to return a JSON error body.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate the minimum error response contract.",
+                                "// It confirms that the error field exists and is a non-empty string.",
+                                "const expectErrorContract = (body) => {",
+                                "    pm.expect(body).to.be.an(\"object\");",
+                                "    pm.expect(body).to.have.property(\"error\");",
+                                "    pm.expect(body.error).to.be.a(\"string\").and.not.empty;",
+                                "};",
+                                "",
+                                "// Reusable helper to confirm that error responses do not include success-only fields.",
+                                "// These fields should only appear in successful create, update or authentication flows.",
+                                "const expectNoSuccessPayload = (body) => {",
+                                "    const successOnlyFields = [\"token\", \"id\", \"createdAt\", \"updatedAt\", \"name\", \"job\"];",
+                                "",
+                                "    successOnlyFields.forEach((field) => {",
+                                "        pm.expect(body, `Error response should not contain success field: ${field}`).to.not.have.property(field);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Validate that missing password returns the expected bad request status.",
+                                "expectStatus(400);",
+                                "",
+                                "// Validate that the API response can be safely treated as JSON.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the minimum error contract for the missing password scenario.",
+                                "pm.test(\"Error response contains a non-empty error message\", function () {",
+                                "    expectErrorContract(response);",
+                                "});",
+                                "",
+                                "// Validate that the error message is coherent with the missing password scenario.",
+                                "pm.test(\"Error message is coherent with missing password scenario\", function () {",
+                                "    pm.expect(response.error.toLowerCase()).to.include(\"password\");",
+                                "});",
+                                "",
+                                "// Validate that the error response does not include fields from successful responses.",
+                                "pm.test(\"Error response does not contain success-only fields\", function () {",
+                                "    expectNoSuccessPayload(response);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "POST - Login without email",
+                    "description": "Related IDs:\n- Endpoint ID: EP-024\n- Test Case ID: TC-018\n\nPurpose:\nValidates that the API rejects a login request when the email field is missing.\n\nExpected:\n- Status code 400\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains error field\n- error is a non-empty string\n- error message is coherent with missing email or username scenario\n- Response does not contain success-only fields\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"password\": \"{{validPassword}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "login"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the error response body only once and reuse it in all assertions.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate the minimum error response contract.",
+                                "const expectErrorContract = (body) => {",
+                                "    pm.expect(body).to.be.an(\"object\");",
+                                "    pm.expect(body).to.have.property(\"error\");",
+                                "    pm.expect(body.error).to.be.a(\"string\").and.not.empty;",
+                                "};",
+                                "",
+                                "// Reusable helper to confirm that error responses do not include success-only fields.",
+                                "const expectNoSuccessPayload = (body) => {",
+                                "    const successOnlyFields = [\"token\", \"id\", \"createdAt\", \"updatedAt\", \"name\", \"job\"];",
+                                "",
+                                "    successOnlyFields.forEach((field) => {",
+                                "        pm.expect(body, `Error response should not contain success field: ${field}`).to.not.have.property(field);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Validate that missing email returns the expected bad request status.",
+                                "expectStatus(400);",
+                                "",
+                                "// Validate that the API response can be safely treated as JSON.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the minimum error contract for the missing email scenario.",
+                                "pm.test(\"Error response contains a non-empty error message\", function () {",
+                                "    expectErrorContract(response);",
+                                "});",
+                                "",
+                                "// Validate that the error message is coherent with a missing email or username scenario.",
+                                "pm.test(\"Error message is coherent with missing email scenario\", function () {",
+                                "    const errorMessage = response.error.toLowerCase();",
+                                "    pm.expect(errorMessage.includes(\"email\") || errorMessage.includes(\"username\")).to.be.true;",
+                                "});",
+                                "",
+                                "// Validate that the error response does not include fields from successful responses.",
+                                "pm.test(\"Error response does not contain success-only fields\", function () {",
+                                "    expectNoSuccessPayload(response);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "POST - Login with empty body",
+                    "description": "Related IDs:\n- Endpoint ID: EP-024\n- Test Case ID: TC-019\n\nPurpose:\nValidates that the API rejects a login request when the request body is empty.\n\nExpected:\n- Status code 400\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains error field\n- error is a non-empty string\n- error message is coherent with missing required authentication data\n- Response does not contain success-only fields\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "login"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the error response body only once and reuse it in all assertions.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate the minimum error response contract.",
+                                "const expectErrorContract = (body) => {",
+                                "    pm.expect(body).to.be.an(\"object\");",
+                                "    pm.expect(body).to.have.property(\"error\");",
+                                "    pm.expect(body.error).to.be.a(\"string\").and.not.empty;",
+                                "};",
+                                "",
+                                "// Reusable helper to confirm that error responses do not include success-only fields.",
+                                "const expectNoSuccessPayload = (body) => {",
+                                "    const successOnlyFields = [\"token\", \"id\", \"createdAt\", \"updatedAt\", \"name\", \"job\"];",
+                                "",
+                                "    successOnlyFields.forEach((field) => {",
+                                "        pm.expect(body, `Error response should not contain success field: ${field}`).to.not.have.property(field);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Validate that an empty login body returns the expected bad request status.",
+                                "expectStatus(400);",
+                                "",
+                                "// Validate that the API response can be safely treated as JSON.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the minimum error contract for an empty login body.",
+                                "pm.test(\"Error response contains a non-empty error message\", function () {",
+                                "    expectErrorContract(response);",
+                                "});",
+                                "",
+                                "// Validate that the error message is coherent with missing required login data.",
+                                "pm.test(\"Error message is coherent with empty body scenario\", function () {",
+                                "    const errorMessage = response.error.toLowerCase();",
+                                "    pm.expect(errorMessage.includes(\"email\") || errorMessage.includes(\"username\") || errorMessage.includes(\"password\")).to.be.true;",
+                                "});",
+                                "",
+                                "// Validate that the error response does not include fields from successful responses.",
+                                "pm.test(\"Error response does not contain success-only fields\", function () {",
+                                "    expectNoSuccessPayload(response);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "POST - Register with valid data",
+                    "description": "Related IDs:\n- Endpoint ID: EP-025\n- Test Case ID: TC-014\n\nPurpose:\nValidates that the API accepts valid registration data and returns a registration token.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains id and token\n- id is a number with integer value\n- token is a non-empty string\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"{{validEmail}}\",\n  \"password\": \"{{validPassword}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "register"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the response body only once and reuse it in all assertions.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate numeric fields that must contain integer values.",
+                                "const expectIntegerNumber = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
+                                "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
+                                "};",
+                                "",
+                                "// Reusable helper to validate required string fields that must not be empty.",
+                                "const expectNonEmptyString = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a string`).to.be.a(\"string\");",
+                                "    pm.expect(value.trim(), `${fieldName} should not be empty`).to.not.eql(\"\");",
+                                "};",
+                                "",
+                                "// Validate that valid registration data returns a successful status.",
+                                "expectStatus(200);",
+                                "",
+                                "// Validate that the API response can be safely treated as JSON.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the successful registration response contract.",
+                                "pm.test(\"Response contains registered user id and token\", function () {",
+                                "    pm.expect(response).to.be.an(\"object\");",
+                                "    expectIntegerNumber(\"id\", response.id);",
+                                "    expectNonEmptyString(\"token\", response.token);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "POST - Register without password",
+                    "description": "Related IDs:\n- Endpoint ID: EP-026\n- Test Case ID: TC-020\n\nPurpose:\nValidates that the API rejects a registration request when the password field is missing.\n\nExpected:\n- Status code 400\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains error field\n- error is a non-empty string\n- error message is coherent with missing password scenario\n- Response does not contain success-only fields\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"{{validEmail}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "register"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the error response body only once and reuse it in all assertions.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate the minimum error response contract.",
+                                "const expectErrorContract = (body) => {",
+                                "    pm.expect(body).to.be.an(\"object\");",
+                                "    pm.expect(body).to.have.property(\"error\");",
+                                "    pm.expect(body.error).to.be.a(\"string\").and.not.empty;",
+                                "};",
+                                "",
+                                "// Reusable helper to confirm that error responses do not include success-only fields.",
+                                "const expectNoSuccessPayload = (body) => {",
+                                "    const successOnlyFields = [\"token\", \"id\", \"createdAt\", \"updatedAt\", \"name\", \"job\"];",
+                                "",
+                                "    successOnlyFields.forEach((field) => {",
+                                "        pm.expect(body, `Error response should not contain success field: ${field}`).to.not.have.property(field);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Validate that missing password returns the expected bad request status.",
+                                "expectStatus(400);",
+                                "",
+                                "// Validate that the API response can be safely treated as JSON.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the minimum error contract for the missing password scenario.",
+                                "pm.test(\"Error response contains a non-empty error message\", function () {",
+                                "    expectErrorContract(response);",
+                                "});",
+                                "",
+                                "// Validate that the error message is coherent with the missing password scenario.",
+                                "pm.test(\"Error message is coherent with missing password scenario\", function () {",
+                                "    pm.expect(response.error.toLowerCase()).to.include(\"password\");",
+                                "});",
+                                "",
+                                "// Validate that the error response does not include fields from successful responses.",
+                                "pm.test(\"Error response does not contain success-only fields\", function () {",
+                                "    expectNoSuccessPayload(response);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "POST - Register without email",
+                    "description": "Related IDs:\n- Endpoint ID: EP-026\n- Test Case ID: TC-021\n\nPurpose:\nValidates that the API rejects a registration request when the email field is missing.\n\nExpected:\n- Status code 400\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains error field\n- error is a non-empty string\n- error message is coherent with missing email or username scenario\n- Response does not contain success-only fields\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"password\": \"{{validPassword}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "register"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the error response body only once and reuse it in all assertions.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate the minimum error response contract.",
+                                "const expectErrorContract = (body) => {",
+                                "    pm.expect(body).to.be.an(\"object\");",
+                                "    pm.expect(body).to.have.property(\"error\");",
+                                "    pm.expect(body.error).to.be.a(\"string\").and.not.empty;",
+                                "};",
+                                "",
+                                "// Reusable helper to confirm that error responses do not include success-only fields.",
+                                "const expectNoSuccessPayload = (body) => {",
+                                "    const successOnlyFields = [\"token\", \"id\", \"createdAt\", \"updatedAt\", \"name\", \"job\"];",
+                                "",
+                                "    successOnlyFields.forEach((field) => {",
+                                "        pm.expect(body, `Error response should not contain success field: ${field}`).to.not.have.property(field);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Validate that missing email returns the expected bad request status.",
+                                "expectStatus(400);",
+                                "",
+                                "// Validate that the API response can be safely treated as JSON.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the minimum error contract for the missing email scenario.",
+                                "pm.test(\"Error response contains a non-empty error message\", function () {",
+                                "    expectErrorContract(response);",
+                                "});",
+                                "",
+                                "// Validate that the error message is coherent with a missing email or username scenario.",
+                                "pm.test(\"Error message is coherent with missing email scenario\", function () {",
+                                "    const errorMessage = response.error.toLowerCase();",
+                                "    pm.expect(errorMessage.includes(\"email\") || errorMessage.includes(\"username\")).to.be.true;",
+                                "});",
+                                "",
+                                "// Validate that the error response does not include fields from successful responses.",
+                                "pm.test(\"Error response does not contain success-only fields\", function () {",
+                                "    expectNoSuccessPayload(response);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "POST - Register with empty body",
+                    "description": "Related IDs:\n- Endpoint ID: EP-026\n- Test Case ID: TC-022\n\nPurpose:\nValidates that the API rejects a registration request when the request body is empty.\n\nExpected:\n- Status code 400\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains error field\n- error is a non-empty string\n- error message is coherent with missing required registration data\n- Response does not contain success-only fields\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "register"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the error response body only once and reuse it in all assertions.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate the minimum error response contract.",
+                                "const expectErrorContract = (body) => {",
+                                "    pm.expect(body).to.be.an(\"object\");",
+                                "    pm.expect(body).to.have.property(\"error\");",
+                                "    pm.expect(body.error).to.be.a(\"string\").and.not.empty;",
+                                "};",
+                                "",
+                                "// Reusable helper to confirm that error responses do not include success-only fields.",
+                                "const expectNoSuccessPayload = (body) => {",
+                                "    const successOnlyFields = [\"token\", \"id\", \"createdAt\", \"updatedAt\", \"name\", \"job\"];",
+                                "",
+                                "    successOnlyFields.forEach((field) => {",
+                                "        pm.expect(body, `Error response should not contain success field: ${field}`).to.not.have.property(field);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Validate that an empty registration body returns the expected bad request status.",
+                                "expectStatus(400);",
+                                "",
+                                "// Validate that the API response can be safely treated as JSON.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the minimum error contract for an empty registration body.",
+                                "pm.test(\"Error response contains a non-empty error message\", function () {",
+                                "    expectErrorContract(response);",
+                                "});",
+                                "",
+                                "// Validate that the error message is coherent with missing required registration data.",
+                                "pm.test(\"Error message is coherent with empty body scenario\", function () {",
+                                "    const errorMessage = response.error.toLowerCase();",
+                                "    pm.expect(errorMessage.includes(\"email\") || errorMessage.includes(\"username\") || errorMessage.includes(\"password\")).to.be.true;",
+                                "});",
+                                "",
+                                "// Validate that the error response does not include fields from successful responses.",
+                                "pm.test(\"Error response does not contain success-only fields\", function () {",
+                                "    expectNoSuccessPayload(response);",
+                                "});"
+                            ]
+                        }
+                    }]
+                }
+            ]
         },
         {
             "name": "06 - Resources",
