@@ -7,8 +7,8 @@
 | Project Name | Reqres API Testing Portfolio |
 | Document Type | Test Plan |
 | Author | Mariana |
-| Status | Draft |
-| Version | 1.0 |
+| Status | Completed |
+| Version | 1.1 |
 | Created Date | 2026-04-28 |
 | Application Under Test | Reqres API |
 | Base URL | https://reqres.in |
@@ -54,7 +54,9 @@ It provides endpoints that allow testers and developers to practice API requests
 
 Base URL:
 
-    https://reqres.in
+```txt
+https://reqres.in
+```
 
 ---
 
@@ -82,8 +84,9 @@ The following areas are included in this project:
 - Validating required fields
 - Validating response JSON data types
 - Validating value constraints such as integer values, non-empty strings and arrays
-- Validating response JSON data types and value      constraints
 - Validating error responses
+- Validating absence of success payload in error responses
+- Validating absence of internal implementation details
 - Creating positive test scenarios
 - Creating negative test scenarios
 - Creating boundary test scenarios
@@ -91,7 +94,8 @@ The following areas are included in this project:
 - Creating regression test scenarios
 - Creating contract validation scenarios
 - Capturing execution evidence
-- Exporting Postman collection and environment
+- Exporting the Postman collection
+- Preparing a sanitized Postman environment file
 - Preparing the project for Newman execution
 - Preparing the project for GitHub Actions execution
 
@@ -109,7 +113,8 @@ The following areas are not included in this project:
 - Real data persistence validation
 - Production monitoring
 - Business analytics validation
-- Testing private Project API endpoints that require a real project setup
+- Testing private project API endpoints that require a real project setup
+- Full performance testing beyond a basic delayed response observation
 
 ---
 
@@ -121,21 +126,21 @@ The following areas are not included in this project:
 | EP-002 | GET | /api/users?page=2 | List users from second page | 200 |
 | EP-003 | GET | /api/users?per_page=3 | List users using custom page size | 200 |
 | EP-004 | GET | /api/users?page=1&per_page=3 | List users using page and custom page size | 200 |
-| EP-005 | GET | /api/users?page=0 | List users using page zero | To be observed |
-| EP-006 | GET | /api/users?page=-1 | List users using negative page value | To be observed |
-| EP-007 | GET | /api/users?page=999 | List users using very high page value | 200 or handled response |
-| EP-008 | GET | /api/users?page=abc | List users using non-numeric page value | To be observed |
+| EP-005 | GET | /api/users?page=0 | List users using page zero | 200 |
+| EP-006 | GET | /api/users?page=-1 | List users using negative page value | 200 |
+| EP-007 | GET | /api/users?page=999 | List users using very high page value | 200 |
+| EP-008 | GET | /api/users?page=abc | List users using non-numeric page value | 200 |
 | EP-009 | GET | /api/users/1 | Get first existing user | 200 |
 | EP-010 | GET | /api/users/2 | Get existing user | 200 |
 | EP-011 | GET | /api/users/23 | Get non-existing user | 404 |
-| EP-012 | GET | /api/users/0 | Get user using zero ID | 404 or handled response |
-| EP-013 | GET | /api/users/-1 | Get user using negative ID | 404 or handled response |
-| EP-014 | GET | /api/users/abc | Get user using non-numeric ID | 404 or handled response |
+| EP-012 | GET | /api/users/0 | Get user using zero ID | 404 |
+| EP-013 | GET | /api/users/-1 | Get user using negative ID | 404 |
+| EP-014 | GET | /api/users/abc | Get user using non-numeric ID | 404 |
 | EP-015 | POST | /api/users | Create user | 201 |
 | EP-016 | PUT | /api/users/2 | Update user | 200 |
 | EP-017 | PATCH | /api/users/2 | Partially update user | 200 |
 | EP-018 | DELETE | /api/users/2 | Delete user | 204 |
-| EP-019 | DELETE | /api/users/999999 | Delete non-existing user | 204 or handled response |
+| EP-019 | DELETE | /api/users/999999 | Delete non-existing user | 204 |
 | EP-020 | GET | /api/unknown | List resource data | 200 |
 | EP-021 | GET | /api/unknown/2 | Get existing resource | 200 |
 | EP-022 | GET | /api/unknown/23 | Get non-existing resource | 404 |
@@ -145,7 +150,7 @@ The following areas are not included in this project:
 | EP-026 | POST | /api/register | Register user with missing or invalid data | 400 |
 | EP-027 | GET | /api/users?delay=3 | Validate delayed response behavior | 200 |
 
-Note: Some boundary scenarios are marked as "To be observed" because the actual API behavior will be confirmed during Postman execution.
+Note: Boundary scenarios were initially marked for observation, but their behavior was later confirmed during Postman execution and documented through evidence screenshots.
 
 ---
 
@@ -156,31 +161,35 @@ Note: Some boundary scenarios are marked as "To be observed" because the actual 
 | Functional Testing | Validate that each endpoint behaves according to its expected purpose |
 | Positive Testing | Validate successful scenarios using valid data |
 | Negative Testing | Validate API behavior using invalid or missing data |
-| Boundary Testing | Validate edge cases such as empty values, invalid IDs, negative values, non-numeric values and very high values |
+| Boundary Testing | Validate edge cases such as zero values, invalid IDs, negative values, non-numeric values and very high values |
 | Smoke Testing | Validate that the most critical endpoints are available and working |
-| Regression Testing | Re-run selected tests after changes in collection, scripts, environment or CI pipeline |
-| Contract Testing | Validate response structure, required fields and data types |
-| Basic Performance Checks | Validate whether response time remains within an acceptable limit |
+| Regression Testing | Re-run selected high-value tests after changes in collection, scripts, environment or CI pipeline |
+| Contract Testing | Validate response structure, required fields, JSON data types and value constraints |
+| Basic Performance Checks | Validate whether delayed response time remains within an acceptable threshold |
 | Header Validation | Validate response headers when applicable |
 
 ---
 
 ## 7. Test Approach
 
-The API will be tested using Postman.
+The API is tested using Postman.
 
-Each request will include validations when applicable:
+Each request includes validations when applicable:
 
 - Expected HTTP status code
 - JSON response format
+- Content-Type header
 - Required response fields
-- Data types
+- JSON data types
+- Integer value constraints for numeric fields
+- Non-empty string constraints
 - Error message content
-- Response time
-- Header validation
+- Absence of success payload in error responses
+- Absence of internal implementation details
+- Response time threshold for delayed response scenarios
 - Contract validation
 
-The tests will be organized into logical groups inside the Postman collection:
+The tests are organized into logical groups inside the Postman collection:
 
 - 01 - Smoke Tests
 - 02 - Users - List and Pagination
@@ -195,7 +204,32 @@ The tests will be organized into logical groups inside the Postman collection:
 
 ---
 
-## 8. Test Environment
+## 8. Postman Collection Structure
+
+The Postman collection is organized into 10 folders, each focused on a specific API testing area.
+
+| Folder | Area | Requests |
+|---|---|---:|
+| 01 - Smoke Tests | Critical API availability checks | 4 |
+| 02 - Users - List and Pagination | User list and pagination scenarios | 4 |
+| 03 - Users - Single User | Single user retrieval and not found behavior | 3 |
+| 04 - Users - Create Update Delete | Simulated user create, update, patch and delete flows | 4 |
+| 05 - Authentication | Login and registration success/error scenarios | 8 |
+| 06 - Resources | Resource list, single resource and not found behavior | 3 |
+| 07 - Boundary Tests | Boundary scenarios for pagination and user IDs | 8 |
+| 08 - Contract Tests | Response contract validations | 15 |
+| 09 - Delayed Response | Basic delayed response observation | 1 |
+| 10 - Regression Tests | Critical regression coverage | 8 |
+
+Total planned Postman requests:
+
+```txt
+58
+```
+
+---
+
+## 9. Test Environment
 
 | Item | Value |
 |---|---|
@@ -205,52 +239,64 @@ The tests will be organized into logical groups inside the Postman collection:
 | Future CLI Tool | Newman |
 | Future CI Tool | GitHub Actions |
 | Response Format | JSON |
-| Operating System | To be updated |
+| Operating System | Windows 11 |
 | Browser | Not applicable |
 | Database Access | Not applicable |
 
 ---
 
-## 9. Postman Environment Variables
+## 10. Postman Environment Variables
 
 | Variable | Example Value | Description |
 |---|---|---|
 | baseUrl | https://reqres.in | API base URL |
-| apiKey | To be updated if required | Optional API key |
+| apiKey | YOUR_API_KEY | Reqres API key stored only in the Postman environment |
+| reqresEnv | portfolio | Custom environment marker used in request headers |
 | validUserId | 2 | Existing user ID used in tests |
 | firstUserId | 1 | First existing user ID used in tests |
 | invalidUserId | 23 | Non-existing user ID used in negative tests |
 | zeroUserId | 0 | Zero ID used in boundary tests |
 | negativeUserId | -1 | Negative ID used in boundary tests |
 | nonNumericUserId | abc | Non-numeric ID used in boundary tests |
+| veryHighUserId | 999999 | Very high or non-existing user ID used in delete boundary tests |
 | validResourceId | 2 | Existing resource ID used in tests |
 | invalidResourceId | 23 | Non-existing resource ID used in negative tests |
-| validEmail | To be updated | Valid email used for authentication tests |
-| validPassword | To be updated | Valid password used for authentication tests |
-| invalidEmail | invalid-email | Invalid email format used in boundary tests |
+| validEmail | eve.holt@reqres.in | Valid email used for authentication tests |
+| validPassword | cityslicka | Valid password used for authentication tests |
+| invalidEmail | invalid-email | Invalid email format reserved for negative or boundary scenarios |
 | pageOne | 1 | First page |
 | pageTwo | 2 | Second page |
 | pageZero | 0 | Boundary page value |
 | negativePage | -1 | Negative page value |
 | highPage | 999 | Very high page value |
+| nonNumericPage | abc | Non-numeric page value |
 | perPage | 3 | Custom number of records per page |
-| delaySeconds | 3 | Delay value used for basic response time behavior |
+| delaySeconds | 3 | Delay value used for delayed response behavior |
+| delayedMaxResponseTimeMs | 5000 | Maximum accepted response time for delayed response test |
+| testUserName | Mariana | User name used in create/update request bodies |
+| testUserJob | QA Tester | Job value used in create request body |
+| updatedUserJob | Senior QA Tester | Job value used in full update request body |
+| patchedUserJob | API QA Analyst | Job value used in partial update request body |
+
+Note: The real API key must be configured only in the local Postman environment. It should not be committed to the repository.
 
 ---
 
-## 10. Test Data
+## 11. Test Data
 
-The test data will include:
+The test data includes:
 
 - Valid user IDs
 - Invalid user IDs
 - Zero ID
 - Negative ID
 - Non-numeric ID
+- Very high user ID
 - Valid resource IDs
 - Invalid resource IDs
 - Valid page values
-- Invalid page values
+- Boundary page values
+- Non-numeric page values
 - Empty request bodies
 - Missing required fields
 - Invalid email formats
@@ -263,42 +309,60 @@ The test data will include:
 
 Example valid user creation data:
 
-    {
-      "name": "Mariana",
-      "job": "QA Tester"
-    }
+```json
+{
+  "name": "Mariana",
+  "job": "QA Tester"
+}
+```
 
 Example update data:
 
-    {
-      "name": "Mariana",
-      "job": "Senior QA Tester"
-    }
+```json
+{
+  "name": "Mariana",
+  "job": "Senior QA Tester"
+}
+```
+
+Example partial update data:
+
+```json
+{
+  "job": "API QA Analyst"
+}
+```
 
 Example boundary data:
 
-    {
-      "name": "",
-      "job": ""
-    }
+```json
+{
+  "name": "",
+  "job": ""
+}
+```
 
 Example special character data:
 
-    {
-      "name": "Mariana @#$%",
-      "job": "QA Tester & API Analyst"
-    }
+```json
+{
+  "name": "Mariana @#$%",
+  "job": "QA Tester & API Analyst"
+}
+```
 
 Example invalid email:
 
-    {
-      "email": "invalid-email",
-      "password": "test123"
-    }
+```json
+{
+  "email": "invalid-email",
+  "password": "test123"
+}
+```
 
 ---
 
-## 11. Entry Criteria
+## 12. Entry Criteria
 
 Testing can start when:
 
@@ -313,28 +377,30 @@ Testing can start when:
 
 ---
 
-## 12. Exit Criteria
+## 13. Exit Criteria
 
 Testing can be considered complete when:
 
-- All planned test cases are executed
+- All planned Postman requests are implemented
+- All planned test folders are executed
 - Positive scenarios are validated
 - Negative scenarios are validated
 - Boundary scenarios are validated
 - Resource scenarios are validated
 - Delayed response scenario is validated
 - Contract validations are executed
+- Regression scenarios are executed
 - Execution evidence is saved
-- Bugs or unexpected behaviors are documented
+- Bugs or unexpected behaviors are documented, if found
 - Test summary report is completed
 - Postman collection is exported
-- Postman environment is exported
-- Newman report is generated, when applicable
-- GitHub Actions workflow is configured, when applicable
+- Postman environment is prepared with safe placeholder values
+- Newman report is generated, if CLI execution is included in the project scope
+- GitHub Actions workflow is configured, if CI execution is included in the project scope
 
 ---
 
-## 13. Pass and Fail Criteria
+## 14. Pass and Fail Criteria
 
 ### Pass Criteria
 
@@ -344,8 +410,10 @@ A test case will be marked as passed when:
 - The response body matches the expected structure
 - Required fields are present
 - Field JSON data types and value constraints are correct
-- Error messages match the expected behavior
-- Response time is within the defined limit
+- Error messages match the expected behavior when applicable
+- Error responses do not include success-only payloads
+- Response time is within the defined limit when applicable
+- No internal implementation details are exposed
 - No unexpected behavior is observed
 
 ### Fail Criteria
@@ -355,43 +423,48 @@ A test case will be marked as failed when:
 - The API returns an unexpected status code
 - The response body is missing required fields
 - The response contains incorrect data types
+- The response violates expected value constraints
 - The API returns an unexpected error
 - The API does not handle invalid input properly
-- Response time exceeds the defined limit
+- Error responses expose success-only payloads
+- Response time exceeds the defined limit when applicable
+- Internal implementation details are exposed
 - The API behavior differs from the expected result
 
 ---
 
-## 14. Risks and Mitigation
+## 15. Risks and Mitigation
 
 | Risk | Impact | Mitigation |
 |---|---|---|
 | API behavior changes | Tests may fail unexpectedly | Review Reqres documentation and update expected results |
-| Authentication requirement changes | Requests may return 401 or 403 | Prepare optional apiKey variable in Postman |
+| Authentication requirement changes | Requests may return 401 or 403 | Use the apiKey variable through Postman environment configuration |
 | Network instability | Requests may fail intermittently | Re-run failed requests and document the result |
 | Public API limitations | Some edge cases may not behave like a real production API | Document observations clearly |
 | No real data persistence | Create/update/delete tests may return simulated responses | Mention this limitation in the summary report |
 | Missing official business requirements | Expected results may require assumptions | Document assumptions in test cases |
-| Delayed response may increase execution time | Tests may take longer in Newman or CI | Keep delayed response test separated from smoke tests |
+| Delayed response may increase execution time | Tests may take longer in Newman or CI | Keep delayed response test separated from smoke and regression tests |
+| API key exposure risk | Sensitive data may be committed accidentally | Store the real API key only in Current Value/local Postman environment and use placeholders in repository files |
 
 ---
 
-## 15. Assumptions
+## 16. Assumptions
 
 The following assumptions are considered for this project:
 
 - Reqres API is available during test execution
-- The API returns JSON responses
+- The API returns JSON responses for the covered endpoints
 - Public demo endpoints are suitable for API testing practice
-- Some responses may be simulated and not persisted
-- Test results will be documented based on observed behavior
+- Some responses are simulated and not persisted
+- Test results are documented based on observed behavior
 - Any unexpected behavior will be recorded as an observation or potential defect
-- Edge case results will be confirmed during actual Postman execution
-- The delayed response endpoint will be used only for basic response time observation
+- Boundary scenario results are confirmed during actual Postman execution
+- The delayed response endpoint is used only for basic response time observation
+- Contract tests validate response shape, JSON data types and value constraints, not business persistence
 
 ---
 
-## 16. Deliverables
+## 17. Deliverables
 
 | Deliverable | Location |
 |---|---|
@@ -413,7 +486,7 @@ The following assumptions are considered for this project:
 
 ---
 
-## 17. Defect Management
+## 18. Defect Management
 
 Any defect or unexpected behavior found during testing will be documented in:
 
@@ -437,41 +510,64 @@ Each bug report should include:
 
 ---
 
-## 18. Evidence Strategy
+## 19. Evidence Strategy
 
-Evidence will be collected during test execution.
+Evidence is collected during test execution.
 
 Evidence may include:
 
 - Postman execution screenshots
 - Collection runner screenshots
-- Failed request screenshots
-- Newman HTML report
-- Newman JSON report
-- GitHub Actions execution screenshot
+- Failed request screenshots, when applicable
+- Newman HTML report, if CLI execution is included
+- Newman JSON report, if CLI execution is included
+- GitHub Actions execution screenshot, if CI execution is included
 
-Evidence will be stored in:
+Evidence is stored in:
 
-- evidence/screenshots/
-- evidence/reports/
+```txt
+evidence/screenshots/
+evidence/reports/
+```
+
+The Postman evidence is organized by collection area:
+
+```txt
+evidence/screenshots/reqres-api-testing-portfolio/smoke-tests/
+evidence/screenshots/reqres-api-testing-portfolio/users-list-pagination/
+evidence/screenshots/reqres-api-testing-portfolio/single-user/
+evidence/screenshots/reqres-api-testing-portfolio/create-update-delete/
+evidence/screenshots/reqres-api-testing-portfolio/authentication/
+evidence/screenshots/reqres-api-testing-portfolio/resources/
+evidence/screenshots/reqres-api-testing-portfolio/boundary-tests/
+evidence/screenshots/reqres-api-testing-portfolio/contract-tests/
+evidence/screenshots/reqres-api-testing-portfolio/delayed-response/
+evidence/screenshots/reqres-api-testing-portfolio/regression-tests/
+```
 
 ---
 
-## 19. Test Execution Order
+## 20. Test Execution Order
 
-Tests will be executed in the following order:
+Tests are organized and executed in the following Postman collection order:
 
-1. Smoke tests
-2. Positive tests
-3. Negative tests
-4. Boundary tests
-5. Resource tests
-6. Contract tests
-7. Delayed response test
-8. Regression tests
+1. 01 - Smoke Tests
+2. 02 - Users - List and Pagination
+3. 03 - Users - Single User
+4. 04 - Users - Create Update Delete
+5. 05 - Authentication
+6. 06 - Resources
+7. 07 - Boundary Tests
+8. 08 - Contract Tests
+9. 09 - Delayed Response
+10. 10 - Regression Tests
+
+The delayed response folder is intentionally kept outside the smoke and regression scope because it introduces an artificial wait time.
 
 ---
 
-## 20. Completion Notes
+## 21. Completion Notes
 
-This test plan will be updated if the scope, tools, endpoints or execution strategy change during the project.
+This test plan was updated to reflect the completed Postman collection structure, implemented request coverage, confirmed boundary behavior, environment variables and evidence organization.
+
+Future updates may be required if the scope, tools, endpoints, execution strategy, Newman setup or GitHub Actions workflow changes during the project.

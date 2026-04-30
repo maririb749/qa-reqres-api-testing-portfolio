@@ -7,8 +7,8 @@
 | Project Name | Reqres API Testing Portfolio |
 | Document Type | Contract Tests |
 | Author | Mariana |
-| Status | Draft |
-| Version | 1.0 |
+| Status | Completed |
+| Version | 1.1 |
 | Created Date | 2026-04-28 |
 | Related Documents | docs/test-plan.md, docs/test-strategy.md, docs/endpoint-mapping.md, docs/test-cases.md, docs/smoke-tests.md, docs/regression-tests.md |
 | Application Under Test | Reqres API |
@@ -18,11 +18,15 @@
 
 ## 2. Purpose
 
-The purpose of this document is to define the response contracts that will be validated in the Reqres API Testing Portfolio project.
+The purpose of this document is to define and document the response contracts validated in the Reqres API Testing Portfolio project.
 
 Contract testing ensures that API responses follow an expected structure, including required fields, JSON data types, value constraints, successful response payloads and error response payloads.
 
-This document also prepares the project for future Postman test scripts by defining what each important response should contain and what it should not expose.
+The implemented contract tests are available in the Postman collection under:
+
+```txt
+08 - Contract Tests
+```
 
 ---
 
@@ -30,7 +34,7 @@ This document also prepares the project for future Postman test scripts by defin
 
 The objective of contract testing in this project is to validate that important Reqres API responses remain stable and predictable.
 
-The contract checks will focus on:
+The contract checks focus on:
 
 - HTTP status code
 - Content-Type header
@@ -53,7 +57,9 @@ The contract checks will focus on:
 The following response contracts are included:
 
 - List users response
-- Single user response
+- Users page 2 response
+- First user response
+- Existing user response
 - Resource list response
 - Single resource response
 - Create user response
@@ -61,9 +67,10 @@ The following response contracts are included:
 - Partial update response
 - Login success response
 - Register success response
-- Not found response
-- Authentication error response
-- Registration error response
+- User not found response
+- Resource not found response
+- Login error response
+- Register error response
 
 ### 4.2 Out of Scope
 
@@ -79,42 +86,42 @@ The following areas are not part of contract testing in this project:
 
 ---
 
-## 5. Contract Test Candidates
+## 5. Implemented Contract Test Suite
 
-| Contract ID | Test Case ID | Endpoint ID | Method | Endpoint | Contract Type | Priority |
-|---|---|---|---|---|---|---|
-| CON-001 | TC-040 | EP-001 | GET | /api/users?page=1 | List users success contract | High |
-| CON-002 | TC-041 | EP-002 | GET | /api/users?page=2 | List users success contract | High |
-| CON-003 | TC-042 | EP-009 | GET | /api/users/1 | Single user success contract | High |
-| CON-004 | TC-043 | EP-010 | GET | /api/users/2 | Single user success contract | High |
-| CON-005 | TC-044 | EP-020 | GET | /api/unknown | Resource list success contract | Medium |
-| CON-006 | TC-045 | EP-021 | GET | /api/unknown/2 | Single resource success contract | Medium |
-| CON-007 | TC-007 | EP-015 | POST | /api/users | Create user success contract | High |
-| CON-008 | TC-008 | EP-016 | PUT | /api/users/2 | Update user success contract | Medium |
-| CON-009 | TC-009 | EP-017 | PATCH | /api/users/2 | Partial update success contract | Medium |
-| CON-010 | TC-013 | EP-023 | POST | /api/login | Login success contract | High |
-| CON-011 | TC-014 | EP-025 | POST | /api/register | Register success contract | High |
-| CON-012 | TC-015 | EP-011 | GET | /api/users/23 | User not found contract | High |
-| CON-013 | TC-016 | EP-022 | GET | /api/unknown/23 | Resource not found contract | Medium |
-| CON-014 | TC-017 | EP-024 | POST | /api/login | Login error contract | High |
-| CON-015 | TC-020 | EP-026 | POST | /api/register | Register error contract | High |
+| Contract ID | Related Test Case ID | Endpoint ID | Method | Endpoint | Postman Request | Contract Type | Expected Status | Priority | Status | Evidence |
+|---|---|---|---|---|---|---|---:|---|---|---|
+| CON-001 | TC-040 | EP-001 | GET | `/api/users?page=1` | GET - Contract - Validate users list response | Users list success contract | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-001-users-list-contract-postman-passed.png` |
+| CON-002 | TC-041 | EP-002 | GET | `/api/users?page=2` | GET - Contract - Validate users page 2 response | Users list success contract | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-002-users-page-2-contract-postman-passed.png` |
+| CON-003 | TC-042 | EP-009 | GET | `/api/users/1` | GET - Contract - Validate first user response | Single user success contract | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-003-first-user-contract-postman-passed.png` |
+| CON-004 | TC-043 | EP-010 | GET | `/api/users/2` | GET - Contract - Validate existing user response | Single user success contract | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-004-existing-user-contract-postman-passed.png` |
+| CON-005 | TC-044 | EP-020 | GET | `/api/unknown` | GET - Contract - Validate resource list response | Resource list success contract | 200 | Medium | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-005-resource-list-contract-postman-passed.png` |
+| CON-006 | TC-045 | EP-021 | GET | `/api/unknown/2` | GET - Contract - Validate single resource response | Single resource success contract | 200 | Medium | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-006-single-resource-contract-postman-passed.png` |
+| CON-007 | TC-007 | EP-015 | POST | `/api/users` | POST - Contract - Validate create user response | Create user success contract | 201 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-007-create-user-contract-postman-passed.png` |
+| CON-008 | TC-008 | EP-016 | PUT | `/api/users/2` | PUT - Contract - Validate update user response | Update user success contract | 200 | Medium | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-008-update-user-contract-postman-passed.png` |
+| CON-009 | TC-009 | EP-017 | PATCH | `/api/users/2` | PATCH - Contract - Validate partial update response | Partial update success contract | 200 | Medium | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-009-partial-update-contract-postman-passed.png` |
+| CON-010 | TC-013 | EP-023 | POST | `/api/login` | POST - Contract - Validate login success response | Login success contract | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-010-login-success-contract-postman-passed.png` |
+| CON-011 | TC-014 | EP-025 | POST | `/api/register` | POST - Contract - Validate register success response | Register success contract | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-011-register-success-contract-postman-passed.png` |
+| CON-012 | TC-015 | EP-011 | GET | `/api/users/23` | GET - Contract - Validate user not found response | User not found contract | 404 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-012-user-not-found-contract-postman-passed.png` |
+| CON-013 | TC-016 | EP-022 | GET | `/api/unknown/23` | GET - Contract - Validate resource not found response | Resource not found contract | 404 | Medium | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-013-resource-not-found-contract-postman-passed.png` |
+| CON-014 | TC-017 | EP-024 | POST | `/api/login` | POST - Contract - Validate login error response | Login error contract | 400 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-014-login-error-contract-postman-passed.png` |
+| CON-015 | TC-020 | EP-026 | POST | `/api/register` | POST - Contract - Validate register error response | Register error contract | 400 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-015-register-error-contract-postman-passed.png` |
 
 ---
 
 ## 6. Common Contract Validation Rules
 
-These validation rules should be applied when relevant.
+These validation rules are applied when relevant.
 
 | Rule | Description |
 |---|---|
 | HTTP status validation | Response must return the expected status code |
-| Content-Type validation | JSON responses must include application/json in Content-Type |
+| Content-Type validation | JSON responses must include `application/json` in Content-Type |
 | JSON validation | Response body must be valid JSON when a JSON body is expected |
 | Required fields validation | Required fields must exist in the response |
 | JSON type validation | Fields must use the expected JSON data types |
 | Value constraint validation | Fields must respect expected value constraints such as integer value, non-empty string or array |
 | Success payload validation | Success responses must contain the expected success fields |
-| Error contract validation | Error responses must follow the minimum expected error structure |
+| Error contract validation | Error responses must follow the minimum expected error structure when applicable |
 | No success payload in error | Error responses must not contain success-only fields |
 | No internal leak validation | Response must not expose stack traces, SQL errors, exceptions or internal implementation details |
 
@@ -126,8 +133,8 @@ These validation rules should be applied when relevant.
 
 Endpoints:
 
-- GET /api/users?page=1
-- GET /api/users?page=2
+- `GET /api/users?page=1`
+- `GET /api/users?page=2`
 
 Expected status:
 
@@ -146,33 +153,33 @@ Expected top-level fields:
 | data | array | Can be empty or contain user objects | Yes | List of users |
 | support | object | Must contain url and text | Yes | Support information |
 
-Expected user object inside data array:
+Expected user object inside `data` array:
 
 | Field | Expected JSON Type | Value Constraint | Required | Notes |
 |---|---|---|---|---|
 | id | number | Integer value | Yes | User ID |
-| email | string | Non-empty, email-like value | Yes | User email |
+| email | string | Non-empty | Yes | User email |
 | first_name | string | Non-empty | Yes | User first name |
 | last_name | string | Non-empty | Yes | User last name |
-| avatar | string | Non-empty, URL-like value | Yes | Avatar URL |
+| avatar | string | Non-empty | Yes | Avatar URL |
 
 Expected support object:
 
 | Field | Expected JSON Type | Value Constraint | Required | Notes |
 |---|---|---|---|---|
-| url | string | Non-empty, URL-like value | Yes | Support URL |
+| url | string | Non-empty | Yes | Support URL |
 | text | string | Non-empty | Yes | Support text |
 
 Validation focus:
 
 - Status code is 200
-- Content-Type includes application/json
+- Content-Type includes `application/json`
 - Response body is a JSON object
 - Pagination fields are numbers with integer values
-- data is an array
-- Each user object contains id, email, first_name, last_name and avatar
-- User id is a number with integer value
+- `data` is an array
+- User objects contain `id`, `email`, `first_name`, `last_name` and `avatar` when present
 - User string fields are not empty
+- Support object contains `url` and `text`
 - Response does not expose internal implementation details
 
 ---
@@ -181,8 +188,8 @@ Validation focus:
 
 Endpoints:
 
-- GET /api/users/1
-- GET /api/users/2
+- `GET /api/users/1`
+- `GET /api/users/2`
 
 Expected status:
 
@@ -197,35 +204,32 @@ Expected top-level fields:
 | data | object | Must contain user fields | Yes | User data |
 | support | object | Must contain url and text | Yes | Support information |
 
-Expected data object:
+Expected `data` object:
 
 | Field | Expected JSON Type | Value Constraint | Required | Notes |
 |---|---|---|---|---|
 | id | number | Integer value | Yes | User ID |
-| email | string | Non-empty, email-like value | Yes | User email |
+| email | string | Non-empty | Yes | User email |
 | first_name | string | Non-empty | Yes | User first name |
 | last_name | string | Non-empty | Yes | User last name |
-| avatar | string | Non-empty, URL-like value | Yes | Avatar URL |
+| avatar | string | Non-empty | Yes | Avatar URL |
 
 Expected support object:
 
 | Field | Expected JSON Type | Value Constraint | Required | Notes |
 |---|---|---|---|---|
-| url | string | Non-empty, URL-like value | Yes | Support URL |
+| url | string | Non-empty | Yes | Support URL |
 | text | string | Non-empty | Yes | Support text |
 
 Validation focus:
 
 - Status code is 200
-- Content-Type includes application/json
+- Content-Type includes `application/json`
 - Response body is a JSON object
-- data object exists
-- data.id is a number with integer value
-- data.email is a non-empty string
-- data.first_name is a non-empty string
-- data.last_name is a non-empty string
-- data.avatar is a non-empty string
-- support object exists
+- `data` object exists
+- `data.id` is a number with integer value
+- User string fields are not empty
+- Support object exists
 - Response does not expose internal implementation details
 
 ---
@@ -234,7 +238,7 @@ Validation focus:
 
 Endpoint:
 
-- GET /api/unknown
+- `GET /api/unknown`
 
 Expected status:
 
@@ -253,26 +257,27 @@ Expected top-level fields:
 | data | array | Can be empty or contain resource objects | Yes | List of resources |
 | support | object | Must contain url and text | Yes | Support information |
 
-Expected resource object inside data array:
+Expected resource object inside `data` array:
 
 | Field | Expected JSON Type | Value Constraint | Required | Notes |
 |---|---|---|---|---|
 | id | number | Integer value | Yes | Resource ID |
 | name | string | Non-empty | Yes | Resource name |
 | year | number | Integer value | Yes | Resource year |
-| color | string | Non-empty, color-like value | Yes | Color value |
+| color | string | Non-empty | Yes | Color value |
 | pantone_value | string | Non-empty | Yes | Pantone value |
 
 Validation focus:
 
 - Status code is 200
-- Content-Type includes application/json
+- Content-Type includes `application/json`
 - Response body is a JSON object
 - Pagination fields are numbers with integer values
-- data is an array
-- Resource objects contain id, name, year, color and pantone_value
-- Resource id and year are numbers with integer values
+- `data` is an array
+- Resource objects contain `id`, `name`, `year`, `color` and `pantone_value` when present
+- Resource `id` and `year` are numbers with integer values
 - Resource string fields are not empty
+- Support object exists
 - Response does not expose internal implementation details
 
 ---
@@ -281,7 +286,7 @@ Validation focus:
 
 Endpoint:
 
-- GET /api/unknown/2
+- `GET /api/unknown/2`
 
 Expected status:
 
@@ -296,34 +301,35 @@ Expected top-level fields:
 | data | object | Must contain resource fields | Yes | Resource data |
 | support | object | Must contain url and text | Yes | Support information |
 
-Expected data object:
+Expected `data` object:
 
 | Field | Expected JSON Type | Value Constraint | Required | Notes |
 |---|---|---|---|---|
 | id | number | Integer value | Yes | Resource ID |
 | name | string | Non-empty | Yes | Resource name |
 | year | number | Integer value | Yes | Resource year |
-| color | string | Non-empty, color-like value | Yes | Color value |
+| color | string | Non-empty | Yes | Color value |
 | pantone_value | string | Non-empty | Yes | Pantone value |
 
 Expected support object:
 
 | Field | Expected JSON Type | Value Constraint | Required | Notes |
 |---|---|---|---|---|
-| url | string | Non-empty, URL-like value | Yes | Support URL |
+| url | string | Non-empty | Yes | Support URL |
 | text | string | Non-empty | Yes | Support text |
 
 Validation focus:
 
 - Status code is 200
-- Content-Type includes application/json
+- Content-Type includes `application/json`
 - Response body is a JSON object
-- data object exists
-- data.id is a number with integer value
-- data.name is a non-empty string
-- data.year is a number with integer value
-- data.color is a non-empty string
-- data.pantone_value is a non-empty string
+- `data` object exists
+- `data.id` is a number with integer value
+- `data.name` is a non-empty string
+- `data.year` is a number with integer value
+- `data.color` is a non-empty string
+- `data.pantone_value` is a non-empty string
+- Support object exists
 - Response does not expose internal implementation details
 
 ---
@@ -332,7 +338,7 @@ Validation focus:
 
 Endpoint:
 
-- POST /api/users
+- `POST /api/users`
 
 Expected status:
 
@@ -342,34 +348,36 @@ Expected status:
 
 Request body:
 
-    {
-      "name": "Mariana",
-      "job": "QA Tester"
-    }
+```json
+{
+  "name": "{{testUserName}}",
+  "job": "{{testUserJob}}"
+}
+```
 
 Expected response fields:
 
 | Field | Expected JSON Type | Value Constraint | Required | Notes |
 |---|---|---|---|---|
-| name | string | Non-empty, matches request body | Yes | Name sent in request |
-| job | string | Non-empty, matches request body | Yes | Job sent in request |
+| name | string | Matches request body | Yes | Name sent in request |
+| job | string | Matches request body | Yes | Job sent in request |
 | id | string | Non-empty | Yes | Simulated created ID |
-| createdAt | string | Non-empty, date-time-like value | Yes | Creation timestamp |
+| createdAt | string | Non-empty | Yes | Creation timestamp |
 
 Validation focus:
 
 - Status code is 201
-- Content-Type includes application/json
+- Content-Type includes `application/json`
 - Response body is a JSON object
-- name matches the request body
-- job matches the request body
-- id exists and is not empty
-- createdAt exists and is not empty
+- `name` matches the request body
+- `job` matches the request body
+- `id` exists and is not empty
+- `createdAt` exists and is not empty
 - Response does not expose internal implementation details
 
 Note:
 
-Reqres returns the created id as a string in this simulated creation response. The contract should follow the actual API response format observed during execution.
+Reqres returns the created id as a string in this simulated creation response. The contract follows the actual API response format observed during execution.
 
 ---
 
@@ -377,7 +385,7 @@ Reqres returns the created id as a string in this simulated creation response. T
 
 Endpoint:
 
-- PUT /api/users/2
+- `PUT /api/users/2`
 
 Expected status:
 
@@ -387,27 +395,29 @@ Expected status:
 
 Request body:
 
-    {
-      "name": "Mariana",
-      "job": "Senior QA Tester"
-    }
+```json
+{
+  "name": "{{testUserName}}",
+  "job": "{{updatedUserJob}}"
+}
+```
 
 Expected response fields:
 
 | Field | Expected JSON Type | Value Constraint | Required | Notes |
 |---|---|---|---|---|
-| name | string | Non-empty, matches request body | Yes | Updated name |
-| job | string | Non-empty, matches request body | Yes | Updated job |
-| updatedAt | string | Non-empty, date-time-like value | Yes | Update timestamp |
+| name | string | Matches request body | Yes | Updated name |
+| job | string | Matches request body | Yes | Updated job |
+| updatedAt | string | Non-empty | Yes | Update timestamp |
 
 Validation focus:
 
 - Status code is 200
-- Content-Type includes application/json
+- Content-Type includes `application/json`
 - Response body is a JSON object
-- name matches the request body
-- job matches the request body
-- updatedAt exists and is not empty
+- `name` matches the request body
+- `job` matches the request body
+- `updatedAt` exists and is not empty
 - Response does not expose internal implementation details
 
 ---
@@ -416,7 +426,7 @@ Validation focus:
 
 Endpoint:
 
-- PATCH /api/users/2
+- `PATCH /api/users/2`
 
 Expected status:
 
@@ -426,24 +436,26 @@ Expected status:
 
 Request body:
 
-    {
-      "job": "QA Automation Tester"
-    }
+```json
+{
+  "job": "{{patchedUserJob}}"
+}
+```
 
 Expected response fields:
 
 | Field | Expected JSON Type | Value Constraint | Required | Notes |
 |---|---|---|---|---|
-| job | string | Non-empty, matches request body | Yes | Updated job |
-| updatedAt | string | Non-empty, date-time-like value | Yes | Update timestamp |
+| job | string | Matches request body | Yes | Updated job |
+| updatedAt | string | Non-empty | Yes | Update timestamp |
 
 Validation focus:
 
 - Status code is 200
-- Content-Type includes application/json
+- Content-Type includes `application/json`
 - Response body is a JSON object
-- job matches the request body
-- updatedAt exists and is not empty
+- `job` matches the request body
+- `updatedAt` exists and is not empty
 - Response does not expose internal implementation details
 
 ---
@@ -452,7 +464,7 @@ Validation focus:
 
 Endpoint:
 
-- POST /api/login
+- `POST /api/login`
 
 Expected status:
 
@@ -462,10 +474,12 @@ Expected status:
 
 Request body:
 
-    {
-      "email": "{{validEmail}}",
-      "password": "{{validPassword}}"
-    }
+```json
+{
+  "email": "{{validEmail}}",
+  "password": "{{validPassword}}"
+}
+```
 
 Expected response fields:
 
@@ -476,10 +490,10 @@ Expected response fields:
 Validation focus:
 
 - Status code is 200
-- Content-Type includes application/json
+- Content-Type includes `application/json`
 - Response body is a JSON object
-- token exists
-- token is a non-empty string
+- `token` exists
+- `token` is a non-empty string
 - Response does not expose internal implementation details
 
 ---
@@ -488,7 +502,7 @@ Validation focus:
 
 Endpoint:
 
-- POST /api/register
+- `POST /api/register`
 
 Expected status:
 
@@ -498,10 +512,12 @@ Expected status:
 
 Request body:
 
-    {
-      "email": "{{validEmail}}",
-      "password": "{{validPassword}}"
-    }
+```json
+{
+  "email": "{{validEmail}}",
+  "password": "{{validPassword}}"
+}
+```
 
 Expected response fields:
 
@@ -513,12 +529,12 @@ Expected response fields:
 Validation focus:
 
 - Status code is 200
-- Content-Type includes application/json
+- Content-Type includes `application/json`
 - Response body is a JSON object
-- id exists
-- id is a number with integer value
-- token exists
-- token is a non-empty string
+- `id` exists
+- `id` is a number with integer value
+- `token` exists
+- `token` is a non-empty string
 - Response does not expose internal implementation details
 
 ---
@@ -527,14 +543,14 @@ Validation focus:
 
 ### 8.1 General Error Contract Rules
 
-Error responses should be validated beyond the HTTP status code.
+Error responses are validated beyond the HTTP status code.
 
-For error scenarios, validations should confirm:
+For error scenarios, validations confirm:
 
 - Expected HTTP status code
-- Content-Type includes application/json when a JSON body is returned
+- Content-Type includes `application/json` when a JSON body is returned
 - Error response follows the minimum expected contract when applicable
-- Error message is not empty when an error field exists
+- Error message is not empty when an `error` field exists
 - Error message is coherent with the scenario
 - Error response does not contain success-only fields
 - Error response does not expose internal implementation details
@@ -561,7 +577,6 @@ Internal details that should not appear:
 | database | Database references should not be exposed |
 | internal server | Internal server details should not be exposed |
 | node_modules | Dependency paths should not be exposed |
-| file path | File paths should not be exposed |
 
 ---
 
@@ -569,7 +584,7 @@ Internal details that should not appear:
 
 Endpoint:
 
-- GET /api/users/23
+- `GET /api/users/23`
 
 Expected status:
 
@@ -583,22 +598,20 @@ Expected response behavior:
 |---|---|
 | HTTP status | 404 |
 | Success user payload | Should not be returned |
-| data object | Should not contain a valid user object |
-| token | Should not exist |
-| createdAt | Should not exist |
-| updatedAt | Should not exist |
+| Valid data object | Should not contain a valid user object |
+| Success-only fields | Should not exist |
 | Internal leak | Should not exist |
 
 Validation focus:
 
 - Status code is 404
 - Response does not return a valid user payload
-- Response does not contain authentication token
+- Response does not contain success-only fields
 - Response does not expose internal implementation details
 
 Note:
 
-Reqres may return an empty object for some 404 responses. In that case, the contract should validate that no success payload is returned and no internal details are leaked.
+Reqres may return an empty object for some 404 responses. In that case, the contract validates that no success payload is returned and no internal details are leaked.
 
 ---
 
@@ -606,7 +619,7 @@ Reqres may return an empty object for some 404 responses. In that case, the cont
 
 Endpoint:
 
-- GET /api/unknown/23
+- `GET /api/unknown/23`
 
 Expected status:
 
@@ -620,10 +633,8 @@ Expected response behavior:
 |---|---|
 | HTTP status | 404 |
 | Success resource payload | Should not be returned |
-| data object | Should not contain a valid resource object |
-| token | Should not exist |
-| createdAt | Should not exist |
-| updatedAt | Should not exist |
+| Valid data object | Should not contain a valid resource object |
+| Success-only fields | Should not exist |
 | Internal leak | Should not exist |
 
 Validation focus:
@@ -635,7 +646,7 @@ Validation focus:
 
 Note:
 
-Reqres may return an empty object for some 404 responses. In that case, the contract should validate absence of success payload and absence of internal leaks.
+Reqres may return an empty object for some 404 responses. In that case, the contract validates absence of success payload and absence of internal leaks.
 
 ---
 
@@ -643,7 +654,7 @@ Reqres may return an empty object for some 404 responses. In that case, the cont
 
 Endpoint:
 
-- POST /api/login
+- `POST /api/login`
 
 Scenario:
 
@@ -657,9 +668,11 @@ Expected status:
 
 Request body:
 
-    {
-      "email": "{{validEmail}}"
-    }
+```json
+{
+  "email": "{{validEmail}}"
+}
+```
 
 Expected error fields:
 
@@ -670,15 +683,12 @@ Expected error fields:
 Validation focus:
 
 - Status code is 400
-- Content-Type includes application/json
+- Content-Type includes `application/json`
 - Response body is a JSON object
-- error field exists
-- error is a non-empty string
-- error message is coherent with missing password scenario
-- Response does not contain token
-- Response does not contain id
-- Response does not contain createdAt
-- Response does not contain updatedAt
+- `error` field exists
+- `error` is a non-empty string
+- Error message is coherent with missing password scenario
+- Response does not contain success-only fields
 - Response does not expose internal implementation details
 
 ---
@@ -687,7 +697,7 @@ Validation focus:
 
 Endpoint:
 
-- POST /api/register
+- `POST /api/register`
 
 Scenario:
 
@@ -701,9 +711,11 @@ Expected status:
 
 Request body:
 
-    {
-      "email": "{{validEmail}}"
-    }
+```json
+{
+  "email": "{{validEmail}}"
+}
+```
 
 Expected error fields:
 
@@ -714,45 +726,44 @@ Expected error fields:
 Validation focus:
 
 - Status code is 400
-- Content-Type includes application/json
+- Content-Type includes `application/json`
 - Response body is a JSON object
-- error field exists
-- error is a non-empty string
-- error message is coherent with missing password scenario
-- Response does not contain token
-- Response does not contain id
-- Response does not contain createdAt
-- Response does not contain updatedAt
+- `error` field exists
+- `error` is a non-empty string
+- Error message is coherent with missing password scenario
+- Response does not contain success-only fields
 - Response does not expose internal implementation details
 
 ---
 
 ## 9. Postman Collection Documentation
 
-The contract tests will be organized in the following Postman folder:
+The contract tests are organized in the following Postman folder:
 
 | Postman Folder | Description |
 |---|---|
-| 08 - Contract Tests | This folder contains response structure validations used to confirm that important Reqres API payloads keep the expected fields, JSON data types, value constraints and error contracts. |
+| 08 - Contract Tests | Contains response structure validations used to confirm that important Reqres API payloads keep the expected fields, JSON data types, value constraints and error contracts. |
 
-Each contract request in Postman must include:
+Each contract request in Postman includes:
 
 - Clear request name
 - Request description
 - Related contract ID
 - Related test case ID
+- Related endpoint ID
+- Purpose
 - Expected status code
 - Expected response body structure
 - Expected JSON data types
 - Expected value constraints
 - Expected error contract when applicable
-- Test script following the project technical quality standard
+- Commented test script following the project technical quality standard
 
 ---
 
 ## 10. Postman Request Naming Standard
 
-Recommended request names:
+Implemented request names:
 
 | Request Name | Related Contract ID |
 |---|---|
@@ -776,56 +787,53 @@ Recommended request names:
 
 ## 11. Postman Script Quality Standard
 
-All contract test scripts must follow the project technical quality standard.
+All contract test scripts follow the project technical quality standard.
 
 | Standard | Description |
 |---|---|
 | Parse response once | Parse the response body only once per script when a JSON body exists |
 | Reusable helpers | Use helper functions for repeated validations |
 | HTTP validation | Validate the expected HTTP status code |
-| Content-Type validation | Validate application/json when a JSON body is expected |
+| Content-Type validation | Validate `application/json` when a JSON body is expected |
 | Contract validation | Validate required fields, expected JSON data types and value constraints |
 | Error contract validation | Validate minimum error response structure in negative scenarios |
 | Non-empty error message | Validate that error messages are not empty |
 | Scenario coherence | Validate that error messages match the tested scenario |
-| No success payload in errors | Ensure error responses do not include token, id, createdAt or updatedAt |
+| No success payload in errors | Ensure error responses do not include `token`, `id`, `createdAt`, `updatedAt`, `name` or `job` |
 | No internal leaks | Ensure responses do not expose stack traces, SQL errors, exceptions or internal details |
 
 Important note:
 
-For 204 responses or responses with an empty body, scripts should not force JSON parsing.
+For `204 No Content` responses or responses with an empty body, scripts should not force JSON parsing.
 
-Contract scripts should parse the response only when a JSON response body is expected.
+Contract scripts parse the response only when a JSON response body is expected.
 
 ---
 
-## 12. Recommended Reusable Helpers
+## 12. Implemented Reusable Validation Helpers
 
-The future Postman scripts should use reusable helper functions.
-
-Recommended helpers:
+The Postman scripts use reusable helper functions such as:
 
 | Helper | Purpose |
 |---|---|
-| parseJsonResponse | Parse response body once when JSON is expected |
-| expectStatus | Validate expected HTTP status |
-| expectJsonContentType | Validate Content-Type includes application/json |
-| expectObject | Validate that a value is an object |
-| expectArray | Validate that a value is an array |
-| expectField | Validate that a field exists |
-| expectNumber | Validate that a field is a number |
-| expectInteger | Validate that a numeric field contains an integer value |
-| expectString | Validate that a field is a string |
-| expectNonEmptyString | Validate that a field is a non-empty string |
-| expectNoSuccessPayload | Validate that error responses do not include success fields |
-| expectNoInternalLeak | Validate that response does not expose internal implementation details |
-| expectErrorContract | Validate minimum error response contract |
+| `expectStatus` | Validate expected HTTP status |
+| `expectJsonContentType` | Validate Content-Type includes `application/json` |
+| `expectJsonContentTypeWhenBodyExists` | Validate JSON Content-Type only when a response body exists |
+| `expectIntegerNumber` | Validate JSON number type with integer value constraint |
+| `expectNonEmptyString` | Validate that a field is a non-empty string |
+| `expectNoSuccessPayload` | Validate that error responses do not include success-only fields |
+| `expectErrorContract` | Validate minimum error response contract |
+| User contract helper | Validate required user fields and value constraints |
+| Resource contract helper | Validate required resource fields and value constraints |
+| Support contract helper | Validate support metadata |
+
+The global collection script validates that responses do not expose internal implementation details.
 
 ---
 
-## 13. Recommended Script Logic for Success Contracts
+## 13. Script Logic for Success Contracts
 
-Success contract scripts should follow this logic:
+Success contract scripts follow this logic:
 
 1. Validate expected HTTP status.
 2. Validate Content-Type when JSON is expected.
@@ -835,55 +843,22 @@ Success contract scripts should follow this logic:
 6. Validate expected JSON data types.
 7. Validate value constraints.
 8. Validate non-empty important values.
-9. Validate absence of internal leaks.
-
-Example logic:
-
-    const response = pm.response.json();
-
-    expectStatus(200);
-    expectJsonContentType();
-    expectNoInternalLeak();
-
-    pm.test("Response contains expected contract", function () {
-        pm.expect(response).to.be.an("object");
-        pm.expect(response).to.have.property("data");
-    });
-
-    pm.test("User id is a number with integer value", function () {
-        pm.expect(response.data.id).to.be.a("number");
-        pm.expect(Number.isInteger(response.data.id)).to.be.true;
-    });
+9. Validate absence of internal leaks through the global collection script.
 
 ---
 
-## 14. Recommended Script Logic for Error Contracts
+## 14. Script Logic for Error Contracts
 
-Error contract scripts should follow this logic:
+Error contract scripts follow this logic:
 
 1. Validate expected HTTP error status.
-2. Validate Content-Type when JSON is expected.
+2. Validate Content-Type when JSON is expected or when a response body exists.
 3. Parse the response body only once when body exists.
 4. Validate minimum error contract when applicable.
-5. Validate error message is not empty when error field exists.
+5. Validate error message is not empty when an `error` field exists.
 6. Validate error message is coherent with the scenario.
 7. Validate absence of success payload.
-8. Validate absence of internal implementation details.
-
-Example logic:
-
-    const response = pm.response.json();
-
-    expectStatus(400);
-    expectJsonContentType();
-    expectErrorContract(response);
-
-    pm.test("Error message is coherent with missing password scenario", function () {
-        pm.expect(response.error.toLowerCase()).to.include("password");
-    });
-
-    expectNoSuccessPayload(response);
-    expectNoInternalLeak();
+8. Validate absence of internal implementation details through the global collection script.
 
 ---
 
@@ -893,8 +868,8 @@ Example logic:
 2. Select the Reqres API Environment.
 3. Confirm that required environment variables are configured.
 4. Open the Reqres API Testing Portfolio collection.
-5. Open the folder 08 - Contract Tests.
-6. Execute each contract request.
+5. Open the folder `08 - Contract Tests`.
+6. Execute each contract request or run the full folder.
 7. Validate HTTP status.
 8. Validate Content-Type when applicable.
 9. Validate response structure.
@@ -904,8 +879,8 @@ Example logic:
 13. Validate error contracts for negative scenarios.
 14. Validate absence of success payload in error responses.
 15. Validate absence of internal implementation details.
-16. Capture evidence when required.
-17. Update results in the test summary report.
+16. Capture evidence.
+17. Save evidence in the contract test evidence folder.
 
 ---
 
@@ -923,8 +898,8 @@ A contract test passes when:
 - Value constraints are respected
 - Important values are not empty
 - Numeric integer fields contain integer values
-- Error responses follow the minimum error contract
-- Error messages are coherent with the scenario
+- Error responses follow the minimum error contract when applicable
+- Error messages are coherent with the scenario when applicable
 - Error responses do not include success payload
 - No internal implementation details are exposed
 
@@ -940,7 +915,7 @@ A contract test fails when:
 - Value constraints are not respected
 - Important values are empty
 - Numeric integer fields contain decimal values when integers are expected
-- Error response does not follow the minimum contract
+- Error response does not follow the minimum contract when applicable
 - Error message is empty or incoherent
 - Error response contains success payload
 - Response exposes internal implementation details
@@ -949,21 +924,31 @@ A contract test fails when:
 
 ## 17. Evidence Strategy
 
-Contract test evidence will be stored in:
+Contract test evidence is stored in:
 
-| Evidence Type | Location |
-|---|---|
-| Screenshots | evidence/screenshots/ |
-| Reports | evidence/reports/ |
+```txt
+evidence/screenshots/reqres-api-testing-portfolio/contract-tests/
+```
 
-Recommended evidence files:
+Implemented evidence files:
 
 | File | Purpose |
 |---|---|
-| contract-tests-execution.png | Screenshot of contract test execution in Postman |
-| postman-contract-folder.png | Screenshot of the Contract Tests folder organization |
-| contract-tests-runner-result.png | Screenshot of collection runner result for contract tests |
-| contract-validation-failure-example.png | Screenshot of any contract validation failure, if found |
+| `CON-001-users-list-contract-postman-passed.png` | Evidence that the users list contract test passed |
+| `CON-002-users-page-2-contract-postman-passed.png` | Evidence that the users page 2 contract test passed |
+| `CON-003-first-user-contract-postman-passed.png` | Evidence that the first user contract test passed |
+| `CON-004-existing-user-contract-postman-passed.png` | Evidence that the existing user contract test passed |
+| `CON-005-resource-list-contract-postman-passed.png` | Evidence that the resource list contract test passed |
+| `CON-006-single-resource-contract-postman-passed.png` | Evidence that the single resource contract test passed |
+| `CON-007-create-user-contract-postman-passed.png` | Evidence that the create user contract test passed |
+| `CON-008-update-user-contract-postman-passed.png` | Evidence that the update user contract test passed |
+| `CON-009-partial-update-contract-postman-passed.png` | Evidence that the partial update contract test passed |
+| `CON-010-login-success-contract-postman-passed.png` | Evidence that the login success contract test passed |
+| `CON-011-register-success-contract-postman-passed.png` | Evidence that the register success contract test passed |
+| `CON-012-user-not-found-contract-postman-passed.png` | Evidence that the user not found contract test passed |
+| `CON-013-resource-not-found-contract-postman-passed.png` | Evidence that the resource not found contract test passed |
+| `CON-014-login-error-contract-postman-passed.png` | Evidence that the login error contract test passed |
+| `CON-015-register-error-contract-postman-passed.png` | Evidence that the register error contract test passed |
 
 ---
 
@@ -974,31 +959,44 @@ Recommended evidence files:
 | docs/test-plan.md | Defines contract testing as part of the project scope |
 | docs/test-strategy.md | Defines the contract testing strategy |
 | docs/endpoint-mapping.md | Maps endpoints selected for contract testing |
-| docs/test-cases.md | Defines contract-related test cases TC-040 to TC-045 and related scenarios |
+| docs/test-cases.md | Defines contract-related scenarios and evidence |
 | docs/smoke-tests.md | References basic contract validation for critical endpoints |
-| docs/regression-tests.md | Uses contract validation as part of response stability checks |
-| docs/test-summary-report.md | Will include final contract execution results |
+| docs/regression-tests.md | Uses contract-style validation as part of response stability checks |
+| docs/test-summary-report.md | Includes final contract execution results |
 
 ---
 
 ## 19. Notes and Assumptions
 
-- Reqres is a demo API, so some responses may be simulated.
+- Reqres is a demo API, so some responses are simulated.
 - Create, update and delete operations may not persist data.
 - Some 404 responses may return an empty object.
-- Empty 404 responses should still be validated for absence of success payload and absence of internal leaks.
-- JSON uses number as the numeric type, but this project documents integer expectations as value constraints.
+- Empty 404 responses are validated for absence of success payload and absence of internal leaks.
+- JSON uses `number` as the numeric type, but this project documents integer expectations as value constraints.
 - Contract tests should not overfit to values that may change unless the value is part of the expected behavior.
-- Contract tests should focus on structure, required fields, JSON data types, value constraints and important non-empty values.
-- Future Postman scripts must avoid parsing the response body multiple times.
-- Future Postman scripts must use reusable helper functions where possible.
+- Contract tests focus on structure, required fields, JSON data types, value constraints and important non-empty values.
+- Postman scripts avoid parsing the response body multiple times.
+- Postman scripts use reusable helper functions where useful.
+- The real API key should remain only in the local Postman environment and should not be committed to the repository.
 
 ---
 
-## 20. Next Step
+## 20. Completion Notes
 
-The next document to be created is:
+The contract test suite was implemented, executed and evidenced successfully.
 
-docs/bug-reports.md
+Final contract coverage:
 
-The bug report document will define the template used to document defects, unexpected behavior, evidence, severity, priority and reproduction steps.
+| Metric | Result |
+|---|---:|
+| Contract requests implemented | 15 |
+| Contract requests executed | 15 |
+| Contract requests passed | 15 |
+| Contract requests failed | 0 |
+| Evidence screenshots captured | 15 |
+
+Final result:
+
+```txt
+PASSED
+```

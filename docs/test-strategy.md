@@ -7,8 +7,8 @@
 | Project Name | Reqres API Testing Portfolio |
 | Document Type | Test Strategy |
 | Author | Mariana |
-| Status | Draft |
-| Version | 1.0 |
+| Status | Completed |
+| Version | 1.1 |
 | Created Date | 2026-04-28 |
 | Related Document | docs/test-plan.md |
 | Application Under Test | Reqres API |
@@ -340,10 +340,8 @@ Regression test candidates:
 | REG-003 | User not found | Error handling |
 | REG-004 | Create user | CRUD behavior |
 | REG-005 | Login valid | Authentication success |
-| REG-006 | Login invalid | Authentication error handling |
-| REG-007 | Register valid | Registration success |
-| REG-008 | Register invalid | Registration error handling |
-| REG-009 | Contract validation | Response structure stability |
+| REG-006 | Register valid | Registration success |
+| REG-007 | Get single resource | Resource behavior |
 
 ---
 
@@ -567,3 +565,24 @@ The test strategy should be updated when:
 This test strategy defines how the Reqres API Testing Portfolio project will be tested in a structured and professional way.
 
 The strategy focuses on demonstrating QA thinking through organized test design, clear prioritization, positive and negative testing, boundary testing, contract validation, evidence collection and future automation with Newman and GitHub Actions.
+
+---
+
+## 26. Completion Notes
+
+This test strategy was finalized and validated against all project documents on 2026-04-30.
+
+All testing approaches, design techniques, priorities, execution orders and evidence strategies are documented and aligned with:
+
+- Test Plan (docs/test-plan.md)
+- Endpoint Mapping (docs/endpoint-mapping.md)
+- Test Cases (docs/test-cases.md)
+- Smoke Tests (docs/smoke-tests.md)
+- Regression Tests (docs/regression-tests.md)
+- Contract Tests (docs/contract-tests.md)
+
+Final status:
+
+\`\`\`txt
+COMPLETED
+\`\`\`

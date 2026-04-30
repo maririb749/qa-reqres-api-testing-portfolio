@@ -7,8 +7,8 @@
 | Project Name | Reqres API Testing Portfolio |
 | Document Type | Smoke Tests |
 | Author | Mariana |
-| Status | Draft |
-| Version | 1.0 |
+| Status | Completed |
+| Version | 1.1 |
 | Created Date | 2026-04-28 |
 | Related Documents | docs/test-plan.md, docs/test-strategy.md, docs/endpoint-mapping.md, docs/test-cases.md |
 | Application Under Test | Reqres API |
@@ -18,11 +18,15 @@
 
 ## 2. Purpose
 
-The purpose of this document is to define the smoke test suite for the Reqres API Testing Portfolio project.
+The purpose of this document is to define and document the smoke test suite for the Reqres API Testing Portfolio project.
 
-Smoke tests are a small set of critical checks used to confirm that the main API endpoints are available and responding as expected before running the full test suite.
+Smoke tests are a small set of critical API checks used to confirm that the main endpoints are available and responding as expected before running the full test suite.
 
-This document also prepares the smoke test structure for the future Postman collection documentation.
+The smoke suite was implemented in the Postman collection under:
+
+```txt
+01 - Smoke Tests
+```
 
 ---
 
@@ -35,7 +39,7 @@ The smoke suite validates that the most important API areas are working at a bas
 - User creation
 - Login
 
-These scenarios were selected because they represent core API behavior and are useful as a first execution layer before positive, negative, boundary, contract and regression tests.
+These scenarios were selected because they represent core API behavior and provide a fast confidence check before executing the broader positive, negative, boundary, contract, delayed response and regression suites.
 
 ---
 
@@ -49,7 +53,7 @@ A test case can be included in the smoke suite when it meets the following crite
 | Stable behavior | The expected result should be predictable |
 | Fast execution | The test should execute quickly |
 | Clear expected result | The expected status and response structure should be clear |
-| Useful failure signal | If the test fails, it may indicate a major issue with the API or setup |
+| Useful failure signal | If the test fails, it may indicate a major issue with the API, environment or collection setup |
 
 ---
 
@@ -58,6 +62,7 @@ A test case can be included in the smoke suite when it meets the following crite
 The following scenarios are intentionally excluded from the smoke suite:
 
 - Boundary tests
+- Negative authentication tests
 - Non-numeric ID tests
 - Negative pagination tests
 - Very high page values
@@ -72,12 +77,12 @@ The delayed response endpoint is excluded because it intentionally increases exe
 
 ## 6. Smoke Test Suite
 
-| Smoke ID | Test Case ID | Endpoint ID | Method | Endpoint | Scenario | Expected Status | Priority |
-|---|---|---|---|---|---|---|---|
-| SMK-001 | TC-002 | EP-002 | GET | /api/users?page=2 | Validate user list endpoint availability | 200 | High |
-| SMK-002 | TC-006 | EP-010 | GET | /api/users/2 | Validate single user endpoint availability | 200 | High |
-| SMK-003 | TC-007 | EP-015 | POST | /api/users | Validate create user endpoint availability | 201 | High |
-| SMK-004 | TC-013 | EP-023 | POST | /api/login | Validate login endpoint availability | 200 | High |
+| Smoke ID | Test Case ID | Endpoint ID | Method | Endpoint | Postman Request | Expected Status | Priority | Status | Evidence |
+|---|---|---|---|---|---|---:|---|---|---|
+| SMK-001 | TC-002 | EP-002 | GET | `/api/users?page=2` | GET - Smoke - List users from page 2 | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/smoke-tests/SMK-001-list-users-page-2-postman-passed.png` |
+| SMK-002 | TC-006 | EP-010 | GET | `/api/users/2` | GET - Smoke - Get existing user by ID | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/smoke-tests/SMK-002-get-existing-user-postman-passed.png` |
+| SMK-003 | TC-007 | EP-015 | POST | `/api/users` | POST - Smoke - Create user with valid data | 201 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/smoke-tests/SMK-003-create-user-valid-data-postman-passed.png` |
+| SMK-004 | TC-013 | EP-023 | POST | `/api/login` | POST - Smoke - Login with valid credentials | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/smoke-tests/SMK-004-login-valid-credentials-postman-passed.png` |
 
 ---
 
@@ -90,21 +95,24 @@ The delayed response endpoint is excluded because it intentionally increases exe
 | Related Test Case | TC-002 |
 | Endpoint ID | EP-002 |
 | Method | GET |
-| Endpoint | /api/users?page=2 |
+| Endpoint | `/api/users?page=2` |
+| Postman Request | GET - Smoke - List users from page 2 |
 | Test Type | Smoke, Positive, Functional |
 | Priority | High |
 | Request Body | N/A |
 | Expected Status | 200 |
-| Expected Result | API returns a valid JSON response containing pagination data and a users array |
+| Status | Passed |
+| Evidence | `evidence/screenshots/reqres-api-testing-portfolio/smoke-tests/SMK-001-list-users-page-2-postman-passed.png` |
 
 Validation focus:
 
 - HTTP status is 200
 - Response is valid JSON
-- Content-Type includes application/json
-- Response contains pagination fields with numeric integer values
-- Response contains data array
-- Response does not expose internal errors
+- Content-Type includes `application/json`
+- Response contains pagination fields
+- Pagination numeric fields use JSON `number` type with integer value constraints
+- Response contains `data` array
+- Response does not expose internal implementation details
 
 ---
 
@@ -115,21 +123,24 @@ Validation focus:
 | Related Test Case | TC-006 |
 | Endpoint ID | EP-010 |
 | Method | GET |
-| Endpoint | /api/users/2 |
+| Endpoint | `/api/users/2` |
+| Postman Request | GET - Smoke - Get existing user by ID |
 | Test Type | Smoke, Positive, Functional |
 | Priority | High |
 | Request Body | N/A |
 | Expected Status | 200 |
-| Expected Result | API returns a valid JSON response containing user data |
+| Status | Passed |
+| Evidence | `evidence/screenshots/reqres-api-testing-portfolio/smoke-tests/SMK-002-get-existing-user-postman-passed.png` |
 
 Validation focus:
 
 - HTTP status is 200
 - Response is valid JSON
-- Content-Type includes application/json
-- Response contains data object
-- User object contains id, email, first_name, last_name and avatar with expected JSON types and value constraints
-- Response does not expose internal errors
+- Content-Type includes `application/json`
+- Response contains `data` object
+- User object contains `id`, `email`, `first_name`, `last_name` and `avatar`
+- Required fields follow expected JSON types and value constraints
+- Response does not expose internal implementation details
 
 ---
 
@@ -140,23 +151,27 @@ Validation focus:
 | Related Test Case | TC-007 |
 | Endpoint ID | EP-015 |
 | Method | POST |
-| Endpoint | /api/users |
+| Endpoint | `/api/users` |
+| Postman Request | POST - Smoke - Create user with valid data |
 | Test Type | Smoke, Positive, Functional |
 | Priority | High |
-| Request Body | {"name":"Mariana","job":"QA Tester"} |
+| Request Body | `{"name":"{{testUserName}}","job":"{{testUserJob}}"}` |
 | Expected Status | 201 |
-| Expected Result | API returns created user data with id and createdAt |
+| Status | Passed |
+| Evidence | `evidence/screenshots/reqres-api-testing-portfolio/smoke-tests/SMK-003-create-user-valid-data-postman-passed.png` |
 
 Validation focus:
 
 - HTTP status is 201
 - Response is valid JSON
-- Content-Type includes application/json
-- Response contains name
-- Response contains job
-- Response contains id
-- Response contains createdAt
-- Response does not expose internal errors
+- Content-Type includes `application/json`
+- Response contains `name`
+- Response contains `job`
+- Response contains generated `id`
+- Response contains `createdAt`
+- Returned `name` matches the request body
+- Returned `job` matches the request body
+- Response does not expose internal implementation details
 
 ---
 
@@ -167,121 +182,108 @@ Validation focus:
 | Related Test Case | TC-013 |
 | Endpoint ID | EP-023 |
 | Method | POST |
-| Endpoint | /api/login |
+| Endpoint | `/api/login` |
+| Postman Request | POST - Smoke - Login with valid credentials |
 | Test Type | Smoke, Positive, Functional |
 | Priority | High |
-| Request Body | {"email":"{{validEmail}}","password":"{{validPassword}}"} |
+| Request Body | `{"email":"{{validEmail}}","password":"{{validPassword}}"}` |
 | Expected Status | 200 |
-| Expected Result | API returns an authentication token |
+| Status | Passed |
+| Evidence | `evidence/screenshots/reqres-api-testing-portfolio/smoke-tests/SMK-004-login-valid-credentials-postman-passed.png` |
 
 Validation focus:
 
 - HTTP status is 200
 - Response is valid JSON
-- Content-Type includes application/json
-- Response contains token
-- Token is not empty
-- Response does not expose internal errors
+- Content-Type includes `application/json`
+- Response contains `token`
+- Token is a non-empty string
+- Response does not expose internal implementation details
 
 ---
 
 ## 8. Postman Collection Documentation
 
-The smoke tests will be organized in the following Postman folder:
+The smoke tests are organized in the following Postman folder:
 
 | Postman Folder | Description |
 |---|---|
-| 01 - Smoke Tests | This folder contains the minimum critical API checks used to confirm that the main Reqres endpoints are available before running the full test suite. |
+| 01 - Smoke Tests | Contains the minimum critical API checks used to confirm that the main Reqres endpoints are available before running the full test suite. |
 
-Each smoke request in Postman must include:
+Each smoke request in Postman includes:
 
 - Clear request name
 - Request description
+- Related IDs
+- Purpose
 - Expected status code
 - Expected response body summary
-- Test script with reusable validations
+- Commented test script
+- Reusable validation helpers
 - Evidence after execution
 
 ---
 
 ## 9. Postman Request Documentation Standards
 
-Each request must follow this documentation pattern inside Postman.
+Each request follows this naming pattern:
 
-### Request name pattern
+```txt
+METHOD - Smoke - Short scenario description
+```
 
-METHOD - Short scenario description
+Implemented examples:
 
-Examples:
+- GET - Smoke - List users from page 2
+- GET - Smoke - Get existing user by ID
+- POST - Smoke - Create user with valid data
+- POST - Smoke - Login with valid credentials
 
-- GET - List users from page 2
-- GET - Get existing user by ID
-- POST - Create user with valid data
-- POST - Login with valid credentials
+Each request description includes:
 
-### Request description pattern
-
-Each request description should explain:
-
-- What the request validates
-- Why the scenario exists
-- What the expected status code is
-- What response fields should be present
-
-Example:
-
-Name:
-GET - List users from page 2
-
-Description:
-Validates that the API returns a successful response when requesting the second page of users.
-
-Expected:
-- Status code 200
-- Response body is valid JSON
-- Response contains pagination fields
-- Response contains a data array
-- Response does not expose internal implementation details
+- Related endpoint/test/smoke IDs
+- Purpose
+- Expected status code
+- Expected response structure
+- Required validations
+- Internal implementation leak validation through the global collection script
 
 ---
 
 ## 10. Postman Script Quality Standard
 
-All Postman scripts created for this project must follow the technical quality standard defined for the portfolio.
-
-Required standards:
+All smoke test scripts follow the project technical quality standard.
 
 | Standard | Description |
 |---|---|
-| Parse response once | The response body should be parsed only one time per script |
-| Reusable helpers | Common validations should be implemented as reusable helper functions |
-| HTTP validation | Each request must validate the expected HTTP status |
-| Content-Type validation | JSON responses must validate Content-Type includes application/json |
-| Error contract validation | Error responses must validate the minimum error contract |
-| Non-empty error message | Error messages must not be empty |
-| Scenario coherence | Error messages must be coherent with the tested scenario |
-| No success payload in errors | Error responses must not contain success fields such as token, id, createdAt or updatedAt |
-| No internal leaks | Responses must not expose stack traces, SQL errors, exceptions or internal server details |
+| Parse response once | The response body is parsed only one time per script |
+| Reusable helpers | Common validations are implemented as reusable helper functions |
+| HTTP validation | Each request validates the expected HTTP status |
+| Content-Type validation | JSON responses validate that Content-Type includes `application/json` |
+| Contract validation | Success responses validate the minimum expected response contract |
+| Non-empty value validation | Required string fields are validated as non-empty |
+| Integer value constraint | Numeric integer fields are validated as JSON `number` with integer value constraint |
+| No internal leaks | Responses are checked globally to avoid exposing stack traces, SQL errors, exceptions or internal server details |
 
-For smoke tests, the main focus is positive validation, but the no-internal-leak check should still be included as a defensive quality check.
+For smoke tests, the main focus is positive validation, but the no-internal-leak check is still included as a defensive quality check through the collection-level test script.
 
 ---
 
-## 11. Recommended Smoke Validation Helpers
+## 11. Implemented Smoke Validation Helpers
 
-The future Postman scripts for smoke tests should include reusable helpers such as:
+The smoke request scripts use reusable helpers such as:
 
 | Helper | Purpose |
 |---|---|
-| expectStatus | Validate the expected HTTP status code |
-| expectJsonContentType | Validate JSON Content-Type |
-| expectNoInternalLeak | Validate that the response does not expose internal details |
-| expectObject | Validate that the parsed response is an object |
-| expectField | Validate that a required field exists |
-| expectNonEmptyString | Validate that a field is a non-empty string |
-| expectArray | Validate that a field is an array |
+| `expectStatus` | Validate the expected HTTP status code |
+| `expectJsonContentType` | Validate JSON Content-Type |
+| `expectIntegerNumber` | Validate JSON number type with integer value constraint |
+| `expectNonEmptyString` | Validate that a field is a non-empty string |
+| User contract validation | Validate required user fields when applicable |
+| Create response validation | Validate returned creation fields and submitted data |
+| Authentication validation | Validate returned token |
 
-These helpers will be implemented later inside the Postman request scripts.
+The global collection script validates that responses do not expose internal implementation details.
 
 ---
 
@@ -289,17 +291,15 @@ These helpers will be implemented later inside the Postman request scripts.
 
 1. Open Postman.
 2. Select the Reqres API Environment.
-3. Confirm that the baseUrl variable is configured.
-4. Open the Reqres API Testing Portfolio collection.
-5. Open the folder 01 - Smoke Tests.
-6. Run SMK-001.
-7. Run SMK-002.
-8. Run SMK-003.
-9. Run SMK-004.
-10. Validate status codes and response bodies.
-11. Review script assertions.
-12. Capture execution evidence.
-13. Update the test status after execution.
+3. Confirm that `baseUrl` is configured.
+4. Confirm that `apiKey` is configured locally in the Postman environment.
+5. Open the Reqres API Testing Portfolio collection.
+6. Open the folder `01 - Smoke Tests`.
+7. Run the smoke folder or execute each smoke request individually.
+8. Validate status codes and response bodies.
+9. Review script assertions.
+10. Capture execution evidence.
+11. Save evidence under the smoke test evidence folder.
 
 ---
 
@@ -333,22 +333,20 @@ A smoke test fails when:
 
 ## 14. Evidence Strategy
 
-Smoke test evidence will be stored in:
+Smoke test evidence is stored in:
 
-| Evidence Type | Location |
-|---|---|
-| Screenshots | evidence/screenshots/ |
-| Reports | evidence/reports/ |
+```txt
+evidence/screenshots/reqres-api-testing-portfolio/smoke-tests/
+```
 
-Recommended evidence files:
+Implemented evidence files:
 
 | File | Purpose |
 |---|---|
-| smoke-tests-execution.png | Screenshot of smoke test execution in Postman |
-| postman-smoke-folder.png | Screenshot of the Smoke Tests folder organization |
-| smoke-tests-runner-result.png | Screenshot of collection runner result for smoke tests |
-
-Evidence will be updated after manual execution in Postman.
+| `SMK-001-list-users-page-2-postman-passed.png` | Evidence that the users list smoke test passed |
+| `SMK-002-get-existing-user-postman-passed.png` | Evidence that the single user smoke test passed |
+| `SMK-003-create-user-valid-data-postman-passed.png` | Evidence that the create user smoke test passed |
+| `SMK-004-login-valid-credentials-postman-passed.png` | Evidence that the login smoke test passed |
 
 ---
 
@@ -360,7 +358,7 @@ Evidence will be updated after manual execution in Postman.
 | docs/test-strategy.md | Defines the smoke testing strategy and execution order |
 | docs/endpoint-mapping.md | Maps the smoke endpoints and Postman folder |
 | docs/test-cases.md | Defines the detailed test cases used by this smoke suite |
-| docs/test-summary-report.md | Will include final smoke execution results |
+| docs/test-summary-report.md | Includes final smoke execution results |
 
 ---
 
@@ -371,15 +369,28 @@ Evidence will be updated after manual execution in Postman.
 - Boundary and delayed response tests are intentionally excluded.
 - Smoke tests should be executed before the full test suite.
 - If a smoke test fails, broader execution should be reviewed before continuing.
-- Postman request descriptions will be added when the collection is created.
-- Postman test scripts will follow the official script quality standard defined for this project.
+- Reqres create operations are simulated and do not persist real data.
+- Postman test scripts follow the script quality standard defined for this project.
+- The real API key should remain only in the local Postman environment and should not be committed to the repository.
 
 ---
 
-## 17. Next Step
+## 17. Completion Notes
 
-The next document to be created is:
+The smoke test suite was implemented, executed and evidenced successfully.
 
-docs/regression-tests.md
+Final smoke coverage:
 
-The regression test document will define which scenarios should be re-executed after changes in the Postman collection, scripts, environment, Newman setup or GitHub Actions workflow.
+| Metric | Result |
+|---|---:|
+| Smoke requests implemented | 4 |
+| Smoke requests executed | 4 |
+| Smoke requests passed | 4 |
+| Smoke requests failed | 0 |
+| Evidence screenshots captured | 4 |
+
+Final result:
+
+```txt
+PASSED
+```

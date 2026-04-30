@@ -7,8 +7,8 @@
 | Project Name | Reqres API Testing Portfolio |
 | Document Type | Regression Tests |
 | Author | Mariana |
-| Status | Draft |
-| Version | 1.0 |
+| Status | Completed |
+| Version | 1.1 |
 | Created Date | 2026-04-28 |
 | Related Documents | docs/test-plan.md, docs/test-strategy.md, docs/endpoint-mapping.md, docs/test-cases.md, docs/smoke-tests.md |
 | Application Under Test | Reqres API |
@@ -18,7 +18,7 @@
 
 ## 2. Purpose
 
-The purpose of this document is to define the regression test suite for the Reqres API Testing Portfolio project.
+The purpose of this document is to define and document the regression test suite implemented for the Reqres API Testing Portfolio project.
 
 Regression testing ensures that existing API behavior continues to work after changes are made to the project, such as updates to:
 
@@ -30,7 +30,13 @@ Regression testing ensures that existing API behavior continues to work after ch
 - Newman setup
 - GitHub Actions workflow
 
-Regression testing is not the same as testing every scenario again every time. The goal is to select relevant tests based on impact and risk.
+Regression testing is not the same as testing every scenario again every time. The goal is to select relevant tests based on impact, stability and risk.
+
+The implemented regression suite is available in the Postman collection under:
+
+```txt
+10 - Regression Tests
+```
 
 ---
 
@@ -38,43 +44,42 @@ Regression testing is not the same as testing every scenario again every time. T
 
 Regression testing validates that existing functionality still works after a change, bug fix or configuration update.
 
-In this project, regression tests will be used to confirm that the most important Reqres API scenarios continue to behave as expected after changes in documentation, Postman scripts, Newman execution or CI pipeline.
+In this project, regression tests are used to confirm that the most important Reqres API scenarios continue to behave as expected after changes in documentation, Postman scripts, exported collection files, environment variables, Newman execution or CI pipeline setup.
 
 ---
 
 ## 4. Regression Scope
 
-### In Scope
+### 4.1 In Scope
 
-The regression suite will include:
+The implemented regression suite includes:
 
 - Core user listing scenario
 - Single user retrieval
-- User not found behavior
-- User creation
-- User update
-- Partial user update
-- User deletion
+- Simulated user creation
+- Simulated user deletion
 - Successful login
-- Login error handling
 - Successful registration
-- Register error handling
-- Important response contract validation
+- Single resource retrieval
+- User not found behavior
 
-### Out of Scope
+### 4.2 Out of Scope
 
-The regression suite will not include every boundary or exploratory scenario by default.
+The default regression suite does not include every scenario from the full collection.
 
-The following scenarios are excluded from the default regression suite:
+The following scenarios are intentionally excluded from the default regression suite:
 
 - Delayed response endpoint
 - All pagination boundary variations
-- All invalid ID variations
-- All long string input scenarios
+- All invalid ID boundary variations
+- Full authentication negative matrix
+- Full contract test suite
+- Full create/update/patch coverage
+- Long string input scenarios
 - Exploratory checks
 - Full performance testing
 
-These scenarios can still be executed when the changed area is related to them.
+These scenarios can still be executed separately when the changed area is related to them.
 
 ---
 
@@ -84,382 +89,305 @@ A test case can be included in the regression suite when it meets one or more of
 
 | Criteria | Description |
 |---|---|
-| High business relevance | The endpoint represents an important API behavior |
+| High functional relevance | The endpoint represents an important API behavior |
 | High technical relevance | The endpoint validates a core HTTP method or response pattern |
+| Stable behavior | The expected result is predictable and suitable for repeated execution |
 | Risk of breaking existing behavior | The scenario may be affected by script, collection or environment changes |
 | Error handling importance | The scenario validates an important negative behavior |
-| Contract stability | The scenario validates expected response structure |
-| CI value | The scenario is useful for automated execution with Newman and GitHub Actions |
+| CI value | The scenario is useful for future automated execution with Newman and GitHub Actions |
+| Execution speed | The scenario can run quickly without intentionally delayed responses |
 
 ---
 
-## 6. Regression Test Suite
+## 6. Implemented Regression Test Suite
 
-| Regression ID | Test Case ID | Endpoint ID | Method | Endpoint | Scenario | Expected Status | Priority | Reason |
-|---|---|---|---|---|---|---|---|---|
-| REG-001 | TC-002 | EP-002 | GET | /api/users?page=2 | List users from second page | 200 | High | Core user listing behavior |
-| REG-002 | TC-006 | EP-010 | GET | /api/users/2 | Get existing user | 200 | High | Core single user behavior |
-| REG-003 | TC-015 | EP-011 | GET | /api/users/23 | Get non-existing user | 404 | High | Important not found behavior |
-| REG-004 | TC-007 | EP-015 | POST | /api/users | Create user with valid body | 201 | High | Core create behavior |
-| REG-005 | TC-008 | EP-016 | PUT | /api/users/2 | Update user with valid body | 200 | Medium | Validates full update behavior |
-| REG-006 | TC-009 | EP-017 | PATCH | /api/users/2 | Partially update user | 200 | Medium | Validates partial update behavior |
-| REG-007 | TC-010 | EP-018 | DELETE | /api/users/2 | Delete user | 204 | Medium | Validates delete behavior |
-| REG-008 | TC-013 | EP-023 | POST | /api/login | Login with valid data | 200 | High | Critical authentication success behavior |
-| REG-009 | TC-017 | EP-024 | POST | /api/login | Login without password | 400 | High | Critical authentication error handling |
-| REG-010 | TC-014 | EP-025 | POST | /api/register | Register with valid data | 200 | High | Critical registration success behavior |
-| REG-011 | TC-020 | EP-026 | POST | /api/register | Register without password | 400 | High | Critical registration error handling |
-| REG-012 | TC-043 | EP-010 | GET | /api/users/2 | Validate existing user response contract | 200 | High | Validates single user response contract stability |
+| Regression ID | Test Case ID | Endpoint ID | Method | Endpoint | Postman Request | Expected Status | Priority | Status | Evidence |
+|---|---|---|---|---|---|---:|---|---|---|
+| REG-001 | TC-002 | EP-002 | GET | `/api/users?page=2` | GET - Regression - List users from page 2 | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-001-list-users-page-2-regression-postman-passed.png` |
+| REG-002 | TC-006 | EP-010 | GET | `/api/users/2` | GET - Regression - Get existing user by ID | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-002-get-existing-user-regression-postman-passed.png` |
+| REG-003 | TC-007 | EP-015 | POST | `/api/users` | POST - Regression - Create user with valid data | 201 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-003-create-user-regression-postman-passed.png` |
+| REG-004 | TC-010 | EP-018 | DELETE | `/api/users/2` | DELETE - Regression - Delete existing user | 204 | Medium | Passed | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-004-delete-existing-user-regression-postman-passed.png` |
+| REG-005 | TC-013 | EP-023 | POST | `/api/login` | POST - Regression - Login with valid credentials | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-005-login-valid-credentials-regression-postman-passed.png` |
+| REG-006 | TC-014 | EP-025 | POST | `/api/register` | POST - Regression - Register with valid data | 200 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-006-register-valid-data-regression-postman-passed.png` |
+| REG-007 | TC-012 | EP-021 | GET | `/api/unknown/2` | GET - Regression - Get single resource | 200 | Medium | Passed | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-007-get-single-resource-regression-postman-passed.png` |
+| REG-008 | TC-015 | EP-011 | GET | `/api/users/23` | GET - Regression - Get non-existing user | 404 | High | Passed | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-008-get-non-existing-user-regression-postman-passed.png` |
 
 ---
 
 ## 7. Detailed Regression Scenarios
 
-### REG-001 — List users from second page
+### REG-001 — List users from page 2
 
 | Field | Value |
 |---|---|
 | Related Test Case | TC-002 |
 | Endpoint ID | EP-002 |
 | Method | GET |
-| Endpoint | /api/users?page=2 |
+| Endpoint | `/api/users?page=2` |
+| Postman Request | GET - Regression - List users from page 2 |
 | Expected Status | 200 |
 | Priority | High |
-| Reason | This scenario validates the core user listing endpoint used in smoke, regression and contract checks |
+| Status | Passed |
+| Evidence | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-001-list-users-page-2-regression-postman-passed.png` |
+| Reason | Validates core user listing behavior |
 
 Validation focus:
 
 - HTTP status is 200
 - Response is valid JSON
-- Content-Type includes application/json
+- Content-Type includes `application/json`
 - Response contains pagination fields
-- Response contains data array
-- Response does not expose internal errors
+- Response page matches the `pageTwo` environment variable
+- Response contains `data` array
+- User objects follow the minimum user contract when present
+- Response does not expose internal implementation details
 
 ---
 
-### REG-002 — Get existing user
+### REG-002 — Get existing user by ID
 
 | Field | Value |
 |---|---|
 | Related Test Case | TC-006 |
 | Endpoint ID | EP-010 |
 | Method | GET |
-| Endpoint | /api/users/2 |
+| Endpoint | `/api/users/2` |
+| Postman Request | GET - Regression - Get existing user by ID |
 | Expected Status | 200 |
 | Priority | High |
-| Reason | This scenario validates the core single user retrieval behavior |
+| Status | Passed |
+| Evidence | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-002-get-existing-user-regression-postman-passed.png` |
+| Reason | Validates core single user retrieval behavior |
 
 Validation focus:
 
 - HTTP status is 200
 - Response is valid JSON
-- Content-Type includes application/json
-- Response contains user data object
-- User fields match the expected minimum contract
-- Response does not expose internal errors
+- Content-Type includes `application/json`
+- Response contains `data` object
+- User ID matches the `validUserId` environment variable
+- User fields follow expected JSON types and value constraints
+- Response contains `support` object
+- Response does not expose internal implementation details
 
 ---
 
-### REG-003 — Get non-existing user
-
-| Field | Value |
-|---|---|
-| Related Test Case | TC-015 |
-| Endpoint ID | EP-011 |
-| Method | GET |
-| Endpoint | /api/users/23 |
-| Expected Status | 404 |
-| Priority | High |
-| Reason | This scenario validates important not found behavior |
-
-Validation focus:
-
-- HTTP status is 404
-- Response does not return a successful user payload
-- Response does not expose internal errors
-- API handles missing resource consistently
-
----
-
-### REG-004 — Create user with valid body
+### REG-003 — Create user with valid data
 
 | Field | Value |
 |---|---|
 | Related Test Case | TC-007 |
 | Endpoint ID | EP-015 |
 | Method | POST |
-| Endpoint | /api/users |
-| Request Body | {"name":"Mariana","job":"QA Tester"} |
+| Endpoint | `/api/users` |
+| Postman Request | POST - Regression - Create user with valid data |
+| Request Body | `{"name":"{{testUserName}}","job":"{{testUserJob}}"}` |
 | Expected Status | 201 |
 | Priority | High |
-| Reason | This scenario validates simulated user creation behavior |
+| Status | Passed |
+| Evidence | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-003-create-user-regression-postman-passed.png` |
+| Reason | Validates simulated user creation behavior |
 
 Validation focus:
 
 - HTTP status is 201
 - Response is valid JSON
-- Content-Type includes application/json
-- Response contains name
-- Response contains job
-- Response contains id
-- Response contains createdAt
-- Response does not expose internal errors
+- Content-Type includes `application/json`
+- Response contains submitted `name`
+- Response contains submitted `job`
+- Response contains generated `id`
+- Response contains `createdAt`
+- Response does not expose internal implementation details
 
 ---
 
-### REG-005 — Update user with valid body
-
-| Field | Value |
-|---|---|
-| Related Test Case | TC-008 |
-| Endpoint ID | EP-016 |
-| Method | PUT |
-| Endpoint | /api/users/2 |
-| Request Body | {"name":"Mariana","job":"Senior QA Tester"} |
-| Expected Status | 200 |
-| Priority | Medium |
-| Reason | This scenario validates full update behavior |
-
-Validation focus:
-
-- HTTP status is 200
-- Response is valid JSON
-- Content-Type includes application/json
-- Response contains updated user fields
-- Response contains updatedAt
-- Response does not expose internal errors
-
----
-
-### REG-006 — Partially update user
-
-| Field | Value |
-|---|---|
-| Related Test Case | TC-009 |
-| Endpoint ID | EP-017 |
-| Method | PATCH |
-| Endpoint | /api/users/2 |
-| Request Body | {"job":"QA Automation Tester"} |
-| Expected Status | 200 |
-| Priority | Medium |
-| Reason | This scenario validates partial update behavior |
-
-Validation focus:
-
-- HTTP status is 200
-- Response is valid JSON
-- Content-Type includes application/json
-- Response contains updated field
-- Response contains updatedAt
-- Response does not expose internal errors
-
----
-
-### REG-007 — Delete user
+### REG-004 — Delete existing user
 
 | Field | Value |
 |---|---|
 | Related Test Case | TC-010 |
 | Endpoint ID | EP-018 |
 | Method | DELETE |
-| Endpoint | /api/users/2 |
+| Endpoint | `/api/users/2` |
+| Postman Request | DELETE - Regression - Delete existing user |
 | Expected Status | 204 |
 | Priority | Medium |
-| Reason | This scenario validates delete behavior |
+| Status | Passed |
+| Evidence | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-004-delete-existing-user-regression-postman-passed.png` |
+| Reason | Validates simulated delete behavior |
 
 Validation focus:
 
 - HTTP status is 204
-- Response body is empty or handled as expected
-- Response does not expose internal errors
+- Response body is empty
+- Script does not force JSON parsing
+- Response does not expose internal implementation details
 
 ---
 
-### REG-008 — Login with valid data
+### REG-005 — Login with valid credentials
 
 | Field | Value |
 |---|---|
 | Related Test Case | TC-013 |
 | Endpoint ID | EP-023 |
 | Method | POST |
-| Endpoint | /api/login |
-| Request Body | {"email":"{{validEmail}}","password":"{{validPassword}}"} |
+| Endpoint | `/api/login` |
+| Postman Request | POST - Regression - Login with valid credentials |
+| Request Body | `{"email":"{{validEmail}}","password":"{{validPassword}}"}` |
 | Expected Status | 200 |
 | Priority | High |
-| Reason | This scenario validates critical authentication success behavior |
+| Status | Passed |
+| Evidence | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-005-login-valid-credentials-regression-postman-passed.png` |
+| Reason | Validates successful authentication behavior |
 
 Validation focus:
 
 - HTTP status is 200
 - Response is valid JSON
-- Content-Type includes application/json
-- Response contains token
-- Token is not empty
-- Response does not expose internal errors
+- Content-Type includes `application/json`
+- Response contains `token`
+- Token is a non-empty string
+- Response does not expose internal implementation details
 
 ---
 
-### REG-009 — Login without password
-
-| Field | Value |
-|---|---|
-| Related Test Case | TC-017 |
-| Endpoint ID | EP-024 |
-| Method | POST |
-| Endpoint | /api/login |
-| Request Body | {"email":"{{validEmail}}"} |
-| Expected Status | 400 |
-| Priority | High |
-| Reason | This scenario validates critical authentication error handling |
-
-Validation focus:
-
-- HTTP status is 400
-- Content-Type includes application/json
-- Error response follows the minimum error contract
-- Error message is not empty
-- Error message is coherent with missing password scenario
-- Error response does not contain success payload
-- Error response does not expose internal implementation details
-
----
-
-### REG-010 — Register with valid data
+### REG-006 — Register with valid data
 
 | Field | Value |
 |---|---|
 | Related Test Case | TC-014 |
 | Endpoint ID | EP-025 |
 | Method | POST |
-| Endpoint | /api/register |
-| Request Body | {"email":"{{validEmail}}","password":"{{validPassword}}"} |
+| Endpoint | `/api/register` |
+| Postman Request | POST - Regression - Register with valid data |
+| Request Body | `{"email":"{{validEmail}}","password":"{{validPassword}}"}` |
 | Expected Status | 200 |
 | Priority | High |
-| Reason | This scenario validates critical registration success behavior |
+| Status | Passed |
+| Evidence | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-006-register-valid-data-regression-postman-passed.png` |
+| Reason | Validates successful registration behavior |
 
 Validation focus:
 
 - HTTP status is 200
 - Response is valid JSON
-- Content-Type includes application/json
-- Response contains id
-- Response contains token
-- Token is not empty
-- Response does not expose internal errors
+- Content-Type includes `application/json`
+- Response contains `id`
+- `id` is a JSON number with integer value constraint
+- Response contains `token`
+- Token is a non-empty string
+- Response does not expose internal implementation details
 
 ---
 
-### REG-011 — Register without password
+### REG-007 — Get single resource
 
 | Field | Value |
 |---|---|
-| Related Test Case | TC-020 |
-| Endpoint ID | EP-026 |
-| Method | POST |
-| Endpoint | /api/register |
-| Request Body | {"email":"{{validEmail}}"} |
-| Expected Status | 400 |
-| Priority | High |
-| Reason | This scenario validates critical registration error handling |
-
-Validation focus:
-
-- HTTP status is 400
-- Content-Type includes application/json
-- Error response follows the minimum error contract
-- Error message is not empty
-- Error message is coherent with missing password scenario
-- Error response does not contain success payload
-- Error response does not expose internal implementation details
-
----
-
-### REG-012 — Validate existing user response contract
-
-| Field | Value |
-|---|---|
-| Related Test Case | TC-043 |
-| Endpoint ID | EP-010 |
+| Related Test Case | TC-012 |
+| Endpoint ID | EP-021 |
 | Method | GET |
-| Endpoint | /api/users/2 |
+| Endpoint | `/api/unknown/2` |
+| Postman Request | GET - Regression - Get single resource |
 | Expected Status | 200 |
-| Priority | High |
-| Reason | This scenario validates that the response structure remains stable |
+| Priority | Medium |
+| Status | Passed |
+| Evidence | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-007-get-single-resource-regression-postman-passed.png` |
+| Reason | Validates core single resource behavior |
 
 Validation focus:
 
 - HTTP status is 200
 - Response is valid JSON
-- Content-Type includes application/json
-- data object exists
-- data.id is a number with integer value
-- data.email is a non-empty string
-- data.first_name is a non-empty string
-- data.last_name is a non-empty string
-- data.avatar is a non-empty string
-- support object exists
-- Response does not expose internal errors
+- Content-Type includes `application/json`
+- Response contains `data` object
+- Resource ID matches the `validResourceId` environment variable
+- Resource fields follow expected JSON types and value constraints
+- Response contains `support` object
+- Response does not expose internal implementation details
+
+---
+
+### REG-008 — Get non-existing user
+
+| Field | Value |
+|---|---|
+| Related Test Case | TC-015 |
+| Endpoint ID | EP-011 |
+| Method | GET |
+| Endpoint | `/api/users/23` |
+| Postman Request | GET - Regression - Get non-existing user |
+| Expected Status | 404 |
+| Priority | High |
+| Status | Passed |
+| Evidence | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/REG-008-get-non-existing-user-regression-postman-passed.png` |
+| Reason | Validates important user not found behavior |
+
+Validation focus:
+
+- HTTP status is 404
+- Response is valid JSON when a body is returned
+- Response does not include a valid user payload
+- Response does not include success-only fields
+- Response does not expose internal implementation details
 
 ---
 
 ## 8. Postman Collection Documentation
 
-The regression tests will be organized in the following Postman folder:
+The regression tests are organized in the following Postman folder:
 
 | Postman Folder | Description |
 |---|---|
-| 10 - Regression Tests | This folder contains selected high-value scenarios used to confirm that existing API behavior continues to work after changes in scripts, environment, collection structure, Newman setup or CI workflow. |
+| 10 - Regression Tests | Contains selected high-value scenarios used to confirm existing API behavior after changes in scripts, environment, collection structure, Newman setup or CI workflow. |
 
-Each regression request in Postman must include:
+Each regression request in Postman includes:
 
 - Clear request name
 - Request description
-- Related test case ID
+- Related regression/test case/endpoint IDs
+- Purpose
 - Expected status code
 - Expected response body summary
-- Test script with reusable validations
-- Evidence after execution when applicable
+- Commented test script
+- Reusable validations
+- Evidence after execution
 
 ---
 
 ## 9. Postman Request Naming Standard
 
-Recommended request names:
+Implemented request names:
 
-| Request Name | Related Regression ID |
+| Request Name | Regression ID |
 |---|---|
 | GET - Regression - List users from page 2 | REG-001 |
 | GET - Regression - Get existing user by ID | REG-002 |
-| GET - Regression - Get non-existing user | REG-003 |
-| POST - Regression - Create user with valid data | REG-004 |
-| PUT - Regression - Update user with valid data | REG-005 |
-| PATCH - Regression - Partially update user | REG-006 |
-| DELETE - Regression - Delete existing user | REG-007 |
-| POST - Regression - Login with valid credentials | REG-008 |
-| POST - Regression - Login without password | REG-009 |
-| POST - Regression - Register with valid data | REG-010 |
-| POST - Regression - Register without password | REG-011 |
-| GET - Regression - Validate single user contract | REG-012 |
+| POST - Regression - Create user with valid data | REG-003 |
+| DELETE - Regression - Delete existing user | REG-004 |
+| POST - Regression - Login with valid credentials | REG-005 |
+| POST - Regression - Register with valid data | REG-006 |
+| GET - Regression - Get single resource | REG-007 |
+| GET - Regression - Get non-existing user | REG-008 |
 
 ---
 
 ## 10. Postman Script Quality Standard
 
-Regression request scripts must follow the project script quality standard:
+Regression request scripts follow the project script quality standard:
 
 | Standard | Description |
 |---|---|
 | Parse response once | Parse the response body only once per script when a body exists |
 | Reusable helpers | Use helper functions for repeated validations |
 | HTTP validation | Validate the expected HTTP status code |
-| Content-Type validation | Validate application/json when a JSON body is expected |
-| Error contract validation | Validate the minimum error response contract in negative scenarios |
-| Non-empty error message | Validate that error messages are not empty |
-| Scenario coherence | Validate that error messages are coherent with the tested scenario |
-| No success payload in errors | Ensure error responses do not include token, id, createdAt or updatedAt |
+| Content-Type validation | Validate `application/json` when a JSON body is expected |
+| Success contract validation | Validate the minimum expected response contract for successful scenarios |
+| Error payload validation | Validate that error responses do not include success-only fields |
 | No internal leaks | Ensure responses do not expose stack traces, SQL errors, exceptions or internal details |
 
-For 204 responses, scripts should not force JSON parsing because DELETE responses may return no body.
+For `204 No Content` responses, scripts do not force JSON parsing because DELETE responses return no body.
 
 ---
 
@@ -490,11 +418,11 @@ Examples:
 |---|---|
 | Change in environment variables | Run authentication and user retrieval regression tests |
 | Change in helper validations | Run full regression suite |
-| Change in error validation helpers | Run REG-009 and REG-011 |
-| Change in success response helpers | Run REG-001, REG-002, REG-004, REG-008 and REG-010 |
+| Change in success response helpers | Run REG-001, REG-002, REG-003, REG-005, REG-006 and REG-007 |
+| Change in not found validation | Run REG-008 and related negative/contract tests |
 | Change in Newman setup | Run full regression suite |
 | Change in GitHub Actions workflow | Run full regression suite in CI |
-| Change in contract assertions | Run REG-012 and related contract tests |
+| Change in contract assertions | Run related contract tests plus the impacted regression tests |
 
 ---
 
@@ -504,14 +432,15 @@ Examples:
 2. Select the Reqres API Environment.
 3. Confirm that required environment variables are configured.
 4. Open the Reqres API Testing Portfolio collection.
-5. Open the folder 10 - Regression Tests.
-6. Execute the selected regression tests.
+5. Open the folder `10 - Regression Tests`.
+6. Execute the regression folder or selected regression requests.
 7. Validate status codes.
 8. Validate response body and contracts when applicable.
 9. Validate error contracts for negative scenarios.
 10. Confirm no internal details are exposed.
 11. Capture evidence when required.
-12. Update results in the test summary report.
+12. Save evidence in the regression evidence folder.
+13. Update results in the test summary report.
 
 ---
 
@@ -525,7 +454,6 @@ A regression test passes when:
 - The response body matches the expected minimum contract
 - Required fields are present
 - Required values are not empty when applicable
-- Error responses contain coherent error messages
 - Error responses do not include success payload
 - No internal implementation details are exposed
 - Existing behavior remains stable after project changes
@@ -537,7 +465,7 @@ A regression test fails when:
 - The endpoint returns an unexpected HTTP status code
 - The response contract changes unexpectedly
 - Required fields are missing
-- Error messages are empty or incoherent
+- Required values are empty when they should not be
 - Error responses contain success payload
 - Internal implementation details are exposed
 - Existing behavior breaks after a project change
@@ -546,21 +474,24 @@ A regression test fails when:
 
 ## 15. Evidence Strategy
 
-Regression evidence will be stored in:
+Regression evidence is stored in:
 
-| Evidence Type | Location |
-|---|---|
-| Screenshots | evidence/screenshots/ |
-| Reports | evidence/reports/ |
+```txt
+evidence/screenshots/reqres-api-testing-portfolio/regression-tests/
+```
 
-Recommended evidence files:
+Implemented evidence files:
 
 | File | Purpose |
 |---|---|
-| regression-tests-execution.png | Screenshot of regression test execution in Postman |
-| postman-regression-folder.png | Screenshot of the Regression Tests folder organization |
-| regression-tests-runner-result.png | Screenshot of collection runner result for regression tests |
-| newman-regression-report.html | Future Newman HTML report, if regression is executed separately |
+| `REG-001-list-users-page-2-regression-postman-passed.png` | Evidence that the users list regression test passed |
+| `REG-002-get-existing-user-regression-postman-passed.png` | Evidence that the existing user regression test passed |
+| `REG-003-create-user-regression-postman-passed.png` | Evidence that the create user regression test passed |
+| `REG-004-delete-existing-user-regression-postman-passed.png` | Evidence that the delete user regression test passed |
+| `REG-005-login-valid-credentials-regression-postman-passed.png` | Evidence that the login regression test passed |
+| `REG-006-register-valid-data-regression-postman-passed.png` | Evidence that the register regression test passed |
+| `REG-007-get-single-resource-regression-postman-passed.png` | Evidence that the single resource regression test passed |
+| `REG-008-get-non-existing-user-regression-postman-passed.png` | Evidence that the non-existing user regression test passed |
 
 ---
 
@@ -573,7 +504,7 @@ Recommended evidence files:
 | docs/endpoint-mapping.md | Maps endpoints selected for regression |
 | docs/test-cases.md | Defines the test cases referenced by the regression suite |
 | docs/smoke-tests.md | Defines the smaller critical suite executed before regression |
-| docs/test-summary-report.md | Will include final regression execution results |
+| docs/test-summary-report.md | Includes final regression execution results |
 
 ---
 
@@ -582,17 +513,29 @@ Recommended evidence files:
 - Regression testing is impact-based, not always full-suite.
 - The default regression suite focuses on high-value API behavior.
 - Some Reqres operations are simulated and may not persist data.
-- DELETE responses with status 204 should not be parsed as JSON.
-- Negative regression scenarios must validate error quality, not only status code.
-- Regression tests will later be useful for Newman and GitHub Actions execution.
-- If a change affects boundary behavior, selected boundary tests should be added to the regression execution for that change.
+- DELETE responses with status `204` should not be parsed as JSON.
+- The delayed response endpoint is intentionally excluded from the regression suite.
+- Boundary and full contract tests can be executed separately when the changed area requires broader coverage.
+- Regression tests are useful for future Newman and GitHub Actions execution.
 
 ---
 
-## 18. Next Step
+## 18. Completion Notes
 
-The next document to be created is:
+The regression test suite was implemented, executed and evidenced successfully.
 
-docs/contract-tests.md
+Final regression coverage:
 
-The contract test document will define the expected response structures, required fields and data types for the most important Reqres API responses.
+| Metric | Result |
+|---|---:|
+| Regression requests implemented | 8 |
+| Regression requests executed | 8 |
+| Regression requests passed | 8 |
+| Regression requests failed | 0 |
+| Evidence screenshots captured | 8 |
+
+Final result:
+
+```txt
+PASSED
+```

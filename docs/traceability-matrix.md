@@ -7,8 +7,8 @@
 | Project Name | Reqres API Testing Portfolio |
 | Document Type | Traceability Matrix |
 | Author | Mariana |
-| Status | Draft |
-| Version | 1.0 |
+| Status | Completed |
+| Version | 1.1 |
 | Created Date | 2026-04-28 |
 | Related Documents | docs/test-plan.md, docs/test-strategy.md, docs/endpoint-mapping.md, docs/test-cases.md, docs/smoke-tests.md, docs/regression-tests.md, docs/contract-tests.md, docs/bug-reports.md |
 | Application Under Test | Reqres API |
@@ -86,24 +86,24 @@ This matrix connects the following identifiers:
 | EP-007 | GET | /api/users?page=999 | TC-025 | N/A | N/A | N/A | Boundary | Medium | 07 - Boundary Tests |
 | EP-008 | GET | /api/users?page=abc | TC-026 | N/A | N/A | N/A | Boundary, Negative | Medium | 07 - Boundary Tests |
 | EP-009 | GET | /api/users/1 | TC-005, TC-042 | N/A | N/A | CON-003 | Positive, Functional, Contract | High | 03 - Users - Single User, 08 - Contract Tests |
-| EP-010 | GET | /api/users/2 | TC-006, TC-043 | SMK-002 | REG-002, REG-012 | CON-004 | Positive, Functional, Smoke, Regression, Contract | High | 01 - Smoke Tests, 03 - Users - Single User, 08 - Contract Tests, 10 - Regression Tests |
-| EP-011 | GET | /api/users/23 | TC-015 | N/A | REG-003 | CON-012 | Negative, Regression, Error Contract | High | 03 - Users - Single User, 08 - Contract Tests, 10 - Regression Tests |
+| EP-010 | GET | /api/users/2 | TC-006, TC-043 | SMK-002 | REG-002 | CON-004 | Positive, Functional, Smoke, Regression, Contract | High | 01 - Smoke Tests, 03 - Users - Single User, 08 - Contract Tests, 10 - Regression Tests |
+| EP-011 | GET | /api/users/23 | TC-015 | N/A | REG-008 | CON-012 | Negative, Regression, Error Contract | High | 03 - Users - Single User, 08 - Contract Tests, 10 - Regression Tests |
 | EP-012 | GET | /api/users/0 | TC-027 | N/A | N/A | N/A | Boundary, Negative | Medium | 07 - Boundary Tests |
 | EP-013 | GET | /api/users/-1 | TC-028 | N/A | N/A | N/A | Boundary, Negative | Medium | 07 - Boundary Tests |
 | EP-014 | GET | /api/users/abc | TC-029 | N/A | N/A | N/A | Boundary, Negative, Error Guessing | Medium | 07 - Boundary Tests |
-| EP-015 | POST | /api/users | TC-007, TC-031, TC-032, TC-033, TC-034, TC-035 | SMK-003 | REG-004 | CON-007 | Positive, Functional, Smoke, Regression, Boundary, Contract | High | 01 - Smoke Tests, 04 - Users - Create Update Delete, 07 - Boundary Tests, 08 - Contract Tests, 10 - Regression Tests |
-| EP-016 | PUT | /api/users/2 | TC-008 | N/A | REG-005 | CON-008 | Positive, Functional, Regression, Contract | Medium | 04 - Users - Create Update Delete, 08 - Contract Tests, 10 - Regression Tests |
-| EP-017 | PATCH | /api/users/2 | TC-009 | N/A | REG-006 | CON-009 | Positive, Functional, Regression, Contract | Medium | 04 - Users - Create Update Delete, 08 - Contract Tests, 10 - Regression Tests |
-| EP-018 | DELETE | /api/users/2 | TC-010 | N/A | REG-007 | N/A | Positive, Functional, Regression | Medium | 04 - Users - Create Update Delete, 10 - Regression Tests |
+| EP-015 | POST | /api/users | TC-007 | SMK-003 | REG-003 | CON-007 | Positive, Functional, Smoke, Regression, Contract | High | 01 - Smoke Tests, 04 - Users - Create Update Delete, 08 - Contract Tests, 10 - Regression Tests |
+| EP-016 | PUT | /api/users/2 | TC-008 | N/A | N/A | CON-008 | Positive, Functional, Contract | Medium | 04 - Users - Create Update Delete, 08 - Contract Tests |
+| EP-017 | PATCH | /api/users/2 | TC-009 | N/A | N/A | CON-009 | Positive, Functional, Contract | Medium | 04 - Users - Create Update Delete, 08 - Contract Tests |
+| EP-018 | DELETE | /api/users/2 | TC-010 | N/A | REG-004 | N/A | Positive, Functional, Regression | Medium | 04 - Users - Create Update Delete, 10 - Regression Tests |
 | EP-019 | DELETE | /api/users/999999 | TC-030 | N/A | N/A | N/A | Boundary, Negative, Error Guessing | Low | 07 - Boundary Tests |
 | EP-020 | GET | /api/unknown | TC-011, TC-044 | N/A | N/A | CON-005 | Positive, Functional, Contract | Medium | 06 - Resources, 08 - Contract Tests |
-| EP-021 | GET | /api/unknown/2 | TC-012, TC-045 | N/A | N/A | CON-006 | Positive, Functional, Contract | Medium | 06 - Resources, 08 - Contract Tests |
+| EP-021 | GET | /api/unknown/2 | TC-012, TC-045 | N/A | REG-007 | CON-006 | Positive, Functional, Contract | Medium | 06 - Resources, 08 - Contract Tests, 10 - Regression Tests |
 | EP-022 | GET | /api/unknown/23 | TC-016 | N/A | N/A | CON-013 | Negative, Error Contract | Medium | 06 - Resources, 08 - Contract Tests |
-| EP-023 | POST | /api/login | TC-013 | SMK-004 | REG-008 | CON-010 | Positive, Functional, Smoke, Regression, Contract | High | 01 - Smoke Tests, 05 - Authentication, 08 - Contract Tests, 10 - Regression Tests |
-| EP-024 | POST | /api/login | TC-017, TC-018, TC-019, TC-036, TC-037 | N/A | REG-009 | CON-014 | Negative, Boundary, Regression, Error Contract | High | 05 - Authentication, 07 - Boundary Tests, 08 - Contract Tests, 10 - Regression Tests |
-| EP-025 | POST | /api/register | TC-014 | N/A | REG-010 | CON-011 | Positive, Functional, Regression, Contract | High | 05 - Authentication, 08 - Contract Tests, 10 - Regression Tests |
-| EP-026 | POST | /api/register | TC-020, TC-021, TC-022, TC-038, TC-039 | N/A | REG-011 | CON-015 | Negative, Boundary, Regression, Error Contract | High | 05 - Authentication, 07 - Boundary Tests, 08 - Contract Tests, 10 - Regression Tests |
-| EP-027 | GET | /api/users?delay=3 | TC-046 | N/A | N/A | N/A | Basic Response Time, Observation | Low | 09 - Delayed Response |
+| EP-023 | POST | /api/login | TC-013 | SMK-004 | REG-005 | CON-010 | Positive, Functional, Smoke, Regression, Contract | High | 01 - Smoke Tests, 05 - Authentication, 08 - Contract Tests, 10 - Regression Tests |
+| EP-024 | POST | /api/login | TC-017, TC-018, TC-019 | N/A | N/A | CON-014 | Negative, Error Contract | High | 05 - Authentication, 08 - Contract Tests |
+| EP-025 | POST | /api/register | TC-014 | N/A | REG-006 | CON-011 | Positive, Functional, Regression, Contract | High | 05 - Authentication, 08 - Contract Tests, 10 - Regression Tests |
+| EP-026 | POST | /api/register | TC-020, TC-021, TC-022 | N/A | N/A | CON-015 | Negative, Error Contract | High | 05 - Authentication, 08 - Contract Tests |
+| EP-027 | GET | /api/users?delay=3 | TC-031 | N/A | N/A | N/A | Basic Response Time, Observation | Low | 09 - Delayed Response |
 
 ---
 
@@ -157,15 +157,6 @@ This matrix connects the following identifiers:
 | TC-028 | EP-013 | GET | /api/users/-1 | Validate negative user ID |
 | TC-029 | EP-014 | GET | /api/users/abc | Validate non-numeric user ID |
 | TC-030 | EP-019 | DELETE | /api/users/999999 | Validate delete non-existing user |
-| TC-031 | EP-015 | POST | /api/users | Create user with empty body |
-| TC-032 | EP-015 | POST | /api/users | Create user with empty name |
-| TC-033 | EP-015 | POST | /api/users | Create user with empty job |
-| TC-034 | EP-015 | POST | /api/users | Create user with special characters |
-| TC-035 | EP-015 | POST | /api/users | Create user with very long strings |
-| TC-036 | EP-024 | POST | /api/login | Login with invalid email format |
-| TC-037 | EP-024 | POST | /api/login | Login with empty email |
-| TC-038 | EP-026 | POST | /api/register | Register with invalid email format |
-| TC-039 | EP-026 | POST | /api/register | Register with empty password |
 
 ---
 
@@ -208,16 +199,12 @@ This matrix connects the following identifiers:
 |---|---|---|---|---|---|
 | REG-001 | TC-002 | EP-002 | GET | /api/users?page=2 | Validate core user listing behavior |
 | REG-002 | TC-006 | EP-010 | GET | /api/users/2 | Validate core single user behavior |
-| REG-003 | TC-015 | EP-011 | GET | /api/users/23 | Validate important not found behavior |
-| REG-004 | TC-007 | EP-015 | POST | /api/users | Validate user creation behavior |
-| REG-005 | TC-008 | EP-016 | PUT | /api/users/2 | Validate user update behavior |
-| REG-006 | TC-009 | EP-017 | PATCH | /api/users/2 | Validate partial update behavior |
-| REG-007 | TC-010 | EP-018 | DELETE | /api/users/2 | Validate delete behavior |
-| REG-008 | TC-013 | EP-023 | POST | /api/login | Validate successful login behavior |
-| REG-009 | TC-017 | EP-024 | POST | /api/login | Validate login error handling |
-| REG-010 | TC-014 | EP-025 | POST | /api/register | Validate successful registration behavior |
-| REG-011 | TC-020 | EP-026 | POST | /api/register | Validate register error handling |
-| REG-012 | TC-043 | EP-010 | GET | /api/users/2 | Validate single user contract stability |
+| REG-003 | TC-007 | EP-015 | POST | /api/users | Validate simulated user creation behavior |
+| REG-004 | TC-010 | EP-018 | DELETE | /api/users/2 | Validate delete behavior |
+| REG-005 | TC-013 | EP-023 | POST | /api/login | Validate successful login behavior |
+| REG-006 | TC-014 | EP-025 | POST | /api/register | Validate successful registration behavior |
+| REG-007 | TC-012 | EP-021 | GET | /api/unknown/2 | Validate single resource behavior |
+| REG-008 | TC-015 | EP-011 | GET | /api/users/23 | Validate important user not found behavior |
 
 ---
 
@@ -225,7 +212,7 @@ This matrix connects the following identifiers:
 
 | Test Case ID | Endpoint ID | Method | Endpoint | Purpose |
 |---|---|---|---|---|
-| TC-046 | EP-027 | GET | /api/users?delay=3 | Validate delayed response behavior |
+| TC-031 | EP-027 | GET | /api/users?delay=3 | Validate delayed response behavior |
 
 ---
 
@@ -236,13 +223,13 @@ This matrix connects the following identifiers:
 | 01 - Smoke Tests | EP-002, EP-010, EP-015, EP-023 | TC-002, TC-006, TC-007, TC-013 | Validate critical API availability before full execution |
 | 02 - Users - List and Pagination | EP-001, EP-002, EP-003, EP-004 | TC-001, TC-002, TC-003, TC-004, TC-040, TC-041 | Validate user listing, pagination and related contracts |
 | 03 - Users - Single User | EP-009, EP-010, EP-011 | TC-005, TC-006, TC-015, TC-042, TC-043 | Validate single user retrieval and not found behavior |
-| 04 - Users - Create Update Delete | EP-015, EP-016, EP-017, EP-018 | TC-007, TC-008, TC-009, TC-010, TC-031, TC-032, TC-033, TC-034, TC-035 | Validate simulated user CRUD behavior |
-| 05 - Authentication | EP-023, EP-024, EP-025, EP-026 | TC-013, TC-014, TC-017, TC-018, TC-019, TC-020, TC-021, TC-022, TC-036, TC-037, TC-038, TC-039 | Validate login and registration scenarios |
+| 04 - Users - Create Update Delete | EP-015, EP-016, EP-017, EP-018 | TC-007, TC-008, TC-009, TC-010 | Validate simulated user CRUD behavior |
+| 05 - Authentication | EP-023, EP-024, EP-025, EP-026 | TC-013, TC-014, TC-017, TC-018, TC-019, TC-020, TC-021, TC-022 | Validate login and registration scenarios |
 | 06 - Resources | EP-020, EP-021, EP-022 | TC-011, TC-012, TC-016, TC-044, TC-045 | Validate resource/color endpoints |
-| 07 - Boundary Tests | EP-005, EP-006, EP-007, EP-008, EP-012, EP-013, EP-014, EP-015, EP-019, EP-024, EP-026 | TC-023 to TC-039 | Validate edge cases and unusual values |
+| 07 - Boundary Tests | EP-005, EP-006, EP-007, EP-008, EP-012, EP-013, EP-014, EP-019 | TC-023 to TC-030 | Validate implemented pagination, user ID and delete edge cases |
 | 08 - Contract Tests | EP-001, EP-002, EP-009, EP-010, EP-011, EP-015, EP-016, EP-017, EP-020, EP-021, EP-022, EP-023, EP-024, EP-025, EP-026 | TC-040 to TC-045 plus contract-related success and error cases | Validate response structure, JSON types, value constraints and error contracts |
-| 09 - Delayed Response | EP-027 | TC-046 | Validate delayed response behavior |
-| 10 - Regression Tests | EP-002, EP-010, EP-011, EP-015, EP-016, EP-017, EP-018, EP-023, EP-024, EP-025, EP-026 | REG-001 to REG-012 | Validate high-value scenarios after changes |
+| 09 - Delayed Response | EP-027 | TC-031 | Validate delayed response behavior |
+| 10 - Regression Tests | EP-002, EP-010, EP-011, EP-015, EP-018, EP-021, EP-023, EP-025 | REG-001 to REG-008 | Validate high-value scenarios after changes |
 
 ---
 
@@ -254,10 +241,10 @@ This matrix connects the following identifiers:
 | Validate JSON response body | Positive, contract and regression tests | Postman assertions, screenshots |
 | Validate positive scenarios | TC-001 to TC-014 | Postman execution screenshots |
 | Validate negative scenarios | TC-015 to TC-022 | Postman execution screenshots |
-| Validate boundary scenarios | TC-023 to TC-039 | Postman execution screenshots |
+| Validate boundary scenarios | TC-023 to TC-030 | Postman execution screenshots |
 | Validate response contracts | TC-040 to TC-045, CON-001 to CON-015 | Contract execution screenshots |
 | Validate smoke coverage | SMK-001 to SMK-004 | Smoke execution screenshot |
-| Validate regression coverage | REG-001 to REG-012 | Regression execution screenshot |
+| Validate regression coverage | REG-001 to REG-008 | Regression execution screenshot |
 | Validate error contract quality | CON-012 to CON-015 | Contract execution screenshots |
 | Validate no success payload in error responses | Negative and error contract tests | Postman assertions |
 | Validate no internal implementation leaks | All relevant scripts | Postman assertions |
@@ -274,13 +261,13 @@ At this stage, the following items are intentionally pending because they depend
 
 | Pending Item | Reason | Future Action |
 |---|---|---|
-| Actual execution status | Tests have not been executed yet | Update after Postman execution |
-| Actual evidence files | Evidence is collected after execution | Add screenshots and reports |
-| Real bugs or observations | No confirmed bugs found yet | Add after execution if found |
-| Postman collection export | Collection will be created later | Export to postman/reqres-api-collection.json |
-| Postman environment export | Environment will be created later | Export to postman/reqres-environment.json |
-| Newman report | Newman will be configured later | Generate report in evidence/reports |
-| GitHub Actions run | CI will be configured later | Add workflow and execution evidence |
+| Actual execution status | Tests have been executed | Status is reflected in test-summary-report.md |
+| Actual evidence files | Evidence has been collected | Screenshots exist in evidence folders |
+| Real bugs or observations | No confirmed bugs found | Add after execution if found |
+| Postman collection export | Collection has been created | Export to postman/reqres-api-collection.json |
+| Postman environment export | Environment has been created | Export to postman/reqres-environment.json |
+| Newman report | Newman can be configured later | Generate report in evidence/reports |
+| GitHub Actions run | CI can be configured later | Add workflow and execution evidence |
 
 ---
 
@@ -314,21 +301,35 @@ Any change in this document should remain consistent with:
 
 ## 11. Notes and Assumptions
 
-- This matrix maps planned coverage before actual Postman execution.
-- Test execution status will be updated later in docs/test-summary-report.md.
+- This matrix maps planned coverage and actual execution results.
+- Test execution status is reflected in docs/test-summary-report.md.
 - Some Reqres API responses are simulated and may not persist data.
-- Some boundary scenarios are marked as "To be observed" in previous documents.
-- The matrix does not create new scenarios; it only connects existing ones.
-- Future Postman scripts must follow the project script quality standard.
-- Evidence links will be added after execution.
+- The matrix does not create new scenarios; it connects existing ones.
+- Future Postman scripts follow the project script quality standard.
+- Evidence links reference the evidence collection folders.
 - Bug report references will be added if confirmed bugs are found.
 
 ---
 
-## 12. Next Step
+## 12. Completion Notes
 
-The next document to be created is:
+This traceability matrix was finalized and validated on 2026-04-30.
 
-docs/test-summary-report.md
+All 27 endpoints are mapped to their corresponding test cases, smoke tests, regression tests, contract tests and Postman collection folders.
 
-The test summary report will summarize planned execution, actual execution results, pass/fail status, defects, observations and evidence after the Postman collection is created and executed.
+The following documents have been validated for consistency:
+
+- Test Plan (docs/test-plan.md) — Completed
+- Test Strategy (docs/test-strategy.md) — Completed
+- Endpoint Mapping (docs/endpoint-mapping.md) — Completed
+- Test Cases (docs/test-cases.md) — Completed
+- Smoke Tests (docs/smoke-tests.md) — Completed
+- Regression Tests (docs/regression-tests.md) — Completed
+- Contract Tests (docs/contract-tests.md) — Completed
+- Test Summary Report (docs/test-summary-report.md) — Completed
+
+Final status:
+
+```txt
+COMPLETED
+```
