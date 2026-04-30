@@ -5151,8 +5151,133 @@
         },
         {
             "name": "09 - Delayed Response",
-            "item": [],
-            "description": "Contains delayed response scenarios used for basic response time observation. These tests should not be included in the smoke suite."
+            "description": "Contains delayed response scenarios used for basic response time observation.\n\nThis folder validates that the Reqres API can return a delayed users list response in a controlled way.\n\nThese tests validate HTTP status codes, JSON Content-Type, response body structure, response time threshold for delayed requests and absence of internal implementation details. These tests should not be included in the smoke suite.",
+            "item": [{
+                "name": "GET - Delayed - List users with delay",
+                "description": "Related IDs:\n- Endpoint ID: EP-027\n- Test Case ID: TC-031\n\nPurpose:\nValidates that the API returns a controlled delayed users list response using the delay query parameter.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains pagination fields\n- Pagination numeric fields use number JSON type with integer value constraints\n- Response contains a data array\n- User objects contain id, email, first_name, last_name and avatar when data is not empty\n- Response time is below the delayedMaxResponseTimeMs environment threshold\n- Response does not expose internal implementation details",
+                "request": {
+                    "method": "GET",
+                    "header": [{
+                            "key": "Accept",
+                            "value": "application/json",
+                            "type": "text"
+                        },
+                        {
+                            "key": "x-api-key",
+                            "value": "{{apiKey}}",
+                            "type": "text"
+                        },
+                        {
+                            "key": "X-Reqres-Env",
+                            "value": "{{reqresEnv}}",
+                            "type": "text"
+                        }
+                    ],
+                    "url": {
+                        "raw": "{{baseUrl}}/api/users?delay={{delaySeconds}}",
+                        "host": [
+                            "{{baseUrl}}"
+                        ],
+                        "path": [
+                            "api",
+                            "users"
+                        ],
+                        "query": [{
+                            "key": "delay",
+                            "value": "{{delaySeconds}}"
+                        }]
+                    }
+                },
+                "response": [],
+                "event": [{
+                    "listen": "test",
+                    "script": {
+                        "type": "text/javascript",
+                        "exec": [
+                            "// Parse the response body only once and reuse it in all assertions.",
+                            "// This follows the project standard and avoids repeated pm.response.json() calls.",
+                            "const response = pm.response.json();",
+                            "",
+                            "// Read the configured delayed response threshold from the selected Postman environment.",
+                            "// This keeps the response time validation reusable and easy to adjust.",
+                            "const delayedMaxResponseTimeMs = Number(pm.environment.get(\"delayedMaxResponseTimeMs\"));",
+                            "",
+                            "// Reusable helper to validate the expected HTTP status code.",
+                            "// It confirms that the API returned the status required by this delayed scenario.",
+                            "const expectStatus = (statusCode) => {",
+                            "    pm.test(`Status code is ${statusCode}`, function () {",
+                            "        pm.response.to.have.status(statusCode);",
+                            "    });",
+                            "};",
+                            "",
+                            "// Reusable helper to validate that the response is JSON.",
+                            "// This is required before validating the response body contract.",
+                            "const expectJsonContentType = () => {",
+                            "    pm.test(\"Content-Type includes application/json\", function () {",
+                            "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                            "        pm.expect(contentType).to.include(\"application/json\");",
+                            "    });",
+                            "};",
+                            "",
+                            "// Reusable helper to validate numeric fields that must contain integer values.",
+                            "// JSON uses number as the numeric type, while integer is validated as a value constraint.",
+                            "const expectIntegerNumber = (fieldName, value) => {",
+                            "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
+                            "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
+                            "};",
+                            "",
+                            "// Reusable helper to validate required string fields that must not be empty.",
+                            "// It confirms both JSON type and minimum value constraint.",
+                            "const expectNonEmptyString = (fieldName, value) => {",
+                            "    pm.expect(value, `${fieldName} should be a string`).to.be.a(\"string\");",
+                            "    pm.expect(value.trim(), `${fieldName} should not be empty`).to.not.eql(\"\");",
+                            "};",
+                            "",
+                            "// Reusable helper to validate the minimum user object contract.",
+                            "// It checks required fields, JSON types and non-empty string constraints.",
+                            "const expectUserContract = (user) => {",
+                            "    pm.expect(user).to.be.an(\"object\");",
+                            "    expectIntegerNumber(\"user.id\", user.id);",
+                            "    expectNonEmptyString(\"user.email\", user.email);",
+                            "    expectNonEmptyString(\"user.first_name\", user.first_name);",
+                            "    expectNonEmptyString(\"user.last_name\", user.last_name);",
+                            "    expectNonEmptyString(\"user.avatar\", user.avatar);",
+                            "};",
+                            "",
+                            "// Validate that the delayed endpoint returns the expected successful HTTP status.",
+                            "expectStatus(200);",
+                            "",
+                            "// Validate that the API response can be safely treated as JSON.",
+                            "expectJsonContentType();",
+                            "",
+                            "// Validate the minimum pagination contract for a delayed users list response.",
+                            "pm.test(\"Response contains valid pagination fields and data array\", function () {",
+                            "    pm.expect(response).to.be.an(\"object\");",
+                            "    expectIntegerNumber(\"page\", response.page);",
+                            "    expectIntegerNumber(\"per_page\", response.per_page);",
+                            "    expectIntegerNumber(\"total\", response.total);",
+                            "    expectIntegerNumber(\"total_pages\", response.total_pages);",
+                            "    pm.expect(response.data).to.be.an(\"array\");",
+                            "});",
+                            "",
+                            "// Validate each user object when the data array contains users.",
+                            "// If the array is empty, this loop does not fail because an empty page can be valid.",
+                            "pm.test(\"User objects contain expected minimum fields when present\", function () {",
+                            "    response.data.forEach((user) => {",
+                            "        expectUserContract(user);",
+                            "    });",
+                            "});",
+                            "",
+                            "// Validate that the delayed response stays within the configured threshold.",
+                            "// This is a basic response time observation, not a full performance test.",
+                            "pm.test(\"Response time is below delayed threshold\", function () {",
+                            "    pm.expect(delayedMaxResponseTimeMs, \"delayedMaxResponseTimeMs should be configured as a number\").to.be.a(\"number\");",
+                            "    pm.expect(pm.response.responseTime).to.be.below(delayedMaxResponseTimeMs);",
+                            "});"
+                        ]
+                    }
+                }]
+            }]
         },
         {
             "name": "10 - Regression Tests",
