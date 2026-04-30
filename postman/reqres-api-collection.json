@@ -1,951 +1,1040 @@
 {
-    "info": {
-        "_postman_id": "5e1fef34-fcbc-49ac-a47f-7ab1e462520c",
-        "name": "Reqres API Testing Portfolio",
-        "description": "API testing portfolio collection for the Reqres Demo API. This collection is organized to demonstrate smoke testing, positive scenarios, negative scenarios, boundary testing, contract testing, regression testing and basic response time observation. Requests should use the Reqres API Environment and reusable variables such as {{baseUrl}}, {{validUserId}}, {{validEmail}} and {{validPassword}}.",
-        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-        "_exporter_id": "19053874"
-    },
-    "item": [{
-            "name": "01 - Smoke Tests",
-            "item": [{
-                    "name": "GET - Smoke - List users from page 2",
-                    "event": [{
-                        "listen": "test",
-                        "script": {
-                            "exec": [
-                                "// Parse the response body only once and reuse it in all validations.",
-                                "// This follows the project standard to avoid repeated pm.response.json() calls.",
-                                "const response = pm.response.json();",
-                                "",
-                                "// Reusable helper to validate the expected HTTP status code.",
-                                "// This makes the status validation consistent across requests.",
-                                "const expectStatus = (statusCode) => {",
-                                "    pm.test(`Status code is ${statusCode}`, function () {",
-                                "        pm.response.to.have.status(statusCode);",
-                                "    });",
-                                "};",
-                                "",
-                                "// Reusable helper to validate that the API returns a JSON response.",
-                                "// This confirms that the response Content-Type is compatible with JSON assertions.",
-                                "const expectJsonContentType = () => {",
-                                "    pm.test(\"Content-Type includes application/json\", function () {",
-                                "        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
-                                "    });",
-                                "};",
-                                "",
-                                "// Validate that the endpoint returns the expected successful HTTP status.",
-                                "expectStatus(200);",
-                                "",
-                                "// Validate that the response is returned as JSON before checking the response body contract.",
-                                "expectJsonContentType();",
-                                "",
-                                "// Validate the minimum contract for the users list response.",
-                                "// This confirms that pagination fields exist, use the expected JSON type,",
-                                "// and contain integer values where applicable.",
-                                "pm.test(\"Response contains pagination fields and data array\", function () {",
-                                "    // Validate that the full response body is a JSON object.",
-                                "    pm.expect(response).to.be.an(\"object\");",
-                                "",
-                                "    // Validate current page field.",
-                                "    pm.expect(response.page).to.be.a(\"number\");",
-                                "    pm.expect(Number.isInteger(response.page)).to.be.true;",
-                                "",
-                                "    // Validate page size field.",
-                                "    pm.expect(response.per_page).to.be.a(\"number\");",
-                                "    pm.expect(Number.isInteger(response.per_page)).to.be.true;",
-                                "",
-                                "    // Validate total records field.",
-                                "    pm.expect(response.total).to.be.a(\"number\");",
-                                "    pm.expect(Number.isInteger(response.total)).to.be.true;",
-                                "",
-                                "    // Validate total pages field.",
-                                "    pm.expect(response.total_pages).to.be.a(\"number\");",
-                                "    pm.expect(Number.isInteger(response.total_pages)).to.be.true;",
-                                "",
-                                "    // Validate that the response contains a users list.",
-                                "    pm.expect(response.data).to.be.an(\"array\");",
-                                "});"
-                            ],
-                            "type": "text/javascript",
-                            "packages": {},
-                            "requests": {}
-                        }
-                    }],
-                    "request": {
-                        "method": "GET",
-                        "header": [{
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "x-api-key",
-                                "value": "{{apiKey}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "X-Reqres-Env",
-                                "value": "{{reqresEnv}}",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{baseUrl}}/api/users?page={{pageTwo}}",
-                            "host": [
-                                "{{baseUrl}}"
-                            ],
-                            "path": [
-                                "api",
-                                "users"
-                            ],
-                            "query": [{
-                                "key": "page",
-                                "value": "{{pageTwo}}"
-                            }]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "GET - Smoke - Get existing user by ID",
-                    "event": [{
-                        "listen": "test",
-                        "script": {
-                            "exec": [
-                                "// Parse the response body only once and reuse it in all assertions.",
-                                "// This follows the project standard and avoids repeated pm.response.json() calls.",
-                                "const response = pm.response.json();",
-                                "",
-                                "// Reusable helper to validate the expected HTTP status code.",
-                                "// It confirms that the API returned the status required by this scenario.",
-                                "const expectStatus = (statusCode) => {",
-                                "    pm.test(`Status code is ${statusCode}`, function () {",
-                                "        pm.response.to.have.status(statusCode);",
-                                "    });",
-                                "};",
-                                "",
-                                "// Reusable helper to validate that the response is JSON.",
-                                "// This is important because the next assertions depend on a JSON response body.",
-                                "const expectJsonContentType = () => {",
-                                "    pm.test(\"Content-Type includes application/json\", function () {",
-                                "        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
-                                "    });",
-                                "};",
-                                "",
-                                "// Validate that the endpoint successfully returns an existing user.",
-                                "expectStatus(200);",
-                                "",
-                                "// Validate that the API response can be safely treated as JSON.",
-                                "expectJsonContentType();",
-                                "",
-                                "// Validate the minimum contract for a single user response.",
-                                "// This confirms that the response has the expected structure, JSON types,",
-                                "// and value constraints for the user object.",
-                                "pm.test(\"Response contains expected user contract\", function () {",
-                                "    // Validate that the full response body is a JSON object.",
-                                "    pm.expect(response).to.be.an(\"object\");",
-                                "",
-                                "    // Validate that the response contains the main data object.",
-                                "    pm.expect(response).to.have.property(\"data\");",
-                                "",
-                                "    // Validate that the user ID exists as a number and contains an integer value.",
-                                "    pm.expect(response.data.id).to.be.a(\"number\");",
-                                "    pm.expect(Number.isInteger(response.data.id)).to.be.true;",
-                                "",
-                                "    // Validate that the user email exists and is not empty.",
-                                "    pm.expect(response.data.email).to.be.a(\"string\").and.not.empty;",
-                                "",
-                                "    // Validate that the user's first name exists and is not empty.",
-                                "    pm.expect(response.data.first_name).to.be.a(\"string\").and.not.empty;",
-                                "",
-                                "    // Validate that the user's last name exists and is not empty.",
-                                "    pm.expect(response.data.last_name).to.be.a(\"string\").and.not.empty;",
-                                "",
-                                "    // Validate that the avatar URL exists and is not empty.",
-                                "    pm.expect(response.data.avatar).to.be.a(\"string\").and.not.empty;",
-                                "});"
-                            ],
-                            "type": "text/javascript",
-                            "packages": {},
-                            "requests": {}
-                        }
-                    }],
-                    "request": {
-                        "method": "GET",
-                        "header": [{
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "x-api-key",
-                                "value": "{{apiKey}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "X-Reqres-Env",
-                                "value": "{{reqresEnv}}",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{baseUrl}}/api/users/{{validUserId}}",
-                            "host": [
-                                "{{baseUrl}}"
-                            ],
-                            "path": [
-                                "api",
-                                "users",
-                                "{{validUserId}}"
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST - Smoke - Create user with valid data",
-                    "event": [{
-                        "listen": "test",
-                        "script": {
-                            "exec": [
-                                "// Parse the response body only once and reuse it in all assertions.",
-                                "// This follows the project standard and avoids repeated pm.response.json() calls.",
-                                "const response = pm.response.json();",
-                                "",
-                                "// Read expected values from the selected Postman environment.",
-                                "// This validates that the API response matches the request data configured for this scenario.",
-                                "const expectedName = pm.environment.get(\"testUserName\");",
-                                "const expectedJob = pm.environment.get(\"testUserJob\");",
-                                "",
-                                "// Reusable helper to validate the expected HTTP status code.",
-                                "// It confirms that the create user request returned the expected success status.",
-                                "const expectStatus = (statusCode) => {",
-                                "    pm.test(`Status code is ${statusCode}`, function () {",
-                                "        pm.response.to.have.status(statusCode);",
-                                "    });",
-                                "};",
-                                "",
-                                "// Reusable helper to validate that the response is JSON.",
-                                "// This is required before validating the response body contract.",
-                                "const expectJsonContentType = () => {",
-                                "    pm.test(\"Content-Type includes application/json\", function () {",
-                                "        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
-                                "    });",
-                                "};",
-                                "",
-                                "// Validate that the user creation endpoint returns the expected created status.",
-                                "expectStatus(201);",
-                                "",
-                                "// Validate that the API response can be safely treated as JSON.",
-                                "expectJsonContentType();",
-                                "",
-                                "// Validate the minimum contract for the simulated create user response.",
-                                "// This confirms that the API returns the submitted data plus generated metadata.",
-                                "pm.test(\"Response contains created user data\", function () {",
-                                "    // Validate that the full response body is a JSON object.",
-                                "    pm.expect(response).to.be.an(\"object\");",
-                                "",
-                                "    // Validate that the returned name matches the name sent in the request body.",
-                                "    pm.expect(response.name).to.eql(expectedName);",
-                                "",
-                                "    // Validate that the returned job matches the job sent in the request body.",
-                                "    pm.expect(response.job).to.eql(expectedJob);",
-                                "",
-                                "    // Validate that the simulated created user ID exists and is not empty.",
-                                "    pm.expect(response.id).to.be.a(\"string\").and.not.empty;",
-                                "",
-                                "    // Validate that the creation timestamp exists and is not empty.",
-                                "    pm.expect(response.createdAt).to.be.a(\"string\").and.not.empty;",
-                                "});"
-                            ],
-                            "type": "text/javascript",
-                            "packages": {},
-                            "requests": {}
-                        }
-                    }],
-                    "request": {
-                        "method": "POST",
-                        "header": [{
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "x-api-key",
-                                "value": "{{apiKey}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "X-Reqres-Env",
-                                "value": "{{reqresEnv}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"name\": \"{{testUserName}}\",\n  \"job\": \"{{testUserJob}}\"\n}"
-                        },
-                        "url": {
-                            "raw": "{{baseUrl}}/api/users",
-                            "host": [
-                                "{{baseUrl}}"
-                            ],
-                            "path": [
-                                "api",
-                                "users"
-                            ]
-                        }
-                    },
-                    "response": []
-                },
-                {
-                    "name": "POST - Smoke - Login with valid credentials",
-                    "event": [{
-                        "listen": "test",
-                        "script": {
-                            "exec": [
-                                "// Parse the response body only once and reuse it in all assertions.",
-                                "// This follows the project standard and avoids repeated pm.response.json() calls.",
-                                "const response = pm.response.json();",
-                                "",
-                                "// Reusable helper to validate the expected HTTP status code.",
-                                "// It confirms that the login request returned the expected success status.",
-                                "const expectStatus = (statusCode) => {",
-                                "    pm.test(`Status code is ${statusCode}`, function () {",
-                                "        pm.response.to.have.status(statusCode);",
-                                "    });",
-                                "};",
-                                "",
-                                "// Reusable helper to validate that the response is JSON.",
-                                "// This is required before validating the authentication response body.",
-                                "const expectJsonContentType = () => {",
-                                "    pm.test(\"Content-Type includes application/json\", function () {",
-                                "        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
-                                "    });",
-                                "};",
-                                "",
-                                "// Validate that valid credentials return a successful login response.",
-                                "expectStatus(200);",
-                                "",
-                                "// Validate that the API response can be safely treated as JSON.",
-                                "expectJsonContentType();",
-                                "",
-                                "// Validate the minimum contract for a successful login response.",
-                                "// This confirms that the API returns a token and that the token is usable as a non-empty string.",
-                                "pm.test(\"Response contains non-empty authentication token\", function () {",
-                                "    // Validate that the full response body is a JSON object.",
-                                "    pm.expect(response).to.be.an(\"object\");",
-                                "",
-                                "    // Validate that the authentication token exists, is a string, and is not empty.",
-                                "    pm.expect(response.token).to.be.a(\"string\").and.not.empty;",
-                                "});"
-                            ],
-                            "type": "text/javascript",
-                            "packages": {},
-                            "requests": {}
-                        }
-                    }],
-                    "request": {
-                        "method": "POST",
-                        "header": [{
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "Content-Type",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "x-api-key",
-                                "value": "{{apiKey}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "X-Reqres-Env",
-                                "value": "{{reqresEnv}}",
-                                "type": "text"
-                            }
-                        ],
-                        "body": {
-                            "mode": "raw",
-                            "raw": "{\n  \"email\": \"{{validEmail}}\",\n  \"password\": \"{{validPassword}}\"\n}"
-                        },
-                        "url": {
-                            "raw": "{{baseUrl}}/api/login",
-                            "host": [
-                                "{{baseUrl}}"
-                            ],
-                            "path": [
-                                "api",
-                                "login"
-                            ]
-                        }
-                    },
-                    "response": []
-                }
+  "info": {
+    "_postman_id": "1b96c29a-72ce-430f-b42c-4f6e3d3b40e0",
+    "name": "Reqres API Testing Portfolio",
+    "description": "API testing portfolio collection for the Reqres Demo API. This collection is organized to demonstrate smoke testing, positive scenarios, negative scenarios, boundary testing, contract testing, regression testing and basic response time observation. Requests should use the Reqres API Environment and reusable variables such as {{baseUrl}}, {{validUserId}}, {{validEmail}} and {{validPassword}}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "19053874"
+  },
+  "item": [
+    {
+      "name": "01 - Smoke Tests",
+      "item": [
+        {
+          "name": "GET - Smoke - List users from page 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Parse the response body only once and reuse it in all validations.",
+                  "// This follows the project standard to avoid repeated pm.response.json() calls.",
+                  "const response = pm.response.json();",
+                  "",
+                  "// Reusable helper to validate the expected HTTP status code.",
+                  "// This makes the status validation consistent across requests.",
+                  "const expectStatus = (statusCode) => {",
+                  "    pm.test(`Status code is ${statusCode}`, function () {",
+                  "        pm.response.to.have.status(statusCode);",
+                  "    });",
+                  "};",
+                  "",
+                  "// Reusable helper to validate that the API returns a JSON response.",
+                  "// This confirms that the response Content-Type is compatible with JSON assertions.",
+                  "const expectJsonContentType = () => {",
+                  "    pm.test(\"Content-Type includes application/json\", function () {",
+                  "        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "    });",
+                  "};",
+                  "",
+                  "// Validate that the endpoint returns the expected successful HTTP status.",
+                  "expectStatus(200);",
+                  "",
+                  "// Validate that the response is returned as JSON before checking the response body contract.",
+                  "expectJsonContentType();",
+                  "",
+                  "// Validate the minimum contract for the users list response.",
+                  "// This confirms that pagination fields exist, use the expected JSON type,",
+                  "// and contain integer values where applicable.",
+                  "pm.test(\"Response contains pagination fields and data array\", function () {",
+                  "    // Validate that the full response body is a JSON object.",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "",
+                  "    // Validate current page field.",
+                  "    pm.expect(response.page).to.be.a(\"number\");",
+                  "    pm.expect(Number.isInteger(response.page)).to.be.true;",
+                  "",
+                  "    // Validate page size field.",
+                  "    pm.expect(response.per_page).to.be.a(\"number\");",
+                  "    pm.expect(Number.isInteger(response.per_page)).to.be.true;",
+                  "",
+                  "    // Validate total records field.",
+                  "    pm.expect(response.total).to.be.a(\"number\");",
+                  "    pm.expect(Number.isInteger(response.total)).to.be.true;",
+                  "",
+                  "    // Validate total pages field.",
+                  "    pm.expect(response.total_pages).to.be.a(\"number\");",
+                  "    pm.expect(Number.isInteger(response.total_pages)).to.be.true;",
+                  "",
+                  "    // Validate that the response contains a users list.",
+                  "    pm.expect(response.data).to.be.an(\"array\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Reqres-Env",
+                "value": "{{reqresEnv}}",
+                "type": "text"
+              }
             ],
-            "description": "Contains the minimum critical API checks used to confirm that the main Reqres endpoints are available and responding as expected before running the full test suite.\n\nThis folder includes core smoke scenarios for user listing, single user retrieval, user creation and valid login.\n\nThese tests validate basic API availability, expected HTTP status codes, JSON responses, key response fields and absence of internal implementation details."
-        },
-        {
-            "name": "02 - Users - List and Pagination",
-            "description": "Contains user listing requests used to validate pagination, custom page size, JSON response structure and list-user contracts.\n\nThis folder covers positive and functional scenarios for retrieving user lists from different pages and with custom pagination parameters.\n\nThese requests validate HTTP status codes, JSON Content-Type, pagination fields, integer value constraints, data array structure and absence of internal implementation details.",
-            "item": [{
-                    "name": "GET - List users from page 1",
-                    "description": "Related IDs:\n- Endpoint ID: EP-001\n- Test Case ID: TC-001\n\nPurpose:\nValidates that the API returns a successful users list response when requesting the first page.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains pagination fields\n- Pagination numeric fields use number JSON type with integer values\n- Response page matches the requested page\n- Response contains a data array\n- User objects contain id, email, first_name, last_name and avatar when data is not empty\n- Response does not expose internal implementation details",
-                    "request": {
-                        "method": "GET",
-                        "header": [{
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "x-api-key",
-                                "value": "{{apiKey}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "X-Reqres-Env",
-                                "value": "{{reqresEnv}}",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{baseUrl}}/api/users?page={{pageOne}}",
-                            "host": [
-                                "{{baseUrl}}"
-                            ],
-                            "path": [
-                                "api",
-                                "users"
-                            ],
-                            "query": [{
-                                "key": "page",
-                                "value": "{{pageOne}}"
-                            }]
-                        }
-                    },
-                    "response": [],
-                    "event": [{
-                        "listen": "test",
-                        "script": {
-                            "type": "text/javascript",
-                            "exec": [
-                                "// Parse the response body only once and reuse it in all assertions.",
-                                "// This follows the project standard and avoids repeated pm.response.json() calls.",
-                                "const response = pm.response.json();",
-                                "",
-                                "// Read the expected page value from the selected Postman environment.",
-                                "// This allows the test to validate the response against the configured request data.",
-                                "const expectedPage = Number(pm.environment.get(\"pageOne\"));",
-                                "",
-                                "// Reusable helper to validate the expected HTTP status code.",
-                                "// It confirms that the API returned the status required by this scenario.",
-                                "const expectStatus = (statusCode) => {",
-                                "    pm.test(`Status code is ${statusCode}`, function () {",
-                                "        pm.response.to.have.status(statusCode);",
-                                "    });",
-                                "};",
-                                "",
-                                "// Reusable helper to validate that the response is JSON.",
-                                "// This is required before validating the response body contract.",
-                                "const expectJsonContentType = () => {",
-                                "    pm.test(\"Content-Type includes application/json\", function () {",
-                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
-                                "        pm.expect(contentType).to.include(\"application/json\");",
-                                "    });",
-                                "};",
-                                "",
-                                "// Reusable helper to validate numeric fields that must contain integer values.",
-                                "// JSON uses number as the numeric type, while integer is validated as a value constraint.",
-                                "const expectIntegerNumber = (fieldName, value) => {",
-                                "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
-                                "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
-                                "};",
-                                "",
-                                "// Reusable helper to validate the minimum user object contract.",
-                                "// It checks required fields, JSON types and non-empty string constraints.",
-                                "const expectUserContract = (user) => {",
-                                "    pm.expect(user).to.be.an(\"object\");",
-                                "    expectIntegerNumber(\"user.id\", user.id);",
-                                "    pm.expect(user.email).to.be.a(\"string\").and.not.empty;",
-                                "    pm.expect(user.first_name).to.be.a(\"string\").and.not.empty;",
-                                "    pm.expect(user.last_name).to.be.a(\"string\").and.not.empty;",
-                                "    pm.expect(user.avatar).to.be.a(\"string\").and.not.empty;",
-                                "};",
-                                "",
-                                "// Validate that the endpoint returns the expected successful HTTP status.",
-                                "expectStatus(200);",
-                                "",
-                                "// Validate that the API response can be safely treated as JSON.",
-                                "expectJsonContentType();",
-                                "",
-                                "// Validate the minimum pagination contract for a users list response.",
-                                "pm.test(\"Response contains valid pagination fields and data array\", function () {",
-                                "    pm.expect(response).to.be.an(\"object\");",
-                                "    expectIntegerNumber(\"page\", response.page);",
-                                "    expectIntegerNumber(\"per_page\", response.per_page);",
-                                "    expectIntegerNumber(\"total\", response.total);",
-                                "    expectIntegerNumber(\"total_pages\", response.total_pages);",
-                                "    pm.expect(response.data).to.be.an(\"array\");",
-                                "});",
-                                "",
-                                "// Validate that the API returned the same page requested through the environment variable.",
-                                "pm.test(\"Response page matches requested page\", function () {",
-                                "    pm.expect(response.page).to.eql(expectedPage);",
-                                "});",
-                                "",
-                                "// Validate the minimum user contract for every item returned in the data array.",
-                                "// If the array is empty, this loop does not fail because an empty page can be valid.",
-                                "pm.test(\"User objects contain expected minimum fields when present\", function () {",
-                                "    response.data.forEach((user) => {",
-                                "        expectUserContract(user);",
-                                "    });",
-                                "});"
-                            ]
-                        }
-                    }]
-                },
+            "url": {
+              "raw": "{{baseUrl}}/api/users?page={{pageTwo}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
                 {
-                    "name": "GET - List users from page 2",
-                    "description": "Related IDs:\n- Endpoint ID: EP-002\n- Test Case ID: TC-002\n\nPurpose:\nValidates that the API returns a successful users list response when requesting the second page.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains pagination fields\n- Pagination numeric fields use number JSON type with integer values\n- Response page matches the requested page\n- Response contains a data array\n- User objects contain id, email, first_name, last_name and avatar when data is not empty\n- Response does not expose internal implementation details",
-                    "request": {
-                        "method": "GET",
-                        "header": [{
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "x-api-key",
-                                "value": "{{apiKey}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "X-Reqres-Env",
-                                "value": "{{reqresEnv}}",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{baseUrl}}/api/users?page={{pageTwo}}",
-                            "host": [
-                                "{{baseUrl}}"
-                            ],
-                            "path": [
-                                "api",
-                                "users"
-                            ],
-                            "query": [{
-                                "key": "page",
-                                "value": "{{pageTwo}}"
-                            }]
-                        }
-                    },
-                    "response": [],
-                    "event": [{
-                        "listen": "test",
-                        "script": {
-                            "type": "text/javascript",
-                            "exec": [
-                                "// Parse the response body only once and reuse it in all assertions.",
-                                "const response = pm.response.json();",
-                                "",
-                                "// Read the expected page value from the selected Postman environment.",
-                                "const expectedPage = Number(pm.environment.get(\"pageTwo\"));",
-                                "",
-                                "// Validate the expected HTTP status code.",
-                                "const expectStatus = (statusCode) => {",
-                                "    pm.test(`Status code is ${statusCode}`, function () {",
-                                "        pm.response.to.have.status(statusCode);",
-                                "    });",
-                                "};",
-                                "",
-                                "// Validate that the response is JSON.",
-                                "const expectJsonContentType = () => {",
-                                "    pm.test(\"Content-Type includes application/json\", function () {",
-                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
-                                "        pm.expect(contentType).to.include(\"application/json\");",
-                                "    });",
-                                "};",
-                                "",
-                                "// Validate that a numeric field uses JSON number type and contains an integer value.",
-                                "const expectIntegerNumber = (fieldName, value) => {",
-                                "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
-                                "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
-                                "};",
-                                "",
-                                "// Validate the minimum contract for each user object returned in the list.",
-                                "const expectUserContract = (user) => {",
-                                "    pm.expect(user).to.be.an(\"object\");",
-                                "    expectIntegerNumber(\"user.id\", user.id);",
-                                "    pm.expect(user.email).to.be.a(\"string\").and.not.empty;",
-                                "    pm.expect(user.first_name).to.be.a(\"string\").and.not.empty;",
-                                "    pm.expect(user.last_name).to.be.a(\"string\").and.not.empty;",
-                                "    pm.expect(user.avatar).to.be.a(\"string\").and.not.empty;",
-                                "};",
-                                "",
-                                "// Validate that the endpoint returns the expected successful HTTP status.",
-                                "expectStatus(200);",
-                                "",
-                                "// Validate that the API response can be safely treated as JSON.",
-                                "expectJsonContentType();",
-                                "",
-                                "// Validate the pagination response contract.",
-                                "pm.test(\"Response contains valid pagination fields and data array\", function () {",
-                                "    pm.expect(response).to.be.an(\"object\");",
-                                "    expectIntegerNumber(\"page\", response.page);",
-                                "    expectIntegerNumber(\"per_page\", response.per_page);",
-                                "    expectIntegerNumber(\"total\", response.total);",
-                                "    expectIntegerNumber(\"total_pages\", response.total_pages);",
-                                "    pm.expect(response.data).to.be.an(\"array\");",
-                                "});",
-                                "",
-                                "// Validate that the returned page matches the requested page.",
-                                "pm.test(\"Response page matches requested page\", function () {",
-                                "    pm.expect(response.page).to.eql(expectedPage);",
-                                "});",
-                                "",
-                                "// Validate each user object when the data array contains users.",
-                                "pm.test(\"User objects contain expected minimum fields when present\", function () {",
-                                "    response.data.forEach((user) => {",
-                                "        expectUserContract(user);",
-                                "    });",
-                                "});"
-                            ]
-                        }
-                    }]
-                },
-                {
-                    "name": "GET - List users with custom page size",
-                    "description": "Related IDs:\n- Endpoint ID: EP-003\n- Test Case ID: TC-003\n\nPurpose:\nValidates that the API supports a custom page size through the per_page query parameter.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains pagination fields\n- Pagination numeric fields use number JSON type with integer values\n- Response per_page matches the requested value\n- Data array length does not exceed the requested per_page value\n- User objects contain id, email, first_name, last_name and avatar when data is not empty\n- Response does not expose internal implementation details",
-                    "request": {
-                        "method": "GET",
-                        "header": [{
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "x-api-key",
-                                "value": "{{apiKey}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "X-Reqres-Env",
-                                "value": "{{reqresEnv}}",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{baseUrl}}/api/users?per_page={{perPage}}",
-                            "host": [
-                                "{{baseUrl}}"
-                            ],
-                            "path": [
-                                "api",
-                                "users"
-                            ],
-                            "query": [{
-                                "key": "per_page",
-                                "value": "{{perPage}}"
-                            }]
-                        }
-                    },
-                    "response": [],
-                    "event": [{
-                        "listen": "test",
-                        "script": {
-                            "type": "text/javascript",
-                            "exec": [
-                                "// Parse the response body only once and reuse it in all assertions.",
-                                "const response = pm.response.json();",
-                                "",
-                                "// Read the expected page size from the selected Postman environment.",
-                                "const expectedPerPage = Number(pm.environment.get(\"perPage\"));",
-                                "",
-                                "// Validate the expected HTTP status code.",
-                                "const expectStatus = (statusCode) => {",
-                                "    pm.test(`Status code is ${statusCode}`, function () {",
-                                "        pm.response.to.have.status(statusCode);",
-                                "    });",
-                                "};",
-                                "",
-                                "// Validate that the response is JSON.",
-                                "const expectJsonContentType = () => {",
-                                "    pm.test(\"Content-Type includes application/json\", function () {",
-                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
-                                "        pm.expect(contentType).to.include(\"application/json\");",
-                                "    });",
-                                "};",
-                                "",
-                                "// Validate that a numeric field uses JSON number type and contains an integer value.",
-                                "const expectIntegerNumber = (fieldName, value) => {",
-                                "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
-                                "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
-                                "};",
-                                "",
-                                "// Validate the minimum contract for each user object returned in the list.",
-                                "const expectUserContract = (user) => {",
-                                "    pm.expect(user).to.be.an(\"object\");",
-                                "    expectIntegerNumber(\"user.id\", user.id);",
-                                "    pm.expect(user.email).to.be.a(\"string\").and.not.empty;",
-                                "    pm.expect(user.first_name).to.be.a(\"string\").and.not.empty;",
-                                "    pm.expect(user.last_name).to.be.a(\"string\").and.not.empty;",
-                                "    pm.expect(user.avatar).to.be.a(\"string\").and.not.empty;",
-                                "};",
-                                "",
-                                "// Validate that the endpoint returns the expected successful HTTP status.",
-                                "expectStatus(200);",
-                                "",
-                                "// Validate that the API response can be safely treated as JSON.",
-                                "expectJsonContentType();",
-                                "",
-                                "// Validate the pagination response contract.",
-                                "pm.test(\"Response contains valid pagination fields and data array\", function () {",
-                                "    pm.expect(response).to.be.an(\"object\");",
-                                "    expectIntegerNumber(\"page\", response.page);",
-                                "    expectIntegerNumber(\"per_page\", response.per_page);",
-                                "    expectIntegerNumber(\"total\", response.total);",
-                                "    expectIntegerNumber(\"total_pages\", response.total_pages);",
-                                "    pm.expect(response.data).to.be.an(\"array\");",
-                                "});",
-                                "",
-                                "// Validate that the returned page size matches the requested per_page value.",
-                                "pm.test(\"Response per_page matches requested value\", function () {",
-                                "    pm.expect(response.per_page).to.eql(expectedPerPage);",
-                                "});",
-                                "",
-                                "// Validate that the response does not return more users than requested.",
-                                "pm.test(\"Data array length does not exceed requested per_page\", function () {",
-                                "    pm.expect(response.data.length).to.be.at.most(expectedPerPage);",
-                                "});",
-                                "",
-                                "// Validate each user object when the data array contains users.",
-                                "pm.test(\"User objects contain expected minimum fields when present\", function () {",
-                                "    response.data.forEach((user) => {",
-                                "        expectUserContract(user);",
-                                "    });",
-                                "});"
-                            ]
-                        }
-                    }]
-                },
-                {
-                    "name": "GET - List users with page and custom page size",
-                    "description": "Related IDs:\n- Endpoint ID: EP-004\n- Test Case ID: TC-004\n\nPurpose:\nValidates that the API supports combining page and per_page query parameters in the same request.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains pagination fields\n- Pagination numeric fields use number JSON type with integer values\n- Response page matches the requested page\n- Response per_page matches the requested value\n- Data array length does not exceed the requested per_page value\n- User objects contain id, email, first_name, last_name and avatar when data is not empty\n- Response does not expose internal implementation details",
-                    "request": {
-                        "method": "GET",
-                        "header": [{
-                                "key": "Accept",
-                                "value": "application/json",
-                                "type": "text"
-                            },
-                            {
-                                "key": "x-api-key",
-                                "value": "{{apiKey}}",
-                                "type": "text"
-                            },
-                            {
-                                "key": "X-Reqres-Env",
-                                "value": "{{reqresEnv}}",
-                                "type": "text"
-                            }
-                        ],
-                        "url": {
-                            "raw": "{{baseUrl}}/api/users?page={{pageOne}}&per_page={{perPage}}",
-                            "host": [
-                                "{{baseUrl}}"
-                            ],
-                            "path": [
-                                "api",
-                                "users"
-                            ],
-                            "query": [{
-                                    "key": "page",
-                                    "value": "{{pageOne}}"
-                                },
-                                {
-                                    "key": "per_page",
-                                    "value": "{{perPage}}"
-                                }
-                            ]
-                        }
-                    },
-                    "response": [],
-                    "event": [{
-                        "listen": "test",
-                        "script": {
-                            "type": "text/javascript",
-                            "exec": [
-                                "// Parse the response body only once and reuse it in all assertions.",
-                                "const response = pm.response.json();",
-                                "",
-                                "// Read expected pagination values from the selected Postman environment.",
-                                "const expectedPage = Number(pm.environment.get(\"pageOne\"));",
-                                "const expectedPerPage = Number(pm.environment.get(\"perPage\"));",
-                                "",
-                                "// Validate the expected HTTP status code.",
-                                "const expectStatus = (statusCode) => {",
-                                "    pm.test(`Status code is ${statusCode}`, function () {",
-                                "        pm.response.to.have.status(statusCode);",
-                                "    });",
-                                "};",
-                                "",
-                                "// Validate that the response is JSON.",
-                                "const expectJsonContentType = () => {",
-                                "    pm.test(\"Content-Type includes application/json\", function () {",
-                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
-                                "        pm.expect(contentType).to.include(\"application/json\");",
-                                "    });",
-                                "};",
-                                "",
-                                "// Validate that a numeric field uses JSON number type and contains an integer value.",
-                                "const expectIntegerNumber = (fieldName, value) => {",
-                                "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
-                                "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
-                                "};",
-                                "",
-                                "// Validate the minimum contract for each user object returned in the list.",
-                                "const expectUserContract = (user) => {",
-                                "    pm.expect(user).to.be.an(\"object\");",
-                                "    expectIntegerNumber(\"user.id\", user.id);",
-                                "    pm.expect(user.email).to.be.a(\"string\").and.not.empty;",
-                                "    pm.expect(user.first_name).to.be.a(\"string\").and.not.empty;",
-                                "    pm.expect(user.last_name).to.be.a(\"string\").and.not.empty;",
-                                "    pm.expect(user.avatar).to.be.a(\"string\").and.not.empty;",
-                                "};",
-                                "",
-                                "// Validate that the endpoint returns the expected successful HTTP status.",
-                                "expectStatus(200);",
-                                "",
-                                "// Validate that the API response can be safely treated as JSON.",
-                                "expectJsonContentType();",
-                                "",
-                                "// Validate the pagination response contract.",
-                                "pm.test(\"Response contains valid pagination fields and data array\", function () {",
-                                "    pm.expect(response).to.be.an(\"object\");",
-                                "    expectIntegerNumber(\"page\", response.page);",
-                                "    expectIntegerNumber(\"per_page\", response.per_page);",
-                                "    expectIntegerNumber(\"total\", response.total);",
-                                "    expectIntegerNumber(\"total_pages\", response.total_pages);",
-                                "    pm.expect(response.data).to.be.an(\"array\");",
-                                "});",
-                                "",
-                                "// Validate that the returned page matches the requested page.",
-                                "pm.test(\"Response page matches requested page\", function () {",
-                                "    pm.expect(response.page).to.eql(expectedPage);",
-                                "});",
-                                "",
-                                "// Validate that the returned page size matches the requested per_page value.",
-                                "pm.test(\"Response per_page matches requested value\", function () {",
-                                "    pm.expect(response.per_page).to.eql(expectedPerPage);",
-                                "});",
-                                "",
-                                "// Validate that the response does not return more users than requested.",
-                                "pm.test(\"Data array length does not exceed requested per_page\", function () {",
-                                "    pm.expect(response.data.length).to.be.at.most(expectedPerPage);",
-                                "});",
-                                "",
-                                "// Validate each user object when the data array contains users.",
-                                "pm.test(\"User objects contain expected minimum fields when present\", function () {",
-                                "    response.data.forEach((user) => {",
-                                "        expectUserContract(user);",
-                                "    });",
-                                "});"
-                            ]
-                        }
-                    }]
+                  "key": "page",
+                  "value": "{{pageTwo}}"
                 }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Smoke - Get existing user by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Parse the response body only once and reuse it in all assertions.",
+                  "// This follows the project standard and avoids repeated pm.response.json() calls.",
+                  "const response = pm.response.json();",
+                  "",
+                  "// Reusable helper to validate the expected HTTP status code.",
+                  "// It confirms that the API returned the status required by this scenario.",
+                  "const expectStatus = (statusCode) => {",
+                  "    pm.test(`Status code is ${statusCode}`, function () {",
+                  "        pm.response.to.have.status(statusCode);",
+                  "    });",
+                  "};",
+                  "",
+                  "// Reusable helper to validate that the response is JSON.",
+                  "// This is important because the next assertions depend on a JSON response body.",
+                  "const expectJsonContentType = () => {",
+                  "    pm.test(\"Content-Type includes application/json\", function () {",
+                  "        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "    });",
+                  "};",
+                  "",
+                  "// Validate that the endpoint successfully returns an existing user.",
+                  "expectStatus(200);",
+                  "",
+                  "// Validate that the API response can be safely treated as JSON.",
+                  "expectJsonContentType();",
+                  "",
+                  "// Validate the minimum contract for a single user response.",
+                  "// This confirms that the response has the expected structure, JSON types,",
+                  "// and value constraints for the user object.",
+                  "pm.test(\"Response contains expected user contract\", function () {",
+                  "    // Validate that the full response body is a JSON object.",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "",
+                  "    // Validate that the response contains the main data object.",
+                  "    pm.expect(response).to.have.property(\"data\");",
+                  "",
+                  "    // Validate that the user ID exists as a number and contains an integer value.",
+                  "    pm.expect(response.data.id).to.be.a(\"number\");",
+                  "    pm.expect(Number.isInteger(response.data.id)).to.be.true;",
+                  "",
+                  "    // Validate that the user email exists and is not empty.",
+                  "    pm.expect(response.data.email).to.be.a(\"string\").and.not.empty;",
+                  "",
+                  "    // Validate that the user's first name exists and is not empty.",
+                  "    pm.expect(response.data.first_name).to.be.a(\"string\").and.not.empty;",
+                  "",
+                  "    // Validate that the user's last name exists and is not empty.",
+                  "    pm.expect(response.data.last_name).to.be.a(\"string\").and.not.empty;",
+                  "",
+                  "    // Validate that the avatar URL exists and is not empty.",
+                  "    pm.expect(response.data.avatar).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Reqres-Env",
+                "value": "{{reqresEnv}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/{{validUserId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users",
+                "{{validUserId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Smoke - Create user with valid data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Parse the response body only once and reuse it in all assertions.",
+                  "// This follows the project standard and avoids repeated pm.response.json() calls.",
+                  "const response = pm.response.json();",
+                  "",
+                  "// Read expected values from the selected Postman environment.",
+                  "// This validates that the API response matches the request data configured for this scenario.",
+                  "const expectedName = pm.environment.get(\"testUserName\");",
+                  "const expectedJob = pm.environment.get(\"testUserJob\");",
+                  "",
+                  "// Reusable helper to validate the expected HTTP status code.",
+                  "// It confirms that the create user request returned the expected success status.",
+                  "const expectStatus = (statusCode) => {",
+                  "    pm.test(`Status code is ${statusCode}`, function () {",
+                  "        pm.response.to.have.status(statusCode);",
+                  "    });",
+                  "};",
+                  "",
+                  "// Reusable helper to validate that the response is JSON.",
+                  "// This is required before validating the response body contract.",
+                  "const expectJsonContentType = () => {",
+                  "    pm.test(\"Content-Type includes application/json\", function () {",
+                  "        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "    });",
+                  "};",
+                  "",
+                  "// Validate that the user creation endpoint returns the expected created status.",
+                  "expectStatus(201);",
+                  "",
+                  "// Validate that the API response can be safely treated as JSON.",
+                  "expectJsonContentType();",
+                  "",
+                  "// Validate the minimum contract for the simulated create user response.",
+                  "// This confirms that the API returns the submitted data plus generated metadata.",
+                  "pm.test(\"Response contains created user data\", function () {",
+                  "    // Validate that the full response body is a JSON object.",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "",
+                  "    // Validate that the returned name matches the name sent in the request body.",
+                  "    pm.expect(response.name).to.eql(expectedName);",
+                  "",
+                  "    // Validate that the returned job matches the job sent in the request body.",
+                  "    pm.expect(response.job).to.eql(expectedJob);",
+                  "",
+                  "    // Validate that the simulated created user ID exists and is not empty.",
+                  "    pm.expect(response.id).to.be.a(\"string\").and.not.empty;",
+                  "",
+                  "    // Validate that the creation timestamp exists and is not empty.",
+                  "    pm.expect(response.createdAt).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Reqres-Env",
+                "value": "{{reqresEnv}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"{{testUserName}}\",\n  \"job\": \"{{testUserJob}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Smoke - Login with valid credentials",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Parse the response body only once and reuse it in all assertions.",
+                  "// This follows the project standard and avoids repeated pm.response.json() calls.",
+                  "const response = pm.response.json();",
+                  "",
+                  "// Reusable helper to validate the expected HTTP status code.",
+                  "// It confirms that the login request returned the expected success status.",
+                  "const expectStatus = (statusCode) => {",
+                  "    pm.test(`Status code is ${statusCode}`, function () {",
+                  "        pm.response.to.have.status(statusCode);",
+                  "    });",
+                  "};",
+                  "",
+                  "// Reusable helper to validate that the response is JSON.",
+                  "// This is required before validating the authentication response body.",
+                  "const expectJsonContentType = () => {",
+                  "    pm.test(\"Content-Type includes application/json\", function () {",
+                  "        pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "    });",
+                  "};",
+                  "",
+                  "// Validate that valid credentials return a successful login response.",
+                  "expectStatus(200);",
+                  "",
+                  "// Validate that the API response can be safely treated as JSON.",
+                  "expectJsonContentType();",
+                  "",
+                  "// Validate the minimum contract for a successful login response.",
+                  "// This confirms that the API returns a token and that the token is usable as a non-empty string.",
+                  "pm.test(\"Response contains non-empty authentication token\", function () {",
+                  "    // Validate that the full response body is a JSON object.",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "",
+                  "    // Validate that the authentication token exists, is a string, and is not empty.",
+                  "    pm.expect(response.token).to.be.a(\"string\").and.not.empty;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Reqres-Env",
+                "value": "{{reqresEnv}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{validEmail}}\",\n  \"password\": \"{{validPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Contains the minimum critical API checks used to confirm that the main Reqres endpoints are available and responding as expected before running the full test suite.\n\nThis folder includes core smoke scenarios for user listing, single user retrieval, user creation and valid login.\n\nThese tests validate basic API availability, expected HTTP status codes, JSON responses, key response fields and absence of internal implementation details."
+    },
+    {
+      "name": "02 - Users - List and Pagination",
+      "item": [
+        {
+          "name": "GET - List users from page 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Parse the response body only once and reuse it in all assertions.",
+                  "// This follows the project standard and avoids repeated pm.response.json() calls.",
+                  "const response = pm.response.json();",
+                  "",
+                  "// Read the expected page value from the selected Postman environment.",
+                  "// This allows the test to validate the response against the configured request data.",
+                  "const expectedPage = Number(pm.environment.get(\"pageOne\"));",
+                  "",
+                  "// Reusable helper to validate the expected HTTP status code.",
+                  "// It confirms that the API returned the status required by this scenario.",
+                  "const expectStatus = (statusCode) => {",
+                  "    pm.test(`Status code is ${statusCode}`, function () {",
+                  "        pm.response.to.have.status(statusCode);",
+                  "    });",
+                  "};",
+                  "",
+                  "// Reusable helper to validate that the response is JSON.",
+                  "// This is required before validating the response body contract.",
+                  "const expectJsonContentType = () => {",
+                  "    pm.test(\"Content-Type includes application/json\", function () {",
+                  "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                  "        pm.expect(contentType).to.include(\"application/json\");",
+                  "    });",
+                  "};",
+                  "",
+                  "// Reusable helper to validate numeric fields that must contain integer values.",
+                  "// JSON uses number as the numeric type, while integer is validated as a value constraint.",
+                  "const expectIntegerNumber = (fieldName, value) => {",
+                  "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
+                  "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
+                  "};",
+                  "",
+                  "// Reusable helper to validate the minimum user object contract.",
+                  "// It checks required fields, JSON types and non-empty string constraints.",
+                  "const expectUserContract = (user) => {",
+                  "    pm.expect(user).to.be.an(\"object\");",
+                  "    expectIntegerNumber(\"user.id\", user.id);",
+                  "    pm.expect(user.email).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(user.first_name).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(user.last_name).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(user.avatar).to.be.a(\"string\").and.not.empty;",
+                  "};",
+                  "",
+                  "// Validate that the endpoint returns the expected successful HTTP status.",
+                  "expectStatus(200);",
+                  "",
+                  "// Validate that the API response can be safely treated as JSON.",
+                  "expectJsonContentType();",
+                  "",
+                  "// Validate the minimum pagination contract for a users list response.",
+                  "pm.test(\"Response contains valid pagination fields and data array\", function () {",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    expectIntegerNumber(\"page\", response.page);",
+                  "    expectIntegerNumber(\"per_page\", response.per_page);",
+                  "    expectIntegerNumber(\"total\", response.total);",
+                  "    expectIntegerNumber(\"total_pages\", response.total_pages);",
+                  "    pm.expect(response.data).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "// Validate that the API returned the same page requested through the environment variable.",
+                  "pm.test(\"Response page matches requested page\", function () {",
+                  "    pm.expect(response.page).to.eql(expectedPage);",
+                  "});",
+                  "",
+                  "// Validate the minimum user contract for every item returned in the data array.",
+                  "// If the array is empty, this loop does not fail because an empty page can be valid.",
+                  "pm.test(\"User objects contain expected minimum fields when present\", function () {",
+                  "    response.data.forEach((user) => {",
+                  "        expectUserContract(user);",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Reqres-Env",
+                "value": "{{reqresEnv}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?page={{pageOne}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{pageOne}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - List users from page 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Parse the response body only once and reuse it in all assertions.",
+                  "const response = pm.response.json();",
+                  "",
+                  "// Read the expected page value from the selected Postman environment.",
+                  "const expectedPage = Number(pm.environment.get(\"pageTwo\"));",
+                  "",
+                  "// Validate the expected HTTP status code.",
+                  "const expectStatus = (statusCode) => {",
+                  "    pm.test(`Status code is ${statusCode}`, function () {",
+                  "        pm.response.to.have.status(statusCode);",
+                  "    });",
+                  "};",
+                  "",
+                  "// Validate that the response is JSON.",
+                  "const expectJsonContentType = () => {",
+                  "    pm.test(\"Content-Type includes application/json\", function () {",
+                  "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                  "        pm.expect(contentType).to.include(\"application/json\");",
+                  "    });",
+                  "};",
+                  "",
+                  "// Validate that a numeric field uses JSON number type and contains an integer value.",
+                  "const expectIntegerNumber = (fieldName, value) => {",
+                  "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
+                  "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
+                  "};",
+                  "",
+                  "// Validate the minimum contract for each user object returned in the list.",
+                  "const expectUserContract = (user) => {",
+                  "    pm.expect(user).to.be.an(\"object\");",
+                  "    expectIntegerNumber(\"user.id\", user.id);",
+                  "    pm.expect(user.email).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(user.first_name).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(user.last_name).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(user.avatar).to.be.a(\"string\").and.not.empty;",
+                  "};",
+                  "",
+                  "// Validate that the endpoint returns the expected successful HTTP status.",
+                  "expectStatus(200);",
+                  "",
+                  "// Validate that the API response can be safely treated as JSON.",
+                  "expectJsonContentType();",
+                  "",
+                  "// Validate the pagination response contract.",
+                  "pm.test(\"Response contains valid pagination fields and data array\", function () {",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    expectIntegerNumber(\"page\", response.page);",
+                  "    expectIntegerNumber(\"per_page\", response.per_page);",
+                  "    expectIntegerNumber(\"total\", response.total);",
+                  "    expectIntegerNumber(\"total_pages\", response.total_pages);",
+                  "    pm.expect(response.data).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "// Validate that the returned page matches the requested page.",
+                  "pm.test(\"Response page matches requested page\", function () {",
+                  "    pm.expect(response.page).to.eql(expectedPage);",
+                  "});",
+                  "",
+                  "// Validate each user object when the data array contains users.",
+                  "pm.test(\"User objects contain expected minimum fields when present\", function () {",
+                  "    response.data.forEach((user) => {",
+                  "        expectUserContract(user);",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Reqres-Env",
+                "value": "{{reqresEnv}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?page={{pageTwo}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{pageTwo}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - List users with custom page size",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Parse the response body only once and reuse it in all assertions.",
+                  "const response = pm.response.json();",
+                  "",
+                  "// Read the expected page size from the selected Postman environment.",
+                  "const expectedPerPage = Number(pm.environment.get(\"perPage\"));",
+                  "",
+                  "// Validate the expected HTTP status code.",
+                  "const expectStatus = (statusCode) => {",
+                  "    pm.test(`Status code is ${statusCode}`, function () {",
+                  "        pm.response.to.have.status(statusCode);",
+                  "    });",
+                  "};",
+                  "",
+                  "// Validate that the response is JSON.",
+                  "const expectJsonContentType = () => {",
+                  "    pm.test(\"Content-Type includes application/json\", function () {",
+                  "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                  "        pm.expect(contentType).to.include(\"application/json\");",
+                  "    });",
+                  "};",
+                  "",
+                  "// Validate that a numeric field uses JSON number type and contains an integer value.",
+                  "const expectIntegerNumber = (fieldName, value) => {",
+                  "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
+                  "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
+                  "};",
+                  "",
+                  "// Validate the minimum contract for each user object returned in the list.",
+                  "const expectUserContract = (user) => {",
+                  "    pm.expect(user).to.be.an(\"object\");",
+                  "    expectIntegerNumber(\"user.id\", user.id);",
+                  "    pm.expect(user.email).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(user.first_name).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(user.last_name).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(user.avatar).to.be.a(\"string\").and.not.empty;",
+                  "};",
+                  "",
+                  "// Validate that the endpoint returns the expected successful HTTP status.",
+                  "expectStatus(200);",
+                  "",
+                  "// Validate that the API response can be safely treated as JSON.",
+                  "expectJsonContentType();",
+                  "",
+                  "// Validate the pagination response contract.",
+                  "pm.test(\"Response contains valid pagination fields and data array\", function () {",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    expectIntegerNumber(\"page\", response.page);",
+                  "    expectIntegerNumber(\"per_page\", response.per_page);",
+                  "    expectIntegerNumber(\"total\", response.total);",
+                  "    expectIntegerNumber(\"total_pages\", response.total_pages);",
+                  "    pm.expect(response.data).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "// Validate that the returned page size matches the requested per_page value.",
+                  "pm.test(\"Response per_page matches requested value\", function () {",
+                  "    pm.expect(response.per_page).to.eql(expectedPerPage);",
+                  "});",
+                  "",
+                  "// Validate that the response does not return more users than requested.",
+                  "pm.test(\"Data array length does not exceed requested per_page\", function () {",
+                  "    pm.expect(response.data.length).to.be.at.most(expectedPerPage);",
+                  "});",
+                  "",
+                  "// Validate each user object when the data array contains users.",
+                  "pm.test(\"User objects contain expected minimum fields when present\", function () {",
+                  "    response.data.forEach((user) => {",
+                  "        expectUserContract(user);",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Reqres-Env",
+                "value": "{{reqresEnv}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?per_page={{perPage}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "{{perPage}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET - List users with page and custom page size",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Parse the response body only once and reuse it in all assertions.",
+                  "const response = pm.response.json();",
+                  "",
+                  "// Read expected pagination values from the selected Postman environment.",
+                  "const expectedPage = Number(pm.environment.get(\"pageOne\"));",
+                  "const expectedPerPage = Number(pm.environment.get(\"perPage\"));",
+                  "",
+                  "// Validate the expected HTTP status code.",
+                  "const expectStatus = (statusCode) => {",
+                  "    pm.test(`Status code is ${statusCode}`, function () {",
+                  "        pm.response.to.have.status(statusCode);",
+                  "    });",
+                  "};",
+                  "",
+                  "// Validate that the response is JSON.",
+                  "const expectJsonContentType = () => {",
+                  "    pm.test(\"Content-Type includes application/json\", function () {",
+                  "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                  "        pm.expect(contentType).to.include(\"application/json\");",
+                  "    });",
+                  "};",
+                  "",
+                  "// Validate that a numeric field uses JSON number type and contains an integer value.",
+                  "const expectIntegerNumber = (fieldName, value) => {",
+                  "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
+                  "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
+                  "};",
+                  "",
+                  "// Validate the minimum contract for each user object returned in the list.",
+                  "const expectUserContract = (user) => {",
+                  "    pm.expect(user).to.be.an(\"object\");",
+                  "    expectIntegerNumber(\"user.id\", user.id);",
+                  "    pm.expect(user.email).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(user.first_name).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(user.last_name).to.be.a(\"string\").and.not.empty;",
+                  "    pm.expect(user.avatar).to.be.a(\"string\").and.not.empty;",
+                  "};",
+                  "",
+                  "// Validate that the endpoint returns the expected successful HTTP status.",
+                  "expectStatus(200);",
+                  "",
+                  "// Validate that the API response can be safely treated as JSON.",
+                  "expectJsonContentType();",
+                  "",
+                  "// Validate the pagination response contract.",
+                  "pm.test(\"Response contains valid pagination fields and data array\", function () {",
+                  "    pm.expect(response).to.be.an(\"object\");",
+                  "    expectIntegerNumber(\"page\", response.page);",
+                  "    expectIntegerNumber(\"per_page\", response.per_page);",
+                  "    expectIntegerNumber(\"total\", response.total);",
+                  "    expectIntegerNumber(\"total_pages\", response.total_pages);",
+                  "    pm.expect(response.data).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "// Validate that the returned page matches the requested page.",
+                  "pm.test(\"Response page matches requested page\", function () {",
+                  "    pm.expect(response.page).to.eql(expectedPage);",
+                  "});",
+                  "",
+                  "// Validate that the returned page size matches the requested per_page value.",
+                  "pm.test(\"Response per_page matches requested value\", function () {",
+                  "    pm.expect(response.per_page).to.eql(expectedPerPage);",
+                  "});",
+                  "",
+                  "// Validate that the response does not return more users than requested.",
+                  "pm.test(\"Data array length does not exceed requested per_page\", function () {",
+                  "    pm.expect(response.data.length).to.be.at.most(expectedPerPage);",
+                  "});",
+                  "",
+                  "// Validate each user object when the data array contains users.",
+                  "pm.test(\"User objects contain expected minimum fields when present\", function () {",
+                  "    response.data.forEach((user) => {",
+                  "        expectUserContract(user);",
+                  "    });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "x-api-key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "X-Reqres-Env",
+                "value": "{{reqresEnv}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?page={{pageOne}}&per_page={{perPage}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{pageOne}}"
+                },
+                {
+                  "key": "per_page",
+                  "value": "{{perPage}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Contains user listing requests used to validate pagination, custom page size, JSON response structure and list-user contracts.\n\nThis folder covers positive and functional scenarios for retrieving user lists from different pages and with custom pagination parameters.\n\nThese requests validate HTTP status codes, JSON Content-Type, pagination fields, integer value constraints, data array structure and absence of internal implementation details.",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
             ]
+          }
         },
         {
-            "name": "03 - Users - Single User",
-            "item": [],
-            "description": "Contains requests for retrieving existing and non-existing users, including not found behavior."
-        },
-        {
-            "name": "04 - Users - Create Update Delete",
-            "item": [],
-            "description": "Contains simulated CRUD requests for creating, updating, partially updating and deleting users."
-        },
-        {
-            "name": "05 - Authentication",
-            "item": [],
-            "description": "Contains login and registration requests, including valid and invalid authentication scenarios."
-        },
-        {
-            "name": "06 - Resources",
-            "item": [],
-            "description": "Contains Reqres resource/color endpoints used to validate resource list, single resource and not found behavior."
-        },
-        {
-            "name": "07 - Boundary Tests",
-            "item": [],
-            "description": "Contains edge case requests using zero values, negative values, non-numeric values, empty bodies, empty fields, special characters and long strings."
-        },
-        {
-            "name": "08 - Contract Tests",
-            "item": [],
-            "description": "Contains response structure validations used to confirm expected JSON types, value constraints, success contracts and error contracts."
-        },
-        {
-            "name": "09 - Delayed Response",
-            "item": [],
-            "description": "Contains delayed response scenarios used for basic response time observation. These tests should not be included in the smoke suite."
-        },
-        {
-            "name": "10 - Regression Tests",
-            "item": [],
-            "description": "Contains selected high-value scenarios used to confirm existing API behavior after changes in scripts, environment, collection structure, Newman setup or CI workflow."
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
         }
-    ],
-    "event": [{
-            "listen": "prerequest",
-            "script": {
-                "type": "text/javascript",
-                "exec": [
-                    "pm.collectionVariables.set('collectionName', 'Reqres API Testing Portfolio');",
-                    "",
-                    "const baseUrl = pm.environment.get('baseUrl');",
-                    "",
-                    "if (!baseUrl) {",
-                    "    throw new Error('Missing required environment variable: baseUrl');",
-                    "}"
-                ]
-            }
-        },
-        {
-            "listen": "test",
-            "script": {
-                "type": "text/javascript",
-                "exec": [
-                    "pm.test('Response does not expose internal implementation details', function () {",
-                    "    const responseText = pm.response.text().toLowerCase();",
-                    "",
-                    "    pm.expect(responseText).to.not.include('stack');",
-                    "    pm.expect(responseText).to.not.include('trace');",
-                    "    pm.expect(responseText).to.not.include('exception');",
-                    "    pm.expect(responseText).to.not.include('sql');",
-                    "    pm.expect(responseText).to.not.include('database');",
-                    "    pm.expect(responseText).to.not.include('internal server');",
-                    "    pm.expect(responseText).to.not.include('node_modules');",
-                    "});"
-                ]
-            }
-        }
-    ],
-    "variable": [{
-        "key": "collectionName",
-        "value": "Reqres API Testing Portfolio",
-        "type": "string"
-    }]
+      ]
+    },
+    {
+      "name": "03 - Users - Single User",
+      "item": [],
+      "description": "Contains requests for retrieving existing and non-existing users, including not found behavior."
+    },
+    {
+      "name": "04 - Users - Create Update Delete",
+      "item": [],
+      "description": "Contains simulated CRUD requests for creating, updating, partially updating and deleting users."
+    },
+    {
+      "name": "05 - Authentication",
+      "item": [],
+      "description": "Contains login and registration requests, including valid and invalid authentication scenarios."
+    },
+    {
+      "name": "06 - Resources",
+      "item": [],
+      "description": "Contains Reqres resource/color endpoints used to validate resource list, single resource and not found behavior."
+    },
+    {
+      "name": "07 - Boundary Tests",
+      "item": [],
+      "description": "Contains edge case requests using zero values, negative values, non-numeric values, empty bodies, empty fields, special characters and long strings."
+    },
+    {
+      "name": "08 - Contract Tests",
+      "item": [],
+      "description": "Contains response structure validations used to confirm expected JSON types, value constraints, success contracts and error contracts."
+    },
+    {
+      "name": "09 - Delayed Response",
+      "item": [],
+      "description": "Contains delayed response scenarios used for basic response time observation. These tests should not be included in the smoke suite."
+    },
+    {
+      "name": "10 - Regression Tests",
+      "item": [],
+      "description": "Contains selected high-value scenarios used to confirm existing API behavior after changes in scripts, environment, collection structure, Newman setup or CI workflow."
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "pm.collectionVariables.set('collectionName', 'Reqres API Testing Portfolio');",
+          "",
+          "const baseUrl = pm.environment.get('baseUrl');",
+          "",
+          "if (!baseUrl) {",
+          "    throw new Error('Missing required environment variable: baseUrl');",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "// Validate that the response does not expose internal implementation details.",
+          "// This collection-level test runs for every request in the collection.",
+          "// It uses targeted patterns to avoid false positives caused by normal words in valid API responses.",
+          "pm.test(\"Response does not expose internal implementation details\", function () {",
+          "    const responseText = pm.response.text();",
+          "",
+          "    // Skip this validation when the response body is empty, such as 204 No Content.",
+          "    if (!responseText) {",
+          "        pm.expect(responseText).to.eql(\"\");",
+          "        return;",
+          "    }",
+          "",
+          "    // Normalize the response body to make the validation case-insensitive.",
+          "    const normalizedResponse = responseText.toLowerCase();",
+          "",
+          "    // These patterns represent common signs of internal implementation leakage.",
+          "    // They are intentionally specific to avoid false positives from normal response text.",
+          "    const internalLeakPatterns = [",
+          "        /stack\\s*trace/i,",
+          "        /\"stack\"\\s*:/i,",
+          "        /\"trace\"\\s*:/i,",
+          "        /\"exception\"\\s*:/i,",
+          "        /sql\\s+syntax/i,",
+          "        /database\\s+error/i,",
+          "        /internal\\s+server\\s+error/i,",
+          "        /node_modules/i,",
+          "        /\\/var\\/www/i,",
+          "        /c:\\\\\\\\/i",
+          "    ];",
+          "",
+          "    // Validate that none of the internal leak patterns appear in the response body.",
+          "    internalLeakPatterns.forEach((pattern) => {",
+          "        pm.expect(",
+          "            normalizedResponse,",
+          "            `Response should not match internal leak pattern: ${pattern}`",
+          "        ).to.not.match(pattern);",
+          "    });",
+          "});"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "collectionName",
+      "value": "Reqres API Testing Portfolio"
+    }
+  ]
 }
