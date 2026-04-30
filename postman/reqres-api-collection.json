@@ -5281,8 +5281,729 @@
         },
         {
             "name": "10 - Regression Tests",
-            "item": [],
-            "description": "Contains selected high-value scenarios used to confirm existing API behavior after changes in scripts, environment, collection structure, Newman setup or CI workflow."
+            "description": "Contains selected high-value scenarios used to confirm existing API behavior after changes in scripts, environment, collection structure, Newman setup or CI workflow.\n\nThis folder focuses on stable regression coverage across users, authentication, resources, create/delete simulation and controlled error responses.\n\nThese tests should be quick, stable and representative of the main API behaviors already covered by the full suite. Delayed response scenarios are intentionally excluded from regression to keep execution fast.",
+            "item": [{
+                    "name": "GET - Regression - List users from page 2",
+                    "description": "Related IDs:\n- Regression ID: REG-001\n- Test Case ID: TC-002\n- Endpoint ID: EP-002\n\nPurpose:\nConfirms that the users list endpoint still returns a valid paginated response after changes to the collection, scripts, environment or CI setup.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains pagination fields\n- Response page matches pageTwo environment variable\n- Response contains data array\n- User objects follow the minimum user contract when present\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users?page={{pageTwo}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users"
+                            ],
+                            "query": [{
+                                "key": "page",
+                                "value": "{{pageTwo}}"
+                            }]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the response body only once and reuse it in all assertions.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Read the expected page value from the selected Postman environment.",
+                                "const expectedPage = Number(pm.environment.get(\"pageTwo\"));",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate numeric fields that must contain integer values.",
+                                "const expectIntegerNumber = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
+                                "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
+                                "};",
+                                "",
+                                "// Reusable helper to validate non-empty string fields.",
+                                "const expectNonEmptyString = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a string`).to.be.a(\"string\");",
+                                "    pm.expect(value.trim(), `${fieldName} should not be empty`).to.not.eql(\"\");",
+                                "};",
+                                "",
+                                "// Reusable helper to validate the minimum user object contract.",
+                                "const expectUserContract = (user) => {",
+                                "    pm.expect(user).to.be.an(\"object\");",
+                                "    expectIntegerNumber(\"user.id\", user.id);",
+                                "    expectNonEmptyString(\"user.email\", user.email);",
+                                "    expectNonEmptyString(\"user.first_name\", user.first_name);",
+                                "    expectNonEmptyString(\"user.last_name\", user.last_name);",
+                                "    expectNonEmptyString(\"user.avatar\", user.avatar);",
+                                "};",
+                                "",
+                                "// Validate that the endpoint returns the expected successful HTTP status.",
+                                "expectStatus(200);",
+                                "",
+                                "// Validate that the API response can be safely treated as JSON.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the pagination structure used as a regression checkpoint.",
+                                "pm.test(\"Response contains valid pagination fields and data array\", function () {",
+                                "    pm.expect(response).to.be.an(\"object\");",
+                                "    expectIntegerNumber(\"page\", response.page);",
+                                "    expectIntegerNumber(\"per_page\", response.per_page);",
+                                "    expectIntegerNumber(\"total\", response.total);",
+                                "    expectIntegerNumber(\"total_pages\", response.total_pages);",
+                                "    pm.expect(response.page).to.eql(expectedPage);",
+                                "    pm.expect(response.data).to.be.an(\"array\");",
+                                "});",
+                                "",
+                                "// Validate user objects only when the API returns items in the data array.",
+                                "pm.test(\"User objects contain expected minimum fields when present\", function () {",
+                                "    response.data.forEach((user) => {",
+                                "        expectUserContract(user);",
+                                "    });",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "GET - Regression - Get existing user by ID",
+                    "description": "Related IDs:\n- Regression ID: REG-002\n- Test Case ID: TC-006\n- Endpoint ID: EP-010\n\nPurpose:\nConfirms that an existing user can still be retrieved successfully and follows the expected response contract.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- Response contains data object\n- User ID matches validUserId environment variable\n- User fields follow expected JSON types and value constraints\n- Support object exists\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/{{validUserId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "{{validUserId}}"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the response body only once and reuse it in all assertions.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Read the expected user ID from the selected Postman environment.",
+                                "const expectedUserId = Number(pm.environment.get(\"validUserId\"));",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate numeric fields that must contain integer values.",
+                                "const expectIntegerNumber = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
+                                "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
+                                "};",
+                                "",
+                                "// Reusable helper to validate non-empty string fields.",
+                                "const expectNonEmptyString = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a string`).to.be.a(\"string\");",
+                                "    pm.expect(value.trim(), `${fieldName} should not be empty`).to.not.eql(\"\");",
+                                "};",
+                                "",
+                                "// Validate successful HTTP response.",
+                                "expectStatus(200);",
+                                "",
+                                "// Validate JSON response before checking the body contract.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the single user response as a regression checkpoint.",
+                                "pm.test(\"Response contains expected user data\", function () {",
+                                "    pm.expect(response).to.be.an(\"object\");",
+                                "    pm.expect(response).to.have.property(\"data\");",
+                                "    pm.expect(response).to.have.property(\"support\");",
+                                "    expectIntegerNumber(\"data.id\", response.data.id);",
+                                "    pm.expect(response.data.id).to.eql(expectedUserId);",
+                                "    expectNonEmptyString(\"data.email\", response.data.email);",
+                                "    expectNonEmptyString(\"data.first_name\", response.data.first_name);",
+                                "    expectNonEmptyString(\"data.last_name\", response.data.last_name);",
+                                "    expectNonEmptyString(\"data.avatar\", response.data.avatar);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "POST - Regression - Create user with valid data",
+                    "description": "Related IDs:\n- Regression ID: REG-003\n- Test Case ID: TC-007\n- Endpoint ID: EP-015\n\nPurpose:\nConfirms that the simulated create user flow still accepts valid data and returns generated metadata.\n\nExpected:\n- Status code 201\n- Response body is valid JSON\n- Content-Type includes application/json\n- name matches request body\n- job matches request body\n- id is a non-empty string\n- createdAt is a non-empty string\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"name\": \"{{testUserName}}\",\n  \"job\": \"{{testUserJob}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the response body only once and reuse it in all assertions.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Read expected values from the selected Postman environment.",
+                                "const expectedName = pm.environment.get(\"testUserName\");",
+                                "const expectedJob = pm.environment.get(\"testUserJob\");",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate non-empty string fields.",
+                                "const expectNonEmptyString = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a string`).to.be.a(\"string\");",
+                                "    pm.expect(value.trim(), `${fieldName} should not be empty`).to.not.eql(\"\");",
+                                "};",
+                                "",
+                                "// Validate that create returns the expected created status.",
+                                "expectStatus(201);",
+                                "",
+                                "// Validate JSON response before checking the body contract.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate the create user response as a regression checkpoint.",
+                                "pm.test(\"Response contains created user data\", function () {",
+                                "    pm.expect(response).to.be.an(\"object\");",
+                                "    pm.expect(response.name).to.eql(expectedName);",
+                                "    pm.expect(response.job).to.eql(expectedJob);",
+                                "    expectNonEmptyString(\"id\", response.id);",
+                                "    expectNonEmptyString(\"createdAt\", response.createdAt);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "DELETE - Regression - Delete existing user",
+                    "description": "Related IDs:\n- Regression ID: REG-004\n- Test Case ID: TC-010\n- Endpoint ID: EP-018\n\nPurpose:\nConfirms that the simulated delete flow still returns a successful no-content response.\n\nExpected:\n- Status code 204\n- Response body is empty\n- No JSON parsing is forced\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/{{validUserId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "{{validUserId}}"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Read the response body as text because DELETE 204 should not return JSON.",
+                                "const responseText = pm.response.text();",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Validate that delete returns the expected no-content status.",
+                                "expectStatus(204);",
+                                "",
+                                "// Validate that the response body is empty for 204 No Content.",
+                                "pm.test(\"Response body is empty\", function () {",
+                                "    pm.expect(responseText).to.eql(\"\");",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "POST - Regression - Login with valid credentials",
+                    "description": "Related IDs:\n- Regression ID: REG-005\n- Test Case ID: TC-013\n- Endpoint ID: EP-023\n\nPurpose:\nConfirms that valid login still returns a successful authentication token.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- token is a non-empty string\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"{{validEmail}}\",\n  \"password\": \"{{validPassword}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/login",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "login"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the response body only once and reuse it in all assertions.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Validate successful login status.",
+                                "expectStatus(200);",
+                                "",
+                                "// Validate JSON response before checking the authentication contract.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate token presence as the key regression checkpoint for login.",
+                                "pm.test(\"Response contains non-empty authentication token\", function () {",
+                                "    pm.expect(response).to.be.an(\"object\");",
+                                "    pm.expect(response.token).to.be.a(\"string\").and.not.empty;",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "POST - Regression - Register with valid data",
+                    "description": "Related IDs:\n- Regression ID: REG-006\n- Test Case ID: TC-014\n- Endpoint ID: EP-025\n\nPurpose:\nConfirms that valid registration still returns an id and authentication token.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- id is a number with integer value constraint\n- token is a non-empty string\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "POST",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"email\": \"{{validEmail}}\",\n  \"password\": \"{{validPassword}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/register",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "register"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the response body only once and reuse it in all assertions.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate numeric fields that must contain integer values.",
+                                "const expectIntegerNumber = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
+                                "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
+                                "};",
+                                "",
+                                "// Validate successful register status.",
+                                "expectStatus(200);",
+                                "",
+                                "// Validate JSON response before checking the registration contract.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate id and token as the key regression checkpoint for registration.",
+                                "pm.test(\"Response contains registered user id and token\", function () {",
+                                "    pm.expect(response).to.be.an(\"object\");",
+                                "    expectIntegerNumber(\"id\", response.id);",
+                                "    pm.expect(response.token).to.be.a(\"string\").and.not.empty;",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "GET - Regression - Get single resource",
+                    "description": "Related IDs:\n- Regression ID: REG-007\n- Test Case ID: TC-012\n- Endpoint ID: EP-021\n\nPurpose:\nConfirms that an existing resource can still be retrieved successfully and follows the expected resource contract.\n\nExpected:\n- Status code 200\n- Response body is valid JSON\n- Content-Type includes application/json\n- data.id matches validResourceId environment variable\n- Resource fields follow expected JSON types and value constraints\n- Support object exists\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/unknown/{{validResourceId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "unknown",
+                                "{{validResourceId}}"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Parse the response body only once and reuse it in all assertions.",
+                                "const response = pm.response.json();",
+                                "",
+                                "// Read the expected resource ID from the selected Postman environment.",
+                                "const expectedResourceId = Number(pm.environment.get(\"validResourceId\"));",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate that the response is JSON.",
+                                "const expectJsonContentType = () => {",
+                                "    pm.test(\"Content-Type includes application/json\", function () {",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate numeric fields that must contain integer values.",
+                                "const expectIntegerNumber = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a number`).to.be.a(\"number\");",
+                                "    pm.expect(Number.isInteger(value), `${fieldName} should contain an integer value`).to.be.true;",
+                                "};",
+                                "",
+                                "// Reusable helper to validate non-empty string fields.",
+                                "const expectNonEmptyString = (fieldName, value) => {",
+                                "    pm.expect(value, `${fieldName} should be a string`).to.be.a(\"string\");",
+                                "    pm.expect(value.trim(), `${fieldName} should not be empty`).to.not.eql(\"\");",
+                                "};",
+                                "",
+                                "// Validate successful HTTP response.",
+                                "expectStatus(200);",
+                                "",
+                                "// Validate JSON response before checking the resource contract.",
+                                "expectJsonContentType();",
+                                "",
+                                "// Validate resource data as a regression checkpoint.",
+                                "pm.test(\"Response contains expected resource data\", function () {",
+                                "    pm.expect(response).to.be.an(\"object\");",
+                                "    pm.expect(response).to.have.property(\"data\");",
+                                "    pm.expect(response).to.have.property(\"support\");",
+                                "    expectIntegerNumber(\"data.id\", response.data.id);",
+                                "    pm.expect(response.data.id).to.eql(expectedResourceId);",
+                                "    expectNonEmptyString(\"data.name\", response.data.name);",
+                                "    expectIntegerNumber(\"data.year\", response.data.year);",
+                                "    expectNonEmptyString(\"data.color\", response.data.color);",
+                                "    expectNonEmptyString(\"data.pantone_value\", response.data.pantone_value);",
+                                "});"
+                            ]
+                        }
+                    }]
+                },
+                {
+                    "name": "GET - Regression - Get non-existing user",
+                    "description": "Related IDs:\n- Regression ID: REG-008\n- Test Case ID: TC-015\n- Endpoint ID: EP-011\n\nPurpose:\nConfirms that requesting a non-existing user still returns a controlled not found response without success payload.\n\nExpected:\n- Status code 404\n- Content-Type includes application/json when body exists\n- Response does not contain a valid user payload\n- Response does not contain success-only fields\n- Response does not expose internal implementation details",
+                    "request": {
+                        "method": "GET",
+                        "header": [{
+                                "key": "Accept",
+                                "value": "application/json",
+                                "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/{{invalidUserId}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "{{invalidUserId}}"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [{
+                        "listen": "test",
+                        "script": {
+                            "type": "text/javascript",
+                            "exec": [
+                                "// Read the response body as text first to avoid forcing JSON parsing on an empty body.",
+                                "const responseText = pm.response.text();",
+                                "",
+                                "// Parse the response body only once when a body exists.",
+                                "const response = responseText ? pm.response.json() : {};",
+                                "",
+                                "// Reusable helper to validate the expected HTTP status code.",
+                                "const expectStatus = (statusCode) => {",
+                                "    pm.test(`Status code is ${statusCode}`, function () {",
+                                "        pm.response.to.have.status(statusCode);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to validate JSON Content-Type only when a response body exists.",
+                                "const expectJsonContentTypeWhenBodyExists = () => {",
+                                "    pm.test(\"Content-Type includes application/json when body exists\", function () {",
+                                "        if (!responseText) {",
+                                "            pm.expect(responseText).to.eql(\"\");",
+                                "            return;",
+                                "        }",
+                                "        const contentType = pm.response.headers.get(\"Content-Type\") || \"\";",
+                                "        pm.expect(contentType).to.include(\"application/json\");",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to confirm error responses do not contain success-only fields.",
+                                "const expectNoSuccessPayload = (body) => {",
+                                "    const successOnlyFields = [\"token\", \"id\", \"createdAt\", \"updatedAt\", \"name\", \"job\"];",
+                                "    successOnlyFields.forEach((field) => {",
+                                "        pm.expect(body, `Error response should not contain success field: ${field}`).to.not.have.property(field);",
+                                "    });",
+                                "};",
+                                "",
+                                "// Reusable helper to detect whether a valid user payload was returned by mistake.",
+                                "const hasValidUserPayload = (body) => {",
+                                "    if (!body || !body.data || typeof body.data !== \"object\" || Array.isArray(body.data)) {",
+                                "        return false;",
+                                "    }",
+                                "    const userFields = [\"id\", \"email\", \"first_name\", \"last_name\", \"avatar\"];",
+                                "    return userFields.every((field) => Object.prototype.hasOwnProperty.call(body.data, field));",
+                                "};",
+                                "",
+                                "// Validate expected not found HTTP response.",
+                                "expectStatus(404);",
+                                "",
+                                "// Validate JSON Content-Type only when a body exists.",
+                                "expectJsonContentTypeWhenBodyExists();",
+                                "",
+                                "// Validate that the response does not include a successful user payload.",
+                                "pm.test(\"Response does not contain a valid user payload\", function () {",
+                                "    pm.expect(response).to.be.an(\"object\");",
+                                "    pm.expect(hasValidUserPayload(response)).to.be.false;",
+                                "});",
+                                "",
+                                "// Validate that the error response does not include success-only fields.",
+                                "pm.test(\"Error response does not contain success-only fields\", function () {",
+                                "    expectNoSuccessPayload(response);",
+                                "});"
+                            ]
+                        }
+                    }]
+                }
+            ]
         }
     ],
     "event": [{
