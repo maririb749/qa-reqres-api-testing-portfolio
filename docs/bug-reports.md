@@ -7,8 +7,8 @@
 | Project Name | Reqres API Testing Portfolio |
 | Document Type | Bug Reports |
 | Author | Mariana |
-| Status | Draft |
-| Version | 1.0 |
+| Status | Completed |
+| Version | 1.1 |
 | Created Date | 2026-04-28 |
 | Related Documents | docs/test-plan.md, docs/test-strategy.md, docs/endpoint-mapping.md, docs/test-cases.md, docs/smoke-tests.md, docs/regression-tests.md, docs/contract-tests.md |
 | Application Under Test | Reqres API |
@@ -30,9 +30,9 @@ This document includes:
 - Example bug report structure
 - Notes for demo API limitations
 
-At this stage, no confirmed bugs have been found yet.
+Final execution did not identify confirmed application defects in the Reqres API.
 
-Bug reports will be added after Postman execution if unexpected behavior is identified.
+One CI/environment configuration issue was observed during GitHub Actions setup and documented as an observation, not as an application bug.
 
 ---
 
@@ -257,8 +257,8 @@ Describe whether the issue affects:
 |---|---|
 | Screenshot | evidence/screenshots/BUG-XXX-description.png |
 | Video | evidence/videos/BUG-XXX-description.mp4 |
-| Newman Report | evidence/reports/newman-report.html |
-| Postman Runner | evidence/screenshots/BUG-XXX-runner-result.png |
+| Newman Report | evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml |
+| Postman Runner | evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summary.png |
 
 #### Impact Analysis
 
@@ -380,7 +380,7 @@ It may also reduce the quality of validation feedback for API consumers.
 
 This example is included to demonstrate the expected bug report format.
 
-It should be replaced by real bugs or observations after actual Postman execution.
+This example should remain only as a reference format unless a confirmed defect is identified in future executions.
 
 ---
 
@@ -423,7 +423,7 @@ Describe what actually happened.
 | Evidence Type | File or Link |
 |---|---|
 | Screenshot | evidence/screenshots/OBS-XXX-description.png |
-| Report | evidence/reports/newman-report.html |
+| Report | evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml |
 
 #### Notes
 
@@ -474,8 +474,8 @@ Evidence should include at least one of the following:
 
 - Screenshot from Postman
 - Postman Collection Runner result
-- Newman HTML report
-- Newman JSON report
+- Newman JUnit XML report
+- GitHub Actions execution evidence
 - Short video when useful
 - Request and response details
 
@@ -486,8 +486,8 @@ Recommended file naming:
 | Screenshot | BUG-XXX-short-description.png |
 | Video | BUG-XXX-short-description.mp4 |
 | Postman Runner | BUG-XXX-runner-result.png |
-| Newman Report | newman-report.html |
-| JSON Report | newman-report.json |
+| Newman JUnit Report | newman-results.xml |
+| Postman Runner Summary | postman-runner-summary.png |
 
 Evidence should be stored in:
 
@@ -557,17 +557,70 @@ Before reporting a bug, confirm:
 
 ## 17. Current Bug Status
 
-At this stage, no confirmed bugs have been found.
+No confirmed application defects were found during the final documented execution.
+
+The Reqres API behaved according to the expected results defined in the project documentation and implemented Postman assertions.
 
 | Bug ID | Title | Severity | Priority | Status |
 |---|---|---|---|---|
-| N/A | No confirmed bugs found yet | N/A | N/A | N/A |
+| N/A | No confirmed application bugs found | N/A | N/A | N/A |
 
-Bug reports will be added after the Postman collection is created and executed.
+Final execution summary:
+
+| Evidence Type | Status |
+|---|---|
+| Postman request screenshots | Completed |
+| Postman Runner summary evidence | Completed |
+| Newman CI execution report | Completed |
+| GitHub Actions execution | Passed |
 
 ---
 
-## 18. Relationship With Other Documents
+## 18. Observations and Setup Issues
+
+The following item was identified during project setup. It was not classified as an application bug because the API behavior was correct: requests with an invalid or missing API key were rejected.
+
+### OBS-001 — GitHub Actions initially failed due to invalid Reqres API key configuration
+
+| Field | Value |
+|---|---|
+| Observation ID | OBS-001 |
+| Status | Resolved |
+| Reported By | Mariana |
+| Environment | GitHub Actions |
+| Related Area | Newman CI execution |
+| Classification | Environment / CI Configuration Issue |
+| Application Under Test | Reqres API |
+| Impact | Newman workflow failed before the API key was correctly configured |
+
+#### Summary
+
+During GitHub Actions setup, the Newman workflow initially failed because all API requests returned `403 Forbidden` with an `invalid_api_key` response.
+
+#### Why This Is Not an Application Bug
+
+This was not classified as a Reqres API defect because the API correctly rejected requests with an invalid or missing API key.
+
+#### Root Cause
+
+The `REQRES_API_KEY` repository secret was not correctly configured with the valid Reqres API key value.
+
+#### Resolution
+
+The valid Reqres API key was added as a GitHub Actions repository secret named `REQRES_API_KEY`.
+
+The workflow was re-run successfully after the secret was corrected.
+
+#### Evidence
+
+| Evidence Type | File or Location |
+|---|---|
+| GitHub Actions | Successful Newman API Tests workflow run |
+| Newman Report | `evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml` |
+
+---
+
+## 19. Relationship With Other Documents
 
 | Document | Relationship |
 |---|---|
@@ -578,26 +631,35 @@ Bug reports will be added after the Postman collection is created and executed.
 | docs/smoke-tests.md | Defines critical tests that may block broader execution if failed |
 | docs/regression-tests.md | Defines scenarios to rerun after fixes |
 | docs/contract-tests.md | Defines expected success and error contracts |
-| docs/test-summary-report.md | Will summarize final defects and observations |
+| docs/test-summary-report.md | Summarizes final defects, observations and execution results |
 
 ---
 
-## 19. Notes and Assumptions
+## 20. Notes and Assumptions
 
 - Reqres is a demo API, so some behaviors may be simulated.
 - Some create, update and delete operations may not persist data.
 - A behavior should not be classified as a bug without checking the expected result.
 - Some findings may be documented as observations or limitations instead of bugs.
 - Error responses should be validated for message quality, success payload leakage and internal information leaks.
-- Bug reports should be updated after actual Postman execution.
-- Evidence should be added only after running the tests.
+- Bug reports should be updated if future executions identify confirmed defects.
+- Evidence should reference the final Postman, Newman and GitHub Actions execution artifacts when applicable.
 
 ---
 
-## 20. Next Step
+## 21. Completion Notes
 
-The next document to be created is:
+This bug reports document was finalized after the Postman collection, evidence screenshots, Newman report and GitHub Actions workflow were executed successfully.
 
-docs/traceability-matrix.md
+Final result:
 
-The traceability matrix will connect endpoint IDs, test case IDs, smoke tests, regression tests and contract tests.
+```txt
+No confirmed application bugs found.
+```
+
+Setup/configuration observation:
+
+```txt
+OBS-001 — GitHub Actions initially failed due to invalid Reqres API key configuration.
+Status: Resolved.
+```
