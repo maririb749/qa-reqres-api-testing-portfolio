@@ -10,7 +10,7 @@
 | Status | Completed |
 | Version | 1.1 |
 | Created Date | 2026-04-28 |
-| Related Document | docs/test-plan.md |
+| Related Documents | docs/test-plan.md, docs/endpoint-mapping.md, docs/test-cases.md, docs/smoke-tests.md, docs/regression-tests.md, docs/contract-tests.md, docs/bug-reports.md, docs/test-summary-report.md, docs/traceability-matrix.md |
 | Application Under Test | Reqres API |
 | Base URL | https://reqres.in |
 
@@ -18,11 +18,11 @@
 
 ## 2. Purpose
 
-The purpose of this test strategy is to define how the Reqres API will be tested during this portfolio project.
+The purpose of this test strategy is to define how the Reqres API was tested during this portfolio project.
 
-While the Test Plan defines the overall scope, objectives, risks, deliverables and exit criteria, this Test Strategy defines the practical testing approach, test design techniques, prioritization, execution order, validation rules and evidence strategy.
+While the Test Plan defines the overall scope, objectives, risks, deliverables and exit criteria, this Test Strategy defines the practical testing approach, test design techniques, prioritization, execution order, validation rules, CI execution strategy and evidence strategy.
 
-This document ensures that API testing is performed in a structured, consistent and traceable way.
+This document ensures that API testing is performed in a structured, consistent, traceable and portfolio-ready way.
 
 ---
 
@@ -35,146 +35,184 @@ The main goals of this strategy are:
 - Validate JSON response structure
 - Validate required response fields
 - Validate response data types
+- Validate value constraints
 - Cover positive, negative and boundary scenarios
 - Validate important API contracts
 - Organize requests clearly inside Postman
 - Collect execution evidence
-- Prepare the project for Newman execution
-- Prepare the project for GitHub Actions execution
+- Execute the Postman collection with Newman
+- Run the Newman test suite through GitHub Actions
+- Store manual and CI execution evidence in the project
+- Demonstrate QA thinking through documentation, traceability and evidence
 
 ---
 
 ## 4. Testing Approach
 
-The API will be tested using Postman.
+The API is tested using Postman.
 
-The testing approach will be based on:
+The testing approach is based on:
 
 - Manual API execution in Postman
 - Organized Postman collection folders
-- Environment variables
+- Postman environment variables
 - Test scripts inside Postman requests
+- Reusable validation helpers
+- Collection-level validation for internal implementation leaks
 - Documented test cases
-- Evidence collection
-- Future command-line execution with Newman
-- Future CI execution with GitHub Actions
+- Execution evidence
+- Command-line execution with Newman
+- CI execution with GitHub Actions
+- GitHub Actions secret management for the Reqres API key
 
-Each request will include validations when applicable:
+Each request includes validations when applicable:
 
-- Status code validation
+- HTTP status code validation
 - JSON response validation
 - Response body validation
+- Content-Type validation
 - Contract validation
 - Error message validation
 - Response time validation
 - Header validation
+- Success payload leakage validation
+- Internal implementation leak validation
 
 ---
 
 ## 5. Test Design Techniques
 
-The following test design techniques will be applied:
+The following test design techniques are applied:
 
 | Technique | Application in this Project |
 |---|---|
 | Positive Testing | Validate expected behavior with valid data |
 | Negative Testing | Validate API behavior with missing, invalid or incomplete data |
-| Boundary Value Analysis | Validate edge cases such as zero, negative values, high values and empty fields |
+| Boundary Value Analysis | Validate edge cases such as zero values, negative values, high values and non-numeric values |
 | Error Guessing | Try inputs that could commonly cause failures |
 | Contract Testing | Validate response structure, JSON data types and value constraints |
 | Risk-Based Testing | Prioritize critical endpoints such as login, register and user retrieval |
-| Regression Testing | Re-run selected tests after changes in collection, scripts or CI pipeline |
+| Smoke Testing | Validate that critical endpoints are available before broader execution |
+| Regression Testing | Re-run selected tests after changes in collection, scripts, environment, Newman setup or CI pipeline |
+| Basic Response Time Observation | Validate delayed response behavior with a controlled threshold |
 
 ---
 
 ## 6. Collection Organization Strategy
 
-The Postman collection will be organized by feature and test purpose.
+The Postman collection is organized by feature and test purpose.
 
 Collection name:
 
+```txt
 Reqres API Testing Portfolio
+```
 
-Recommended folder structure:
+Implemented folder structure:
 
-- 01 - Smoke Tests
-- 02 - Users - List and Pagination
-- 03 - Users - Single User
-- 04 - Users - Create Update Delete
-- 05 - Authentication
-- 06 - Resources
-- 07 - Boundary Tests
-- 08 - Contract Tests
-- 09 - Delayed Response
-- 10 - Regression Tests
+| Folder | Purpose | Requests |
+|---|---|---:|
+| 01 - Smoke Tests | Critical API availability checks | 4 |
+| 02 - Users - List and Pagination | User list and pagination scenarios | 4 |
+| 03 - Users - Single User | Single user retrieval and not found behavior | 3 |
+| 04 - Users - Create Update Delete | Simulated user create, update, patch and delete flows | 4 |
+| 05 - Authentication | Login and registration success/error scenarios | 8 |
+| 06 - Resources | Resource list, single resource and not found behavior | 3 |
+| 07 - Boundary Tests | Boundary scenarios for pagination and user IDs | 8 |
+| 08 - Contract Tests | Response contract validations | 15 |
+| 09 - Delayed Response | Basic delayed response observation | 1 |
+| 10 - Regression Tests | Critical regression coverage | 8 |
 
-This organization helps demonstrate clear thinking, maintainability and professional test structure.
+Total implemented requests:
+
+```txt
+58
+```
+
+This organization demonstrates clear thinking, maintainability and professional API test structure.
 
 ---
 
 ## 7. Environment Strategy
 
-A Postman environment will be used to avoid hardcoded values.
+A Postman environment is used to avoid hardcoded values.
 
 Environment name:
 
+```txt
 Reqres API Environment
+```
 
 Main variables:
 
 | Variable | Purpose |
 |---|---|
 | baseUrl | Stores the API base URL |
-| apiKey | Optional variable if an API key is required |
+| apiKey | Stores the Reqres API key locally in Postman and is provided in CI through the GitHub Actions `REQRES_API_KEY` secret |
+| reqresEnv | Stores the Reqres environment header value, using `prod` for local and CI execution |
 | validUserId | Stores a valid user ID |
 | firstUserId | Stores the first valid user ID |
 | invalidUserId | Stores a non-existing user ID |
 | zeroUserId | Stores zero as a boundary ID |
 | negativeUserId | Stores a negative ID |
 | nonNumericUserId | Stores a non-numeric ID |
+| veryHighUserId | Stores a very high or non-existing user ID |
 | validResourceId | Stores a valid resource ID |
 | invalidResourceId | Stores an invalid resource ID |
 | validEmail | Stores a valid email for authentication |
 | validPassword | Stores a valid password for authentication |
-| invalidEmail | Stores an invalid email format |
+| invalidEmail | Stores an invalid email format reserved for future expansion |
 | pageOne | Stores first page number |
 | pageTwo | Stores second page number |
 | pageZero | Stores zero page value |
 | negativePage | Stores negative page value |
 | highPage | Stores a very high page value |
+| nonNumericPage | Stores a non-numeric page value |
 | perPage | Stores custom page size |
 | delaySeconds | Stores delay value for delayed response testing |
+| delayedMaxResponseTimeMs | Stores the maximum accepted response time for the delayed response test |
+| testUserName | Stores user name used in create and update request bodies |
+| testUserJob | Stores job value used in create request body |
+| updatedUserJob | Stores job value used in full update request body |
+| patchedUserJob | Stores job value used in partial update request body |
 
 Requests should use variables such as:
 
-    {{baseUrl}}/api/users?page={{pageTwo}}
+```txt
+{{baseUrl}}/api/users?page={{pageTwo}}
+```
 
 Instead of hardcoded values such as:
 
-    https://reqres.in/api/users?page=2
+```txt
+https://reqres.in/api/users?page=2
+```
+
+The real API key must never be committed to the repository. It should remain only in the local Postman environment or in GitHub Actions repository secrets.
 
 ---
 
 ## 8. Test Prioritization
 
-Tests will be prioritized based on business relevance, API importance and risk.
+Tests are prioritized based on API importance, execution value and risk.
 
 | Priority | Test Area | Reason |
 |---|---|---|
 | High | Smoke tests | Confirm that critical endpoints are available |
 | High | Login and register | Authentication endpoints are critical |
-| High | Get users | Core API behavior |
-| Medium | Create, update and delete users | Important CRUD behavior |
-| Medium | Negative tests | Validate error handling |
-| Medium | Boundary tests | Validate edge cases |
-| Medium | Contract tests | Validate response structure |
+| High | User retrieval | Core API behavior |
+| High | Important error handling | Negative scenarios can reveal poor API behavior |
+| Medium | Create, update and delete users | Important simulated CRUD behavior |
+| Medium | Resource endpoints | Useful secondary API coverage |
+| Medium | Boundary tests | Validate edge cases and unusual input values |
+| Medium | Contract tests | Validate response structure and response stability |
 | Low | Delayed response | Useful for basic response time observation |
 
 ---
 
 ## 9. Positive Testing Strategy
 
-Positive tests will validate successful scenarios using valid data.
+Positive tests validate successful scenarios using valid data.
 
 Examples:
 
@@ -184,23 +222,28 @@ Examples:
 | Get an existing user | API returns 200 and user data |
 | Create user with valid body | API returns 201 and created user data |
 | Update user with valid body | API returns 200 and updated data |
-| Delete user | API returns 204 |
+| Partially update user | API returns 200 and updated field data |
+| Delete user | API returns 204 with empty body |
 | Login with valid data | API returns 200 and token |
 | Register with valid data | API returns 200 and token/id |
+| List resources | API returns 200 and resource list |
+| Get existing resource | API returns 200 and resource data |
 
-Positive tests should confirm:
+Positive tests confirm:
 
 - Correct HTTP status code
-- Valid JSON response
+- Valid JSON response when applicable
 - Required fields
-- Correct data types
+- Correct JSON data types
 - Expected response content
+- Non-empty important values
+- Absence of internal implementation details
 
 ---
 
 ## 10. Negative Testing Strategy
 
-Negative tests will validate how the API behaves with invalid, missing or incomplete data.
+Negative tests validate how the API behaves with missing, invalid or incomplete data.
 
 Examples:
 
@@ -210,114 +253,133 @@ Examples:
 | Get non-existing resource | API returns 404 |
 | Login without password | API returns 400 |
 | Login without email | API returns 400 |
+| Login with empty body | API returns 400 |
 | Register without password | API returns 400 |
 | Register without email | API returns 400 |
+| Register with empty body | API returns 400 |
 
-Negative tests should confirm:
+Negative tests confirm:
 
 - API returns an appropriate error status
 - Error response is valid JSON when applicable
-- Error message is clear
-- API does not return successful status for invalid requests
+- Error message is not empty when returned
+- Error message is coherent with the scenario
+- API does not return success payload for invalid requests
+- API does not expose internal implementation details
 
 ---
 
 ## 11. Boundary Testing Strategy
 
-Boundary tests will validate edge cases and unusual input values.
+Boundary tests validate edge cases and unusual input values.
 
-Examples:
+Implemented boundary examples:
 
-| Scenario | Purpose |
-|---|---|
-| page=0 | Validate lower boundary behavior |
-| page=-1 | Validate negative page value |
-| page=999 | Validate very high page value |
-| page=abc | Validate non-numeric page value |
-| user ID = 0 | Validate invalid zero ID |
-| user ID = -1 | Validate negative ID |
-| user ID = abc | Validate non-numeric ID |
-| empty request body | Validate behavior with missing fields |
-| empty strings | Validate input boundary |
-| special characters | Validate unusual but possible input |
-| very long strings | Validate large input handling |
+| Scenario | Purpose | Expected Status |
+|---|---|---:|
+| page=0 | Validate lower boundary behavior | 200 |
+| page=-1 | Validate negative page value | 200 |
+| page=999 | Validate very high page value | 200 |
+| page=abc | Validate non-numeric page value | 200 |
+| user ID = 0 | Validate invalid zero ID | 404 |
+| user ID = -1 | Validate negative ID | 404 |
+| user ID = abc | Validate non-numeric ID | 404 |
+| delete non-existing user | Validate simulated delete behavior for unusual ID | 204 |
 
-Some boundary results will be marked as "To be observed" until actual execution in Postman.
+Boundary results were confirmed during Postman execution and documented with evidence screenshots.
 
-This is intentional because public demo APIs may not behave exactly like production APIs.
+Additional exploratory boundary data such as empty strings, special characters and very long strings may be considered for future expansion, but they are not part of the current implemented Postman request count.
+
+Reqres is a public demo API, so some boundary behavior may differ from what would be expected in a production API. These behaviors are documented as observed behavior rather than automatically classified as defects.
 
 ---
 
 ## 12. Contract Testing Strategy
 
-Contract tests will validate the expected structure of API responses.
+Contract tests validate the expected structure of API responses.
+
+Contract validation focuses on:
+
+- HTTP status code
+- Content-Type header
+- Valid JSON response when applicable
+- Required fields
+- Expected JSON data types
+- Integer value constraints
+- Non-empty string constraints
+- Success payload structure
+- Error payload structure
+- Absence of success payload in error responses
+- Absence of internal implementation details
 
 For user-related responses, the following fields may be validated:
 
 | Field | Expected JSON Type | Value Constraint |
 |---|---|---|
 | data.id | number | Integer value |
-| data.email | string | Non-empty, email-like value |
+| data.email | string | Non-empty |
 | data.first_name | string | Non-empty |
 | data.last_name | string | Non-empty |
-| data.avatar | string | Non-empty, URL-like value |
-| support.url | string |
-| support.text | string |
+| data.avatar | string | Non-empty |
+| support.url | string | Non-empty |
+| support.text | string | Non-empty |
 
 For list users responses, the following fields may be validated:
 
-| Field | Expected Type |
-|---|---|
-| page | number |
-| per_page | number |
-| total | number |
-| total_pages | number |
-| data | array |
-| support | object |
+| Field | Expected Type | Value Constraint |
+|---|---|---|
+| page | number | Integer value |
+| per_page | number | Integer value |
+| total | number | Integer value |
+| total_pages | number | Integer value |
+| data | array | Can be empty or contain user objects |
+| support | object | Must contain support metadata |
 
 For resource responses, the following fields may be validated:
 
-| Field | Expected Type |
+| Field | Expected Type | Value Constraint |
+|---|---|---|
+| data.id | number | Integer value |
+| data.name | string | Non-empty |
+| data.year | number | Integer value |
+| data.color | string | Non-empty |
+| data.pantone_value | string | Non-empty |
+
+For authentication responses, the following fields may be validated:
+
+| Scenario | Expected Fields |
 |---|---|
-| data.id | number |
-| data.name | string |
-| data.year | number |
-| data.color | string |
-| data.pantone_value | string |
+| Login success | token |
+| Register success | id, token |
+| Login error | error |
+| Register error | error |
 
-Contract tests should validate:
-
-- Response is valid JSON
-- Required objects exist
-- Required fields exist
-- Field data types are correct
-- Arrays are returned where expected
-- Objects are returned where expected
+The implemented contract suite contains 15 contract requests.
 
 ---
 
 ## 13. Smoke Testing Strategy
 
-Smoke tests will validate the minimum critical functionality before running broader tests.
+Smoke tests validate the minimum critical functionality before running broader tests.
 
-Smoke test candidates:
+Implemented smoke tests:
 
-| ID | Method | Endpoint | Purpose |
-|---|---|---|---|
-| SMK-001 | GET | /api/users?page=2 | Validate user list endpoint |
-| SMK-002 | GET | /api/users/2 | Validate single user endpoint |
-| SMK-003 | POST | /api/users | Validate create user endpoint |
-| SMK-004 | POST | /api/login | Validate login endpoint |
+| ID | Method | Endpoint | Purpose | Status |
+|---|---|---|---|---|
+| SMK-001 | GET | /api/users?page=2 | Validate user list endpoint | Passed |
+| SMK-002 | GET | /api/users/2 | Validate single user endpoint | Passed |
+| SMK-003 | POST | /api/users | Validate create user endpoint | Passed |
+| SMK-004 | POST | /api/login | Validate login endpoint | Passed |
 
 Smoke tests should be quick, stable and focused on API availability.
 
-The delayed response endpoint should not be part of the smoke suite because it intentionally increases execution time.
+The delayed response endpoint is not part of the smoke suite because it intentionally increases execution time.
 
 ---
 
 ## 14. Regression Testing Strategy
 
-Regression tests will be executed after changes in:
+Regression tests are executed after changes in:
 
 - Postman collection structure
 - Postman test scripts
@@ -326,124 +388,151 @@ Regression tests will be executed after changes in:
 - GitHub Actions workflow
 - Expected results
 - Test data
+- Documentation that affects expected behavior
 
-Regression testing will not necessarily execute every single test every time.
+Regression testing does not necessarily execute every single test every time.
 
-The regression suite should focus on the most relevant endpoints and high-risk scenarios.
+The implemented regression suite focuses on relevant endpoints and high-value scenarios.
 
 Regression test candidates:
 
-| ID | Related Area | Reason |
-|---|---|---|
-| REG-001 | List users | Core endpoint |
-| REG-002 | Get single user | Core endpoint |
-| REG-003 | User not found | Error handling |
-| REG-004 | Create user | CRUD behavior |
-| REG-005 | Login valid | Authentication success |
-| REG-006 | Register valid | Registration success |
-| REG-007 | Get single resource | Resource behavior |
+| ID | Related Area | Reason | Status |
+|---|---|---|---|
+| REG-001 | List users from page 2 | Core user listing behavior | Passed |
+| REG-002 | Get existing user | Core single user behavior | Passed |
+| REG-003 | Create user | Simulated CRUD behavior | Passed |
+| REG-004 | Delete existing user | Simulated delete behavior | Passed |
+| REG-005 | Login valid | Authentication success | Passed |
+| REG-006 | Register valid | Registration success | Passed |
+| REG-007 | Get single resource | Resource behavior | Passed |
+| REG-008 | Get non-existing user | Important error handling behavior | Passed |
+
+The implemented regression suite contains 8 requests.
 
 ---
 
 ## 15. Delayed Response Testing Strategy
 
-The delayed response endpoint will be used for basic response time observation.
+The delayed response endpoint is used for basic response time observation.
 
 Endpoint:
 
-    GET /api/users?delay=3
+```txt
+GET /api/users?delay=3
+```
 
 Purpose:
 
 - Validate that the API can return a delayed response
 - Observe response time behavior
 - Separate slow tests from smoke tests
-- Prepare future Newman execution with realistic timing awareness
+- Ensure the delayed request remains below the configured threshold
 
 This test should not be treated as a performance load test.
 
 It is only a basic response time observation.
 
+The delayed response request is intentionally excluded from the smoke and regression suites.
+
 ---
 
 ## 16. Header Validation Strategy
 
-Header validation will be applied when useful.
+Header validation is applied when useful.
 
-Possible validations:
+Validations include:
 
-- Response contains Content-Type
-- Content-Type includes application/json when response body is JSON
+- Response contains Content-Type when applicable
+- Content-Type includes `application/json` when response body is JSON
 - Response headers are available
-- Authentication-related headers are handled if required
+- Request headers include required project values when applicable
 
-Header validation should not be overcomplicated in this project because the main goal is API functional testing.
+Request headers used in the project include:
+
+| Header | Purpose |
+|---|---|
+| Accept: application/json | Requests JSON responses |
+| Content-Type: application/json | Used for requests with JSON body |
+| x-api-key: {{apiKey}} | Provides Reqres API key |
+| X-Reqres-Env: {{reqresEnv}} | Identifies the project execution environment |
+
+Header validation is intentionally kept practical because the main goal of the project is API functional, contract and regression testing.
 
 ---
 
 ## 17. Response Time Strategy
 
-Basic response time checks will be added to selected requests.
+Basic response time checks are applied where useful.
 
-Suggested rule:
+The delayed response test uses a configured threshold through the Postman environment variable:
 
-| Request Type | Expected Response Time |
-|---|---|
-| Regular API requests | Less than 1000 ms |
-| Delayed response request | Expected to be slower due to delay parameter |
+```txt
+delayedMaxResponseTimeMs
+```
 
-Example validation idea:
+Implemented delayed response threshold:
 
-    Response time should be below 1000 ms for normal requests.
+```txt
+5000 ms
+```
 
-For the delayed response endpoint, the expected time should be handled separately.
+Response time validation is used as a basic observation only. This project does not include load, stress or full performance testing.
 
 ---
 
 ## 18. Evidence Strategy
 
-Evidence will be collected after executing tests in Postman and later with Newman.
+Evidence is collected after executing tests in Postman and through CI execution with Newman and GitHub Actions.
 
-Evidence may include:
+Evidence includes:
 
-- Postman collection overview screenshot
-- Smoke test execution screenshot
-- Positive test execution screenshot
-- Negative test execution screenshot
-- Boundary test execution screenshot
-- Contract test execution screenshot
-- Newman HTML report
-- Newman JSON report
-- GitHub Actions execution screenshot
+- Postman request execution screenshots
+- Postman Runner summary screenshot
+- Newman JUnit XML report
+- GitHub Actions successful workflow execution
+- Evidence paths referenced in documentation
 
 Evidence folders:
 
 | Evidence Type | Location |
 |---|---|
-| Screenshots | evidence/screenshots/ |
-| Reports | evidence/reports/ |
+| Postman screenshots | evidence/screenshots/reqres-api-testing-portfolio/ |
+| Newman report | evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml |
+| Postman Runner summary | evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summary.png |
 
-Evidence should be named clearly.
+Postman evidence is organized by collection area:
 
-Recommended examples:
+```txt
+evidence/screenshots/reqres-api-testing-portfolio/smoke-tests/
+evidence/screenshots/reqres-api-testing-portfolio/users-list-pagination/
+evidence/screenshots/reqres-api-testing-portfolio/single-user/
+evidence/screenshots/reqres-api-testing-portfolio/create-update-delete/
+evidence/screenshots/reqres-api-testing-portfolio/authentication/
+evidence/screenshots/reqres-api-testing-portfolio/resources/
+evidence/screenshots/reqres-api-testing-portfolio/boundary-tests/
+evidence/screenshots/reqres-api-testing-portfolio/contract-tests/
+evidence/screenshots/reqres-api-testing-portfolio/delayed-response/
+evidence/screenshots/reqres-api-testing-portfolio/regression-tests/
+```
 
-- postman-collection-overview.png
-- smoke-tests-execution.png
-- positive-tests-execution.png
-- negative-tests-execution.png
-- boundary-tests-execution.png
-- contract-tests-execution.png
-- newman-report.html
-- newman-report.json
-- github-actions-run.png
+Recommended naming examples:
+
+- `SMK-001-list-users-page-2-postman-passed.png`
+- `TC-017-login-without-password-postman-passed.png`
+- `REG-008-get-non-existing-user-regression-postman-passed.png`
+- `CON-015-register-error-contract-postman-passed.png`
+- `newman-results.xml`
+- `postman-runner-summary.png`
 
 ---
 
 ## 19. Defect Handling Strategy
 
-Unexpected behavior will be documented in:
+Unexpected behavior is documented in:
 
-    docs/bug-reports.md
+```txt
+docs/bug-reports.md
+```
 
 A bug report should include:
 
@@ -461,68 +550,114 @@ A bug report should include:
 - Evidence
 - Notes
 
-If no critical bugs are found, the bug report file will still include a professional bug report template.
+No confirmed application defects were found during final documented execution.
 
-This demonstrates readiness to document defects properly.
+One CI/environment setup issue was documented as an observation because the API correctly rejected requests with an invalid or missing API key.
+
+Current defect result:
+
+| Item | Result |
+|---|---|
+| Confirmed application bugs | 0 |
+| Setup/configuration observation | OBS-001 |
+| Observation status | Resolved |
 
 ---
 
 ## 20. Newman Strategy
 
-Newman will be added after the Postman collection is completed and exported.
+Newman is configured to execute the exported Postman collection from the command line and through GitHub Actions.
 
-Newman will be used to:
+Newman is used to:
 
-- Run the Postman collection from the command line
-- Generate CLI output
-- Generate HTML report
-- Generate JSON report
-- Prepare the project for CI execution
+- Run the full Postman collection
+- Validate all implemented requests and assertions
+- Generate CLI execution output
+- Generate a JUnit XML report
+- Support CI execution in GitHub Actions
 
-Expected future command:
+Current Newman report location:
 
-    npx newman run postman/reqres-api-collection.json -e postman/reqres-environment.json
+```txt
+evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
+```
 
-Expected future report command:
+The Newman execution uses:
 
-    npx newman run postman/reqres-api-collection.json -e postman/reqres-environment.json -r cli,htmlextra,json --reporter-htmlextra-export evidence/reports/newman-report.html --reporter-json-export evidence/reports/newman-report.json
+| Item | Location or Value |
+|---|---|
+| Postman collection | postman/reqres-api-collection.json |
+| Postman environment | postman/reqres-environment.json |
+| Base URL variable | baseUrl |
+| Reqres environment variable | reqresEnv |
+| API key variable | apiKey |
+| CI secret | REQRES_API_KEY |
+
+In CI, the API key is provided through the GitHub Actions repository secret:
+
+```txt
+REQRES_API_KEY
+```
+
+The API key must not be committed to the repository.
 
 ---
 
 ## 21. GitHub Actions Strategy
 
-GitHub Actions will be added after Newman is working locally.
+GitHub Actions is configured to run the Newman API test suite automatically.
 
-The CI workflow will be used to:
+The workflow is used to:
 
-- Install project dependencies
-- Run Newman tests automatically
-- Validate the Postman collection on push
-- Validate the Postman collection on pull request
+- Check out the repository
+- Set up Node.js
+- Install Newman
+- Validate required CI variables and files
+- Run the exported Postman collection
+- Provide runtime environment variables
+- Use the `REQRES_API_KEY` repository secret
+- Generate a Newman JUnit XML report
+- Upload the Newman result as a workflow artifact
+- Validate the collection on push and pull request events
 
 Workflow file location:
 
-    .github/workflows/newman-tests.yml
+```txt
+.github/workflows/newman-tests.yml
+```
 
-The workflow should run on:
+The workflow runs on:
 
 - push to main
 - pull request to main
+- manual workflow dispatch
+
+Current CI status:
+
+```txt
+PASSED
+```
 
 ---
 
 ## 22. Traceability Strategy
 
-Traceability will be handled through:
+Traceability is handled through:
 
 - Endpoint IDs
 - Test case IDs
-- Test type classification
+- Smoke test IDs
+- Regression test IDs
+- Contract test IDs
+- Postman folder mapping
+- Evidence paths
 - Related documentation files
 
-The traceability matrix will be documented in:
+The traceability matrix is documented in:
 
-    docs/traceability-matrix.md
+```txt
+docs/traceability-matrix.md
+```
 
 The goal is to show which test cases cover each endpoint and which type of testing is applied.
 
@@ -530,18 +665,22 @@ The goal is to show which test cases cover each endpoint and which type of testi
 
 ## 23. Execution Order
 
-Tests will be executed in the following order:
+Tests are organized and executed in the following Postman collection order:
 
-1. Smoke tests
-2. Positive tests
-3. Negative tests
-4. Boundary tests
-5. Resource tests
-6. Contract tests
-7. Delayed response test
-8. Regression tests
+1. 01 - Smoke Tests
+2. 02 - Users - List and Pagination
+3. 03 - Users - Single User
+4. 04 - Users - Create Update Delete
+5. 05 - Authentication
+6. 06 - Resources
+7. 07 - Boundary Tests
+8. 08 - Contract Tests
+9. 09 - Delayed Response
+10. 10 - Regression Tests
 
 This order ensures that critical API availability is checked before broader and more detailed validations.
+
+The delayed response folder is intentionally kept outside the smoke and regression scope because it introduces an artificial wait time.
 
 ---
 
@@ -553,36 +692,59 @@ The test strategy should be updated when:
 - Test scope changes
 - New test types are introduced
 - Postman collection structure changes
-- Newman execution is added
-- GitHub Actions workflow is added
+- Newman execution changes
+- GitHub Actions workflow changes
+- GitHub Actions secrets or environment variables change
 - Test data changes
 - Expected API behavior changes
+- Evidence structure changes
+- Project documentation is reorganized
 
 ---
 
 ## 25. Conclusion
 
-This test strategy defines how the Reqres API Testing Portfolio project will be tested in a structured and professional way.
+This test strategy defines how the Reqres API Testing Portfolio project was tested in a structured and professional way.
 
-The strategy focuses on demonstrating QA thinking through organized test design, clear prioritization, positive and negative testing, boundary testing, contract validation, evidence collection and future automation with Newman and GitHub Actions.
+The strategy focuses on demonstrating QA thinking through organized test design, clear prioritization, positive and negative testing, boundary testing, contract validation, evidence collection and automated execution with Newman and GitHub Actions.
+
+The project now includes both manual Postman evidence and CI evidence, making it suitable for a QA portfolio.
 
 ---
 
 ## 26. Completion Notes
 
-This test strategy was finalized and validated against all project documents on 2026-04-30.
+This test strategy was finalized and validated against the current project state.
 
 All testing approaches, design techniques, priorities, execution orders and evidence strategies are documented and aligned with:
 
-- Test Plan (docs/test-plan.md)
-- Endpoint Mapping (docs/endpoint-mapping.md)
-- Test Cases (docs/test-cases.md)
-- Smoke Tests (docs/smoke-tests.md)
-- Regression Tests (docs/regression-tests.md)
-- Contract Tests (docs/contract-tests.md)
+- Test Plan (`docs/test-plan.md`)
+- Endpoint Mapping (`docs/endpoint-mapping.md`)
+- Test Cases (`docs/test-cases.md`)
+- Smoke Tests (`docs/smoke-tests.md`)
+- Regression Tests (`docs/regression-tests.md`)
+- Contract Tests (`docs/contract-tests.md`)
+- Bug Reports (`docs/bug-reports.md`)
+- Test Summary Report (`docs/test-summary-report.md`)
+- Traceability Matrix (`docs/traceability-matrix.md`)
+- GitHub Actions Workflow (`.github/workflows/newman-tests.yml`)
+- Newman Report (`evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml`)
+
+Final execution status:
+
+| Item | Result |
+|---|---:|
+| Postman folders implemented | 10 |
+| Postman requests implemented | 58 |
+| Smoke requests | 4 |
+| Regression requests | 8 |
+| Contract requests | 15 |
+| Newman/GitHub Actions execution | Passed |
+| Confirmed application bugs | 0 |
+| CI/setup observation | OBS-001 resolved |
 
 Final status:
 
-\`\`\`txt
+```txt
 COMPLETED
-\`\`\`
+```
