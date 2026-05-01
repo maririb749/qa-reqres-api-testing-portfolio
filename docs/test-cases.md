@@ -10,7 +10,7 @@
 | Status | Completed |
 | Version | 1.1 |
 | Created Date | 2026-04-28 |
-| Related Documents | docs/test-plan.md, docs/test-strategy.md, docs/endpoint-mapping.md |
+| Related Documents | docs/test-plan.md, docs/test-strategy.md, docs/endpoint-mapping.md, docs/smoke-tests.md, docs/regression-tests.md, docs/contract-tests.md, docs/test-summary-report.md, docs/traceability-matrix.md |
 | Application Under Test | Reqres API |
 | Base URL | https://reqres.in |
 
@@ -172,6 +172,7 @@ These steps apply to all API test cases:
 2. Select the Reqres API Environment.
 3. Confirm that the `baseUrl` variable is configured.
 4. Confirm that the `apiKey` variable is configured locally in the Postman environment.
+For CI execution, the API key is provided through the GitHub Actions repository secret `REQRES_API_KEY`.
 5. Open the related request in the Postman collection.
 6. Send the request or execute the folder using Collection Runner.
 7. Validate the response status code.
@@ -195,13 +196,17 @@ These steps apply to all API test cases:
 - JSON numeric fields expected to be integer values are validated as `number` type with an integer value constraint.
 - Error responses are validated to confirm they do not contain success-only payloads.
 - The collection includes a global validation to check that responses do not expose internal implementation details.
-- Evidence screenshots were captured after successful Postman execution.
+- Evidence screenshots were captured after successful Postman execution, and CI execution evidence was captured through Newman and GitHub Actions.
+- Newman execution is configured through GitHub Actions.
+- The Newman CI execution report is stored in `evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml`.
+- Postman Runner summary evidence is stored in `evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summary.png`.
+- The real API key should remain only in the local Postman environment or GitHub Actions repository secrets and should never be committed to the repository.
 
 ---
 
 ## 14. Completion Notes
 
-All implemented Postman test cases were executed successfully and documented with evidence.
+All implemented Postman test cases were executed successfully and documented with Postman screenshots, Postman Runner summary evidence and the GitHub Actions Newman execution report.
 
 The implemented coverage includes:
 
@@ -212,6 +217,9 @@ The implemented coverage includes:
 - 15 contract validation checks
 - 4 smoke test checks
 - 8 regression test checks
+- 1 Newman CI execution report
+- 1 Postman Runner summary evidence
+- GitHub Actions/Newman execution passed
 
 Final execution result:
 
