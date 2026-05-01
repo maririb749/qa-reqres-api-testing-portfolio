@@ -39,7 +39,7 @@ jobs:
           newman run postman/reqres-api-collection.json \
             -e postman/reqres-environment.json \
             --env-var baseUrl="https://reqres.in" \
-            --delay-request 5000 \
+            --delay-request 8000 \
             --timeout-request 15000 \
             --reporters cli,junit \
             --reporter-junit-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
