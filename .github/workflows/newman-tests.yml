@@ -16,7 +16,7 @@ jobs:
 
     env:
       BASE_URL: https://reqres.in
-      REQRES_ENV: ci
+      REQRES_ENV: prod
       REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
 
     steps:
