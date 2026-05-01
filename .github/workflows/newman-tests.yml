@@ -31,27 +31,29 @@ jobs:
       - name: Install Newman
         run: npm install -g newman
 
-
       - name: Validate required CI variables
         run: |
           test -n "$REQRES_API_KEY" || (echo "REQRES_API_KEY secret is missing" && exit 1)
           test -f postman/reqres-api-collection.json || (echo "Postman collection file not found" && exit 1)
           test -f postman/reqres-environment.json || (echo "Postman environment file not found" && exit 1)
 
-
       - name: Run Postman collection
         run: |
+          mkdir -p evidence/reports/reqres-api-testing-portfolio/newman
+
           newman run postman/reqres-api-collection.json \
             -e postman/reqres-environment.json \
             --env-var baseUrl="$BASE_URL" \
             --env-var reqresEnv="$REQRES_ENV" \
             --env-var apiKey="$REQRES_API_KEY" \
+            --delay-request 1000 \
+            --timeout-request 10000 \
             --reporters cli,junit \
-            --reporter-junit-export newman-results.xml
+            --reporter-junit-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
 
       - name: Upload Newman test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: newman-results
-          path: newman-results.xml
+          path: evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
