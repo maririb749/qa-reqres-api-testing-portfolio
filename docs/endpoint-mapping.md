@@ -68,7 +68,9 @@ Overall implementation summary:
 | Endpoint definitions mapped | 27 |
 | Postman folders implemented | 10 |
 | Postman requests implemented | 58 |
-| Evidence folders created | 10 |
+| Screenshot evidence folders created | 10 |
+| Newman CI report artifacts | 1 |
+| Postman Runner summary evidence | 1 |
 
 ---
 
@@ -194,13 +196,13 @@ Overall implementation summary:
 - The delayed response endpoint is used only for basic response time observation.
 - The delayed response endpoint is intentionally excluded from the smoke and regression suites.
 - Contract tests reuse several endpoints already covered by functional tests, but their purpose is different: validating response structure, JSON types and value constraints.
-- The real API key should remain only in the local Postman environment and should not be committed to the repository.
+- The real API key should remain only in the local Postman environment or GitHub Actions repository secrets and should never be committed to the repository.
 
 ---
 
 ## 10. Completion Notes
 
-This endpoint mapping was updated to reflect the completed Postman collection structure and executed test coverage.
+This endpoint mapping was updated to reflect the completed Postman collection structure, executed test coverage, Postman evidence and GitHub Actions/Newman execution.
 
 Final coverage includes:
 
@@ -216,6 +218,7 @@ Final coverage includes:
 | Contract requests | 15 |
 | Delayed response requests | 1 |
 | Regression requests | 8 |
+| Newman/GitHub Actions execution | Passed |
 
 Final result:
 
