@@ -31,6 +31,14 @@ jobs:
       - name: Install Newman
         run: npm install -g newman
 
+
+      - name: Validate required CI variables
+        run: |
+          test -n "$REQRES_API_KEY" || (echo "REQRES_API_KEY secret is missing" && exit 1)
+          test -f postman/reqres-api-collection.json || (echo "Postman collection file not found" && exit 1)
+          test -f postman/reqres-environment.json || (echo "Postman environment file not found" && exit 1)
+
+
       - name: Run Postman collection
         run: |
           newman run postman/reqres-api-collection.json \
