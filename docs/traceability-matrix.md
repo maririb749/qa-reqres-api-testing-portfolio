@@ -10,7 +10,7 @@
 | Status | Completed |
 | Version | 1.1 |
 | Created Date | 2026-04-28 |
-| Related Documents | docs/test-plan.md, docs/test-strategy.md, docs/endpoint-mapping.md, docs/test-cases.md, docs/smoke-tests.md, docs/regression-tests.md, docs/contract-tests.md, docs/bug-reports.md |
+| Related Documents | docs/test-plan.md, docs/test-strategy.md, docs/endpoint-mapping.md, docs/test-cases.md, docs/smoke-tests.md, docs/regression-tests.md, docs/contract-tests.md, docs/bug-reports.md, docs/test-summary-report.md |
 | Application Under Test | Reqres API |
 | Base URL | https://reqres.in |
 
@@ -70,6 +70,10 @@ This matrix connects the following identifiers:
 | Delayed response behavior | Covered |
 | Bug report linkage | Prepared |
 | Postman folder mapping | Covered |
+| Newman execution | Covered |
+| GitHub Actions execution | Covered |
+| Postman Runner summary evidence | Covered |
+| CI setup observation | Documented and resolved |
 
 ---
 
@@ -235,39 +239,54 @@ This matrix connects the following identifiers:
 
 ## 8. Requirement-to-Test Coverage
 
-| Requirement / Quality Goal | Covered By | Evidence Planned |
+
+| Requirement / Quality Goal | Covered By | Evidence |
 |---|---|---|
-| Validate API status codes | All test cases | Postman execution screenshots, Newman report |
-| Validate JSON response body | Positive, contract and regression tests | Postman assertions, screenshots |
+| Validate API status codes | All implemented test cases | Postman screenshots, Newman JUnit report |
+| Validate JSON response body | Positive, negative, contract and regression tests | Postman assertions, screenshots, Newman report |
 | Validate positive scenarios | TC-001 to TC-014 | Postman execution screenshots |
 | Validate negative scenarios | TC-015 to TC-022 | Postman execution screenshots |
 | Validate boundary scenarios | TC-023 to TC-030 | Postman execution screenshots |
-| Validate response contracts | TC-040 to TC-045, CON-001 to CON-015 | Contract execution screenshots |
-| Validate smoke coverage | SMK-001 to SMK-004 | Smoke execution screenshot |
-| Validate regression coverage | REG-001 to REG-008 | Regression execution screenshot |
+| Validate delayed response behavior | TC-031 | Delayed response screenshot and Newman execution |
+| Validate response contracts | CON-001 to CON-015 | Contract execution screenshots |
+| Validate smoke coverage | SMK-001 to SMK-004 | Smoke execution screenshots |
+| Validate regression coverage | REG-001 to REG-008 | Regression execution screenshots |
 | Validate error contract quality | CON-012 to CON-015 | Contract execution screenshots |
 | Validate no success payload in error responses | Negative and error contract tests | Postman assertions |
-| Validate no internal implementation leaks | All relevant scripts | Postman assertions |
-| Document defects and observations | docs/bug-reports.md | Bug evidence screenshots |
-| Document Postman collection structure | Future exported collection and README | Postman collection screenshots |
-| Prepare Newman execution | Future Newman setup | Newman HTML/JSON reports |
-| Prepare GitHub Actions execution | Future workflow | GitHub Actions run screenshot |
+| Validate no internal implementation leaks | Collection-level and request-level assertions | Postman assertions and Newman execution |
+| Document defects and observations | docs/bug-reports.md | OBS-001 documented and resolved |
+| Document Postman collection structure | postman/reqres-api-collection.json and documentation files | Postman collection export and docs |
+| Execute collection with Newman | GitHub Actions workflow | Newman JUnit XML report |
+| Execute CI workflow | .github/workflows/newman-tests.yml | GitHub Actions passed execution |
+| Store CI evidence | evidence/reports/reqres-api-testing-portfolio/newman/ | newman-results.xml |
+| Store Postman Runner evidence | evidence/reports/reqres-api-testing-portfolio/postman-runner/ | postman-runner-summary.png |
 
 ---
 
 ## 9. Coverage Gaps and Follow-Up
 
-At this stage, the following items are intentionally pending because they depend on later project phases:
+No open coverage gaps were identified for the current implemented project scope.
 
-| Pending Item | Reason | Future Action |
+The planned API testing scope was completed and evidenced.
+
+| Item | Current Status | Notes |
 |---|---|---|
-| Actual execution status | Tests have been executed | Status is reflected in test-summary-report.md |
-| Actual evidence files | Evidence has been collected | Screenshots exist in evidence folders |
-| Real bugs or observations | No confirmed bugs found | Add after execution if found |
-| Postman collection export | Collection has been created | Export to postman/reqres-api-collection.json |
-| Postman environment export | Environment has been created | Export to postman/reqres-environment.json |
-| Newman report | Newman can be configured later | Generate report in evidence/reports |
-| GitHub Actions run | CI can be configured later | Add workflow and execution evidence |
+| Postman collection execution | Completed | 58 requests executed successfully |
+| Evidence screenshots | Completed | 58 screenshots captured |
+| Postman collection export | Completed | Stored in `postman/reqres-api-collection.json` |
+| Postman environment export | Completed | Stored in `postman/reqres-environment.json` with safe placeholder values |
+| Newman report | Completed | Stored in `evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml` |
+| GitHub Actions workflow | Completed | Stored in `.github/workflows/newman-tests.yml` |
+| GitHub Actions execution | Passed | Newman workflow executed successfully |
+| Confirmed application bugs | None found | Final execution found 0 confirmed application defects |
+| CI setup observation | Resolved | OBS-001 documented invalid API key setup during CI configuration |
+
+Future improvements may include:
+
+- Adding exploratory tests with special characters, empty strings and very long values
+- Adding Newman HTML reporting if useful later
+- Adding README badges for GitHub Actions status
+- Expanding API testing to another public API project
 
 ---
 
@@ -296,18 +315,22 @@ Any change in this document should remain consistent with:
 - docs/regression-tests.md
 - docs/contract-tests.md
 - docs/bug-reports.md
+- docs/test-summary-report.md
 
 ---
 
+
 ## 11. Notes and Assumptions
 
-- This matrix maps planned coverage and actual execution results.
+- This matrix maps implemented coverage and actual execution results.
 - Test execution status is reflected in docs/test-summary-report.md.
 - Some Reqres API responses are simulated and may not persist data.
-- The matrix does not create new scenarios; it connects existing ones.
-- Future Postman scripts follow the project script quality standard.
-- Evidence links reference the evidence collection folders.
-- Bug report references will be added if confirmed bugs are found.
+- The matrix does not create new scenarios; it connects existing endpoints, test cases, test suites and evidence.
+- Postman scripts follow the project script quality standard.
+- Evidence links reference the final evidence collection folders and reports.
+- No confirmed application bugs were found during final execution.
+- OBS-001 was documented as a resolved CI/environment setup observation.
+- The Newman report and Postman Runner summary are included as execution evidence.
 
 ---
 
@@ -327,6 +350,24 @@ The following documents have been validated for consistency:
 - Regression Tests (docs/regression-tests.md) — Completed
 - Contract Tests (docs/contract-tests.md) — Completed
 - Test Summary Report (docs/test-summary-report.md) — Completed
+- Bug Reports (docs/bug-reports.md) — Completed
+- GitHub Actions Workflow (.github/workflows/newman-tests.yml) — Completed
+- Newman Report (evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml) — Completed
+- Postman Runner Summary (evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summary.png) — Completed
+
+Final traceability status:
+
+| Item | Result |
+|---|---:|
+| Endpoints mapped | 27 |
+| Postman folders mapped | 10 |
+| Postman requests mapped | 58 |
+| Smoke tests mapped | 4 |
+| Regression tests mapped | 8 |
+| Contract tests mapped | 15 |
+| Newman/GitHub Actions execution | Passed |
+| Confirmed application bugs | 0 |
+| CI/setup observation | OBS-001 resolved |
 
 Final status:
 
