@@ -9,6 +9,10 @@ on:
       - main
   workflow_dispatch:
 
+concurrency:
+  group: newman-api-tests-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   newman-tests:
     name: Run Reqres API tests with Newman
@@ -46,8 +50,8 @@ jobs:
             --env-var baseUrl="$BASE_URL" \
             --env-var reqresEnv="$REQRES_ENV" \
             --env-var apiKey="$REQRES_API_KEY" \
-            --delay-request 1000 \
-            --timeout-request 10000 \
+            --delay-request 3000 \
+            --timeout-request 15000 \
             --reporters cli,junit \
             --reporter-junit-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
 
