@@ -8,13 +8,13 @@
 | Document Type | Test Summary Report |
 | Author | Mariana |
 | Status | Completed |
-| Version | 1.0 |
+| Version | 1.1 |
 | Created Date | 2026-04-28 |
 | Application Under Test | Reqres API |
 | Base URL | https://reqres.in |
 | Testing Tool | Postman |
-| Execution Type | Manual execution using Postman |
-| Evidence Type | Postman execution screenshots |
+| Execution Type | Manual execution using Postman, Postman Runner and CI execution using Newman with GitHub Actions |
+| Evidence Type | Postman execution screenshots, Postman Runner summary, Newman JUnit XML report and GitHub Actions execution evidence |
 
 ---
 
@@ -23,6 +23,8 @@
 The purpose of this document is to summarize the final execution results of the Reqres API Testing Portfolio project.
 
 This report confirms that the planned Postman API test folders were implemented, executed and evidenced successfully.
+
+It also confirms that the exported Postman collection was executed successfully through Newman in GitHub Actions.
 
 The project demonstrates practical API testing skills, including:
 
@@ -36,6 +38,9 @@ The project demonstrates practical API testing skills, including:
 - Evidence organization
 - Postman collection documentation
 - Environment-based test data usage
+- Newman CLI execution
+- GitHub Actions CI execution
+- CI evidence reporting
 
 ---
 
@@ -90,6 +95,11 @@ The API was used to validate endpoints related to:
 | Total failed requests | 0 |
 | Total blocked requests | 0 |
 | Evidence screenshots captured | 58 |
+| Newman/GitHub Actions execution | Passed |
+| Newman JUnit XML report generated | Yes |
+| Postman Runner summary evidence | Completed |
+| Confirmed application bugs | 0 |
+| CI/setup observation | OBS-001 resolved |
 | Final execution status | Passed |
 
 Final result:
@@ -162,6 +172,7 @@ All evidence screenshots are stored under:
 evidence/screenshots/reqres-api-testing-portfolio/
 ```
 
+
 Evidence folders:
 
 | Area | Evidence Folder |
@@ -178,6 +189,13 @@ Evidence folders:
 | Regression Tests | `evidence/screenshots/reqres-api-testing-portfolio/regression-tests/` |
 
 ---
+
+Additional execution evidence is stored in:
+
+```txt
+evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
+evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summary.png
+```
 
 ## 9. Executed Smoke Tests
 
@@ -275,17 +293,21 @@ The delayed response test is intentionally separated from smoke and regression s
 - Some `404` responses may return an empty object; the tests validate absence of success payload and absence of internal details.
 - JSON uses `number` as the numeric type; integer expectations are validated as value constraints.
 - The delayed response scenario is treated as a basic response time observation, not as full performance testing.
-- The real API key should remain only in the local Postman environment and should not be committed to the repository.
+- The real API key should remain only in the local Postman environment or GitHub Actions repository secrets and should never be committed to the repository.
+- The initial GitHub Actions/Newman failure caused by invalid or missing API key configuration was documented as OBS-001 and resolved.
 
 ---
 
 ## 16. Defects and Unexpected Behavior
 
-No defects were found during the final documented Postman execution.
+No confirmed application defects were found during the final documented execution.
 
-| Defect ID | Summary | Status |
-|---|---|---|
-| N/A | No defects identified | N/A |
+One CI/environment setup issue was identified during GitHub Actions setup and documented as an observation, not as an application bug.
+
+| ID | Summary | Classification | Status |
+|---|---|---|---|
+| N/A | No confirmed application defects found | Application bug | N/A |
+| OBS-001 | GitHub Actions initially failed due to invalid Reqres API key configuration | Environment / CI configuration issue | Resolved |
 
 ---
 
@@ -297,7 +319,7 @@ No defects were found during the final documented Postman execution.
 | Simulated persistence | Create/update/delete results are not stored permanently | Documented as a known limitation |
 | Network instability | Requests may fail intermittently | Re-run may be required if caused by connectivity |
 | Delayed response execution time | May slow down full execution | Kept outside smoke and regression suites |
-| API key exposure risk | Sensitive data could be committed accidentally | Use placeholders in exported environment files |
+| API key exposure risk | Sensitive data could be committed accidentally | Store the real API key only in the local Postman environment or GitHub Actions repository secrets and use placeholders in exported environment files |
 
 ---
 
@@ -325,6 +347,12 @@ No defects were found during the final documented Postman execution.
 | Regression tests documentation alignment | Completed |
 | Contract tests documentation alignment | Completed |
 | Test summary report | Completed |
+| Newman GitHub Actions workflow | Completed |
+| Newman JUnit XML report | Completed |
+| Postman Runner summary evidence | Completed |
+| GitHub Actions execution | Passed |
+| Bug reports documentation | Completed |
+| CI setup observation documentation | Completed |
 
 ---
 
@@ -344,6 +372,17 @@ The project demonstrates structured API testing practice with:
 - Regression coverage
 - Evidence-based execution
 - Professional QA documentation
+- Newman execution through GitHub Actions
+- CI report artifact
+- Postman Runner summary evidence
+- Resolved CI setup observation
+
+Final result:
+
+````markdown
+No confirmed application defects were found during the final documented execution.
+
+The only setup issue identified was related to CI API key configuration and was resolved.
 
 Final result:
 
