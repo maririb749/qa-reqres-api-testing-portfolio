@@ -33,6 +33,8 @@ This project aims to demonstrate API testing skills using Postman, including:
 - Basic response time validation
 - Evidence collection
 - Test documentation
+- Newman CLI execution
+- GitHub Actions CI execution
 
 ---
 
@@ -96,8 +98,8 @@ The following areas are included in this project:
 - Capturing execution evidence
 - Exporting the Postman collection
 - Preparing a sanitized Postman environment file
-- Preparing the project for Newman execution
-- Preparing the project for GitHub Actions execution
+- Executing the Postman collection with Newman
+- Running the Newman test suite through GitHub Actions
 
 ### 4.2 Out of Scope
 
@@ -236,8 +238,8 @@ Total planned Postman requests:
 | API | Reqres |
 | Base URL | https://reqres.in |
 | Tool | Postman |
-| Future CLI Tool | Newman |
-| Future CI Tool | GitHub Actions |
+| CLI Tool | Newman |
+| CI Tool | GitHub Actions |
 | Response Format | JSON |
 | Operating System | Windows 11 |
 | Browser | Not applicable |
@@ -250,8 +252,8 @@ Total planned Postman requests:
 | Variable | Example Value | Description |
 |---|---|---|
 | baseUrl | https://reqres.in | API base URL |
-| apiKey | YOUR_API_KEY | Reqres API key stored only in the Postman environment |
-| reqresEnv | portfolio | Custom environment marker used in request headers |
+| apiKey | YOUR_API_KEY | Reqres API key stored locally in Postman and provided in CI through the GitHub Actions `REQRES_API_KEY` secret |
+| reqresEnv | prod | Reqres environment header value used during local and CI execution |
 | validUserId | 2 | Existing user ID used in tests |
 | firstUserId | 1 | First existing user ID used in tests |
 | invalidUserId | 23 | Non-existing user ID used in negative tests |
@@ -278,13 +280,13 @@ Total planned Postman requests:
 | updatedUserJob | Senior QA Tester | Job value used in full update request body |
 | patchedUserJob | API QA Analyst | Job value used in partial update request body |
 
-Note: The real API key must be configured only in the local Postman environment. It should not be committed to the repository.
+Note: The real API key must be configured only in the local Postman environment or in GitHub Actions repository secrets. It should never be committed to the repository.
 
 ---
 
 ## 11. Test Data
 
-The test data includes:
+The implemented test data includes:
 
 - Valid user IDs
 - Invalid user IDs
@@ -299,13 +301,10 @@ The test data includes:
 - Non-numeric page values
 - Empty request bodies
 - Missing required fields
-- Invalid email formats
-- Empty strings
-- Special characters
-- Very long strings
-- Negative numeric values
-- Very high numeric values
+- Valid authentication credentials
 - Delayed response query parameter
+
+Additional exploratory data such as empty strings, special characters, very long strings and invalid email formats may be considered for future expansion, but they are not part of the current implemented Postman request count.
 
 Example valid user creation data:
 
@@ -395,8 +394,8 @@ Testing can be considered complete when:
 - Test summary report is completed
 - Postman collection is exported
 - Postman environment is prepared with safe placeholder values
-- Newman report is generated, if CLI execution is included in the project scope
-- GitHub Actions workflow is configured, if CI execution is included in the project scope
+- Newman execution report is generated
+- GitHub Actions workflow is configured and passing
 
 ---
 
@@ -438,13 +437,13 @@ A test case will be marked as failed when:
 | Risk | Impact | Mitigation |
 |---|---|---|
 | API behavior changes | Tests may fail unexpectedly | Review Reqres documentation and update expected results |
-| Authentication requirement changes | Requests may return 401 or 403 | Use the apiKey variable through Postman environment configuration |
+| Authentication requirement changes | Requests may return 401 or 403 | Use the `apiKey` variable locally and the `REQRES_API_KEY` GitHub Actions secret in CI |
 | Network instability | Requests may fail intermittently | Re-run failed requests and document the result |
 | Public API limitations | Some edge cases may not behave like a real production API | Document observations clearly |
 | No real data persistence | Create/update/delete tests may return simulated responses | Mention this limitation in the summary report |
 | Missing official business requirements | Expected results may require assumptions | Document assumptions in test cases |
 | Delayed response may increase execution time | Tests may take longer in Newman or CI | Keep delayed response test separated from smoke and regression tests |
-| API key exposure risk | Sensitive data may be committed accidentally | Store the real API key only in Current Value/local Postman environment and use placeholders in repository files |
+| API key exposure risk | Sensitive data may be committed accidentally | Store the real API key only in the local Postman environment or GitHub Actions repository secrets and use placeholders in repository files |
 
 ---
 
@@ -481,7 +480,8 @@ The following assumptions are considered for this project:
 | Postman Collection | postman/reqres-api-collection.json |
 | Postman Environment | postman/reqres-environment.json |
 | Execution Screenshots | evidence/screenshots/ |
-| Newman Reports | evidence/reports/ |
+| Newman JUnit Report | evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml |
+| Postman Runner Summary | evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summary.png |
 | GitHub Actions Workflow | .github/workflows/newman-tests.yml |
 
 ---
@@ -519,9 +519,9 @@ Evidence may include:
 - Postman execution screenshots
 - Collection runner screenshots
 - Failed request screenshots, when applicable
-- Newman HTML report, if CLI execution is included
-- Newman JSON report, if CLI execution is included
-- GitHub Actions execution screenshot, if CI execution is included
+- Newman JUnit XML report
+- Postman Runner summary screenshot
+- GitHub Actions successful workflow execution
 
 Evidence is stored in:
 
@@ -543,6 +543,11 @@ evidence/screenshots/reqres-api-testing-portfolio/boundary-tests/
 evidence/screenshots/reqres-api-testing-portfolio/contract-tests/
 evidence/screenshots/reqres-api-testing-portfolio/delayed-response/
 evidence/screenshots/reqres-api-testing-portfolio/regression-tests/
+
+Newman and Postman Runner report evidence is stored in:
+
+evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
+evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summary.png
 ```
 
 ---
@@ -568,6 +573,17 @@ The delayed response folder is intentionally kept outside the smoke and regressi
 
 ## 21. Completion Notes
 
-This test plan was updated to reflect the completed Postman collection structure, implemented request coverage, confirmed boundary behavior, environment variables and evidence organization.
+This test plan was updated to reflect the completed Postman collection structure, implemented request coverage, confirmed boundary behavior, environment variables, evidence organization, Newman execution and GitHub Actions workflow.
 
-Future updates may be required if the scope, tools, endpoints, execution strategy, Newman setup or GitHub Actions workflow changes during the project.
+Final project execution status:
+
+| Item | Result |
+|---|---:|
+| Postman folders implemented | 10 |
+| Postman requests implemented | 58 |
+| Postman Runner execution | Passed |
+| Newman/GitHub Actions execution | Passed |
+| Confirmed application bugs | 0 |
+| CI/setup observation | OBS-001 resolved |
+
+Future updates may be required if the scope, tools, endpoints or execution strategy changes.
