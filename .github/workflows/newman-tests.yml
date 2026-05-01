@@ -17,8 +17,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -27,18 +28,26 @@ jobs:
       - name: Install Newman
         run: npm install -g newman
 
-      - name: Validate files
+      - name: Validate Reqres API key secret
+        env:
+          REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
         run: |
-          test -f postman/reqres-api-collection.json || (echo "Collection not found" && exit 1)
-          test -f postman/reqres-environment.json || (echo "Environment not found" && exit 1)
+          if [ -z "$REQRES_API_KEY" ]; then
+            echo "REQRES_API_KEY secret is missing. Add it in GitHub: Settings > Secrets and variables > Actions > New repository secret."
+            exit 1
+          fi
 
       - name: Run Postman collection
+        env:
+          REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
         run: |
           mkdir -p evidence/reports/reqres-api-testing-portfolio/newman
 
           newman run postman/reqres-api-collection.json \
             -e postman/reqres-environment.json \
             --env-var baseUrl="https://reqres.in" \
+            --env-var apiKey="$REQRES_API_KEY" \
+            --env-var reqresEnv="prod" \
             --delay-request 8000 \
             --timeout-request 15000 \
             --reporters cli,junit \
