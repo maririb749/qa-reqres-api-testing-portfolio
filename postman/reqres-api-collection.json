@@ -78,6 +78,16 @@
                                 "key": "Accept",
                                 "value": "application/json",
                                 "type": "text"
+                            },
+                            {
+                                "key": "x-api-key",
+                                "value": "{{apiKey}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "X-Reqres-Env",
+                                "value": "{{reqresEnv}}",
+                                "type": "text"
                             }
 
                         ],

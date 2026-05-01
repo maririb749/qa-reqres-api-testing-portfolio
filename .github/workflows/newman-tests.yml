@@ -37,7 +37,7 @@ jobs:
             exit 1
           fi
 
-      - name: Run Postman collection
+      - name: Run Postman smoke tests
         env:
           REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
         run: |
@@ -45,6 +45,7 @@ jobs:
 
           newman run postman/reqres-api-collection.json \
             -e postman/reqres-environment.json \
+            --folder "01 - Smoke Tests" \
             --env-var baseUrl="https://reqres.in" \
             --env-var apiKey="$REQRES_API_KEY" \
             --env-var reqresEnv="prod" \
