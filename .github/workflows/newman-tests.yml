@@ -2,11 +2,9 @@ name: Newman API Tests
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -18,15 +16,9 @@ jobs:
     name: Run Reqres API tests with Newman
     runs-on: ubuntu-latest
 
-    env:
-      BASE_URL: https://reqres.in
-      REQRES_ENV: prod
-      REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -35,11 +27,10 @@ jobs:
       - name: Install Newman
         run: npm install -g newman
 
-      - name: Validate required CI variables
+      - name: Validate files
         run: |
-          test -n "$REQRES_API_KEY" || (echo "REQRES_API_KEY secret is missing" && exit 1)
-          test -f postman/reqres-api-collection.json || (echo "Postman collection file not found" && exit 1)
-          test -f postman/reqres-environment.json || (echo "Postman environment file not found" && exit 1)
+          test -f postman/reqres-api-collection.json || (echo "Collection not found" && exit 1)
+          test -f postman/reqres-environment.json || (echo "Environment not found" && exit 1)
 
       - name: Run Postman collection
         run: |
@@ -47,17 +38,15 @@ jobs:
 
           newman run postman/reqres-api-collection.json \
             -e postman/reqres-environment.json \
-            --env-var baseUrl="$BASE_URL" \
-            --env-var reqresEnv="$REQRES_ENV" \
-            --env-var apiKey="$REQRES_API_KEY" \
-            --delay-request 3000 \
+            --env-var baseUrl="https://reqres.in" \
+            --delay-request 5000 \
             --timeout-request 15000 \
             --reporters cli,junit \
             --reporter-junit-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
 
-      - name: Upload Newman test results
+      - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: newman-results
-          path: evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
+          path: evidence/reports/reqres-api-testing-portfolio/newman/
