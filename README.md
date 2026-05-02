@@ -6,22 +6,25 @@ This project demonstrates how I approach API quality: understanding endpoints, m
 
 ## Quick Results
 
-| Area                                   |                  Result |
-| -------------------------------------- | ----------------------: |
-| Postman collection requests            |                      58 |
-| Test folders                           |                      10 |
-| API endpoints mapped                   |                      27 |
-| Smoke test requests executed locally   |                       4 |
-| Smoke test assertions executed locally |                      16 |
-| Smoke test result                      | 16 passed / 16 executed |
-| CI/CD                                  |          GitHub Actions |
-| CI execution strategy                  |        Smoke tests only |
-| CI status                              |                 Passing |
-| Report artifact                        |     Newman JUnit report |
+| Area | Result |
+|---|---:|
+| Postman collection requests | 58 |
+| Test folders | 10 |
+| API endpoints mapped | 27 |
+| Full collection requests executed | 58 |
+| Newman assertions executed | 290 |
+| Failed assertions | 0 |
+| Full collection result | 58 passed / 58 executed |
+| CI tool | GitHub Actions |
+| CI execution strategy | Full Postman collection |
+| Report artifact | Newman JUnit and JSON reports |
+
 
 The full Postman collection contains 58 API requests across smoke, pagination, single resource, create/update/delete, authentication, resources, boundary, contract, delayed response, and regression coverage.
 
-The GitHub Actions workflow intentionally runs only the `01 - Smoke Tests` folder to validate the main flows while reducing the risk of hitting the Reqres free-tier daily request limit.
+The GitHub Actions workflow is configured to run the full exported Postman collection, not only the smoke folder.
+
+The latest local Newman execution confirmed 58 requests, 290 assertions, and 0 failed assertions.
 
 ## API Under Test
 
