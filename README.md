@@ -65,14 +65,20 @@ The Postman collection covers the main API testing areas:
 
 The automated API execution is handled with Newman and GitHub Actions.
 
-The CI pipeline currently validates the smoke test folder, which includes:
+The CI pipeline currently runs the full Postman collection, which includes all 10 folders:
 
-* Listing users from page 2
-* Getting an existing user by ID
-* Creating a user with valid data
-* Logging in with valid credentials
+1. `01 - Smoke Tests`
+2. `02 - Users - List and Pagination`
+3. `03 - Users - Single User`
+4. `04 - Users - Create Update Delete`
+5. `05 - Authentication`
+6. `06 - Resources`
+7. `07 - Boundary Tests`
+8. `08 - Contract Tests`
+9. `09 - Delayed Response`
+10. `10 - Regression Tests`
 
-This smoke strategy keeps the pipeline useful, fast, and stable while respecting the Reqres free-tier request limits.
+The latest full Newman execution confirmed 58 requests, 290 assertions, and 0 failed assertions.
 
 ## Project Structure
 
@@ -83,7 +89,7 @@ qa-reqres-api-testing-portfolio/
 │       └── newman-tests.yml
 │
 ├── docs/
-│   ├── bug-report-template.md
+│   ├── bug-reports.md
 │   ├── contract-tests.md
 │   ├── endpoint-mapping.md
 │   ├── regression-tests.md
@@ -98,7 +104,24 @@ qa-reqres-api-testing-portfolio/
 │   ├── reports/
 │   │   └── reqres-api-testing-portfolio/
 │   │       └── newman/
+│   │           ├── newman-results.json
+│   │           └── newman-results.xml
+│   │
+│   ├── postman-runner/
+│   │   └── postman-runner-summary.png
+│   │
 │   └── screenshots/
+│       └── reqres-api-testing-portfolio/
+│           ├── authentication/
+│           ├── boundary-tests/
+│           ├── contract-tests/
+│           ├── create-update-delete/
+│           ├── delayed-response/
+│           ├── regression-tests/
+│           ├── resources/
+│           ├── single-user/
+│           ├── smoke-tests/
+│           └── users-list-pagination/
 │
 ├── postman/
 │   ├── reqres-api-collection.json
@@ -122,14 +145,14 @@ Generated files such as Newman reports and temporary local artifacts should not 
 | `docs/regression-tests.md`    | Regression scenarios for stable API behavior                                 |
 | `docs/contract-tests.md`      | Response contract validation scope                                           |
 | `docs/traceability-matrix.md` | Relationship between requirements, endpoints, and test cases                 |
-| `docs/bug-report-template.md` | Standard bug report format for API defects                                   |
+| `docs/bug-reports.md`         | API bug reports and observations documented during the project               |
 | `docs/test-summary-report.md` | Execution summary and project status                                         |
 
 ## Postman Collection Structure
 
 | Folder                              | Purpose                                                    |
 | ----------------------------------- | ---------------------------------------------------------- |
-| `01 - Smoke Tests`                  | Critical flow validation used by CI                        |
+| `01 - Smoke Tests`                  | Critical flow validation included in the full collection   |
 | `02 - Users - List and Pagination`  | User listing, pagination, and page size validation         |
 | `03 - Users - Single User`          | Existing and non-existing user retrieval                   |
 | `04 - Users - Create Update Delete` | Create, update, partial update, and delete operations      |
@@ -164,12 +187,12 @@ The request-level Postman scripts validate areas such as:
 | Visual Studio Code  | Code editor used to edit the Postman collection, GitHub Actions workflow, and project documentation |
 | Postman             | API request design, organization, and validation scripts                                            |
 | Newman              | Command-line execution of the Postman collection                                                    |
-| GitHub Actions      | CI execution of API smoke tests                                                                     |
+| GitHub Actions      | CI execution of the full API test collection                                                        |
 | GitHub Secrets      | Secure storage of the Reqres API key                                                                |
 | Node.js             | Runtime used to execute Newman                                                                      |
 | npm / npx           | Package execution and Newman command support                                                        |
 | Git                 | Version control                                                                                     |
-| GitHub              | Repository hosting and CI/CD visibility                                                             |
+| GitHub              | Repository hosting and CI visibility                                                               |
 | Git Bash / Terminal | Local command-line execution                                                                        |
 | Markdown            | Documentation format                                                                                |
 | Reqres              | API under test                                                                                      |
@@ -217,37 +240,53 @@ Expected result:
 HTTP/1.1 200 OK
 ```
 
-### 4. Run the smoke tests
+### 4. Run the full collection
 
 ```bash
 npx newman run postman/reqres-api-collection.json \
   -e postman/reqres-environment.json \
-  --folder "01 - Smoke Tests" \
   --env-var baseUrl="https://reqres.in" \
   --env-var apiKey="$REQRES_API_KEY" \
   --env-var reqresEnv="prod" \
   --delay-request 8000 \
-  --timeout-request 15000
+  --timeout-request 20000 \
+  --timeout 1200000
 ```
 
-### 5. Run the smoke tests with a JUnit report
+### 5. Run the full collection with JUnit and JSON reports
 
 ```bash
 mkdir -p evidence/reports/reqres-api-testing-portfolio/newman
 
 npx newman run postman/reqres-api-collection.json \
   -e postman/reqres-environment.json \
+  --env-var baseUrl="https://reqres.in" \
+  --env-var apiKey="$REQRES_API_KEY" \
+  --env-var reqresEnv="prod" \
+  --delay-request 8000 \
+  --timeout-request 20000 \
+  --timeout 1200000 \
+  --reporters cli,json,junit \
+  --reporter-json-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.json \
+  --reporter-junit-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
+```
+
+### Optional: run only the smoke folder locally
+
+Use this only for a quick local sanity check:
+
+```bash
+npx newman run postman/reqres-api-collection.json \
+  -e postman/reqres-environment.json \
   --folder "01 - Smoke Tests" \
   --env-var baseUrl="https://reqres.in" \
   --env-var apiKey="$REQRES_API_KEY" \
   --env-var reqresEnv="prod" \
   --delay-request 8000 \
-  --timeout-request 15000 \
-  --reporters cli,junit \
-  --reporter-junit-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
+  --timeout-request 20000
 ```
 
-## CI/CD
+## Continuous Integration
 
 The project includes a GitHub Actions workflow located at:
 
@@ -267,9 +306,9 @@ The pipeline:
 2. Sets up Node.js 20
 3. Installs Newman
 4. Validates that the `REQRES_API_KEY` secret exists
-5. Runs the `01 - Smoke Tests` Postman folder
-6. Generates a JUnit report
-7. Uploads the Newman report as a GitHub Actions artifact
+5. Runs the full exported Postman collection
+6. Generates JUnit and JSON reports
+7. Uploads the Newman reports as GitHub Actions artifacts
 
 The API key is stored securely as a GitHub Actions secret named:
 
@@ -281,28 +320,49 @@ No sensitive API key is committed to the repository.
 
 ## Evidence
 
-Execution evidence is organized under:
+Execution evidence is organized under the `evidence/` directory.
 
-```text
-evidence/
-```
+Path: `evidence/`
 
-The project includes evidence for the API testing work, such as:
+The project includes evidence for the API testing work, including:
 
-* Postman/Newman execution results
-* GitHub Actions run results
-* Newman report artifacts
-* Screenshots of successful executions
+- Postman execution screenshots
+- Postman Runner summary
+- Newman execution results
+- Newman report artifacts
+- GitHub Actions workflow artifact after CI execution
+- Screenshots of successful executions
 
-The latest validated CI execution ran successfully through GitHub Actions using the smoke test strategy.
+### Newman Reports
+
+The project includes Newman reports generated from the full collection execution:
+
+| Report | Purpose |
+|---|---|
+| `newman-results.xml` | JUnit report used as a CI-friendly test artifact. |
+| `newman-results.json` | JSON execution report used to verify total requests, assertions, and failures. |
+
+### Latest Full Newman Execution
+
+| Metric | Result |
+|---|---:|
+| Requests executed | 58 |
+| Assertions executed | 290 |
+| Failed assertions | 0 |
+
+The GitHub Actions workflow is configured to run the full exported Postman collection.
 
 ## Rate Limit Strategy
 
-Reqres free-tier API keys have request limits. To keep the project stable and safe for portfolio review, the CI workflow runs only the smoke test folder instead of the full collection.
+Reqres free-tier API keys may have request limits. The CI workflow runs the full 58-request collection because this portfolio is intended to demonstrate complete automated API coverage.
 
-This approach provides fast feedback on the most important API flows while avoiding unnecessary request consumption.
+To reduce request pressure and avoid unstable runs, the Newman execution uses:
 
-The full collection remains available for review and controlled manual execution.
+- `--delay-request 8000`
+- `--timeout-request 20000`
+- `--timeout 1200000`
+
+If the API returns `429 Too Many Requests`, the workflow should be re-run later or executed with a higher delay between requests.
 
 ## Security Notes
 
@@ -310,9 +370,9 @@ This repository intentionally does not include real API keys.
 
 The project uses:
 
-* `{{apiKey}}` as a Postman environment variable
-* `REQRES_API_KEY` as a protected GitHub Actions secret
-* `--env-var apiKey="$REQRES_API_KEY"` during Newman execution
+- `{{apiKey}}` as a Postman environment variable
+- `REQRES_API_KEY` as a protected GitHub Actions secret
+- `--env-var apiKey="$REQRES_API_KEY"` during Newman execution
 
 This prevents credential exposure while keeping the automated tests executable in CI.
 
@@ -327,7 +387,6 @@ The following areas are intentionally out of scope for this version:
 * Security penetration testing
 * Full authentication lifecycle testing
 * Paid Reqres plan features
-* Running the full 58-request collection on every CI execution
 
 ## What I Learned
 
@@ -341,29 +400,29 @@ Through this project, I practiced how to:
 * Use environment variables for configurable test execution
 * Protect API keys with GitHub Secrets
 * Execute Postman collections with Newman
-* Configure GitHub Actions for API test automation
+* Configure GitHub Actions for full API test automation
 * Generate CI test artifacts
 * Diagnose authentication failures such as `401` and `403`
 * Diagnose rate limit failures such as `429 Too Many Requests`
-* Adapt CI scope to external API limitations
+* Adapt CI execution settings to external API limitations
 * Present API testing work clearly in a GitHub portfolio
 
 ## Project Status
 
-| Area                   | Status                        |
-| ---------------------- | ----------------------------- |
-| Postman collection     | Completed                     |
-| API documentation      | Completed                     |
-| Test plan and strategy | Completed                     |
-| Endpoint mapping       | Completed                     |
-| Smoke tests            | Completed                     |
-| Regression tests       | Completed                     |
-| Contract tests         | Completed                     |
-| Boundary tests         | Completed                     |
-| Newman execution       | Completed                     |
-| GitHub Actions CI      | Configured and passing        |
-| API key security       | Protected with GitHub Secrets |
-| README                 | Completed                     |
+| Area                             | Status                                |
+|----------------------------------|---------------------------------------|
+| Postman collection               | Implemented                           |
+| API documentation                | Implemented                           |
+| Test plan and strategy           | Implemented                           |
+| Endpoint mapping                 | Implemented                           |
+| Smoke tests                      | Implemented                           |
+| Regression tests                 | Implemented                           |
+| Contract tests                   | Implemented                           |
+| Boundary tests                   | Implemented                           |
+| Newman full collection execution | Completed                             |
+| GitHub Actions CI                | Configured to run the full collection |
+| API key security                 | Protected with GitHub Secrets         |
+| README                           | Completed                             |
 
 ## Final Status
 
