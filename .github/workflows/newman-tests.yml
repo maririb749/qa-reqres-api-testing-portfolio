@@ -13,8 +13,9 @@ concurrency:
 
 jobs:
   newman-tests:
-    name: Run Reqres API tests with Newman
+    name: Run full Reqres API test suite with Newman
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
@@ -28,6 +29,11 @@ jobs:
       - name: Install Newman
         run: npm install -g newman
 
+      - name: Validate required files
+        run: |
+          test -f postman/reqres-api-collection.json
+          test -f postman/reqres-environment.json
+
       - name: Validate Reqres API key secret
         env:
           REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
@@ -37,7 +43,7 @@ jobs:
             exit 1
           fi
 
-      - name: Run Postman smoke tests
+      - name: Run full Postman collection
         env:
           REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
         run: |
@@ -45,16 +51,17 @@ jobs:
 
           newman run postman/reqres-api-collection.json \
             -e postman/reqres-environment.json \
-            --folder "01 - Smoke Tests" \
             --env-var baseUrl="https://reqres.in" \
             --env-var apiKey="$REQRES_API_KEY" \
             --env-var reqresEnv="prod" \
             --delay-request 8000 \
-            --timeout-request 15000 \
-            --reporters cli,junit \
+            --timeout-request 20000 \
+            --timeout 1200000 \
+            --reporters cli,json,junit \
+            --reporter-json-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.json \
             --reporter-junit-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
 
-      - name: Upload results
+      - name: Upload Newman results
         if: always()
         uses: actions/upload-artifact@v4
         with:
