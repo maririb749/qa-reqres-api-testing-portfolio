@@ -264,7 +264,7 @@ Total planned Postman requests:
 | validResourceId | 2 | Existing resource ID used in tests |
 | invalidResourceId | 23 | Non-existing resource ID used in negative tests |
 | validEmail | eve.holt@reqres.in | Valid email used for authentication tests |
-| validPassword | cityslicka | Valid password used for authentication tests |
+| validPassword | cityslicka | Valid password used for authentication tests — public Reqres demo credential, not sensitive |
 | invalidEmail | invalid-email | Invalid email format reserved for negative or boundary scenarios |
 | pageOne | 1 | First page |
 | pageTwo | 2 | Second page |
