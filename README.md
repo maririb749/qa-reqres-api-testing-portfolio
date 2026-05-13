@@ -271,9 +271,11 @@ qa-reqres-api-testing-portfolio/
 │
 ├── evidence/
 │   ├── reports/
-│   ├── postman-runner/
+│   │   └── reqres-api-testing-portfolio/
+│   │       ├── newman/
+│   │       └── postman-runner/
 │   └── screenshots/
-│
+│       └── reqres-api-testing-portfolio/
 ├── postman/
 │   ├── reqres-api-collection.json
 │   └── reqres-environment.json
