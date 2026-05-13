@@ -230,7 +230,7 @@ Execution evidence is organized under the `evidence/` directory.
 | Evidence Area | Path | Status |
 |---|---|---|
 | Newman reports | `evidence/reports/reqres-api-testing-portfolio/newman/` | Evidence captured |
-| Postman Runner evidence | `evidence/postman-runner/` | Evidence captured |
+| Postman Runner summary | `evidence/postman-runner/postman-runner-summary.png` | Evidence captured |
 | API screenshots | `evidence/screenshots/reqres-api-testing-portfolio/` | Evidence captured |
 
 The project includes evidence for the API testing work, including:
