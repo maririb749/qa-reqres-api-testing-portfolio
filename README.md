@@ -100,7 +100,6 @@ The request-level Postman scripts validate areas such as:
 - Error response structure
 - Coherent error messages
 - Absence of success-only fields in error responses
-- Absence of internal implementation details in API responses
 
 ## Automation Overview
 
