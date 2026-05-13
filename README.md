@@ -196,10 +196,11 @@ The pipeline:
 1. Checks out the repository
 2. Sets up Node.js 20
 3. Installs Newman
-4. Validates that the `REQRES_API_KEY` secret exists
-5. Runs the full exported Postman collection
-6. Generates JUnit and JSON reports
-7. Uploads the Newman reports as GitHub Actions artifacts
+4. Validates that required collection and environment files exist
+5. Validates that the `REQRES_API_KEY` secret exists
+6. Runs the full exported Postman collection
+7. Generates JUnit and JSON reports
+8. Uploads the Newman reports as GitHub Actions artifacts
 
 The API key is stored securely as a GitHub Actions secret named:
 
