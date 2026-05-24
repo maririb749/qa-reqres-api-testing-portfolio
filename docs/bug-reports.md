@@ -620,21 +620,6 @@ The workflow was re-run successfully after the secret was corrected.
 
 ---
 
-## 19. Relationship With Other Documents
-
-| Document | Relationship |
-|---|---|
-| docs/test-plan.md | Defines defect management and evidence strategy |
-| docs/test-strategy.md | Defines testing approach and validation strategy |
-| docs/endpoint-mapping.md | Provides endpoint IDs used in bug reports |
-| docs/test-cases.md | Provides test case IDs used in bug reports |
-| docs/smoke-tests.md | Defines critical tests that may block broader execution if failed |
-| docs/regression-tests.md | Defines scenarios to rerun after fixes |
-| docs/contract-tests.md | Defines expected success and error contracts |
-| docs/test-summary-report.md | Summarizes final defects, observations and execution results |
-
----
-
 ## 20. Notes and Assumptions
 
 - Reqres is a demo API, so some behaviors may be simulated.
@@ -644,22 +629,3 @@ The workflow was re-run successfully after the secret was corrected.
 - Error responses should be validated for message quality, success payload leakage and internal information leaks.
 - Bug reports should be updated if future executions identify confirmed defects.
 - Evidence should reference the final Postman, Newman and GitHub Actions execution artifacts when applicable.
-
----
-
-## 21. Completion Notes
-
-This bug reports document was finalized after the Postman collection, evidence screenshots, Newman report and GitHub Actions workflow were executed successfully.
-
-Final result:
-
-```txt
-No confirmed application bugs found.
-```
-
-Setup/configuration observation:
-
-```txt
-OBS-001 — GitHub Actions initially failed due to invalid Reqres API key configuration.
-Status: Resolved.
-```

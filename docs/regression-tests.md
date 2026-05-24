@@ -509,19 +509,6 @@ evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summ
 
 ---
 
-## 16. Relationship With Other Documents
-
-| Document | Relationship |
-|---|---|
-| docs/test-plan.md | Defines regression testing as part of the project scope |
-| docs/test-strategy.md | Defines the regression approach and prioritization |
-| docs/endpoint-mapping.md | Maps endpoints selected for regression |
-| docs/test-cases.md | Defines the test cases referenced by the regression suite |
-| docs/smoke-tests.md | Defines the smaller critical suite executed before regression |
-| docs/test-summary-report.md | Includes final regression execution results |
-
----
-
 ## 17. Notes and Assumptions
 
 - Regression testing is impact-based, not always full-suite.
@@ -532,26 +519,3 @@ evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summ
 - Boundary and full contract tests can be executed separately when the changed area requires broader coverage.
 - Regression tests are included in the Newman and GitHub Actions execution flow.
 - The real API key should remain only in the local Postman environment or GitHub Actions repository secrets and should never be committed to the repository.
-
----
-
-## 18. Completion Notes
-
-The regression test suite was implemented, executed and evidenced successfully through Postman evidence screenshots and the GitHub Actions Newman execution report.
-
-Final regression coverage:
-
-| Metric | Result |
-|---|---:|
-| Regression requests implemented | 8 |
-| Regression requests executed | 8 |
-| Regression requests passed | 8 |
-| Regression requests failed | 0 |
-| Evidence screenshots captured | 8 |
-| Newman/GitHub Actions execution | Passed |
-
-Final result:
-
-```txt
-PASSED
-```

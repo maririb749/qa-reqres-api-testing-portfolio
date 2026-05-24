@@ -116,16 +116,30 @@ This document includes:
 
 ---
 
-## 9. Contract Test Cases
+## 9. Exploratory Negative Data Test Cases
+
+These cases strengthen the project with invalid, empty, special-character and long-string payloads against the simulated Reqres create/update endpoints. Because Reqres is a demo API, the current expected result documents controlled observed behavior instead of assuming production-grade validation rules.
+
+| Test Case ID | Endpoint ID | Method | Endpoint | Title | Type | Priority | Request Data | Expected Status | Expected Result | Status | Evidence |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| TC-032 | EP-015 | POST | `/api/users` | Create user with empty name | Exploratory, Negative Data | Medium | `{"name":"{{emptyUserName}}","job":"{{testUserJob}}"}` | 201 | Demo API returns controlled created response and echoes empty name without internal error | Passed | `evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml` |
+| TC-033 | EP-015 | POST | `/api/users` | Create user with empty job | Exploratory, Negative Data | Medium | `{"name":"{{testUserName}}","job":"{{emptyUserJob}}"}` | 201 | Demo API returns controlled created response and echoes empty job without internal error | Passed | `evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml` |
+| TC-034 | EP-015 | POST | `/api/users` | Create user with special characters | Exploratory, Negative Data | Medium | `{"name":"{{specialCharsName}}","job":"{{testUserJob}}"}` | 201 | Demo API returns controlled created response and preserves special characters | Passed | `evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml` |
+| TC-035 | EP-015 | POST | `/api/users` | Create user with very long job | Exploratory, Boundary Data | Medium | `{"name":"{{testUserName}}","job":"{{longString}}"}` | 201 | Demo API returns controlled created response and preserves the long string value | Passed | `evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml` |
+| TC-036 | EP-016 | PUT | `/api/users/2` | Update user with empty body | Exploratory, Negative Data | Medium | `{}` | 200 | Demo API returns controlled update metadata and does not expose internal error details | Passed | `evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml` |
+
+---
+
+## 10. Contract Test Cases
 
 | Contract ID | Related Test Case ID | Endpoint ID | Method | Endpoint | Title | Type | Priority | Expected Status | Expected Result | Status | Evidence |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| CON-001 | TC-040 | EP-001 | GET | `/api/users?page=1` | Validate users list response contract | Contract | High | 200 | Response contains pagination fields, data array, valid user objects when present and support object | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-001-users-list-contract-postman-passed.png` |
-| CON-002 | TC-041 | EP-002 | GET | `/api/users?page=2` | Validate users page 2 response contract | Contract | High | 200 | Response contains valid pagination fields, page 2, data array and support object | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-002-users-page-2-contract-postman-passed.png` |
-| CON-003 | TC-042 | EP-009 | GET | `/api/users/1` | Validate first user response contract | Contract | High | 200 | Response contains data object with id, email, first_name, last_name, avatar and support object | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-003-first-user-contract-postman-passed.png` |
-| CON-004 | TC-043 | EP-010 | GET | `/api/users/2` | Validate existing user response contract | Contract | High | 200 | Response contains expected user fields with correct JSON types and value constraints | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-004-existing-user-contract-postman-passed.png` |
-| CON-005 | TC-044 | EP-020 | GET | `/api/unknown` | Validate resource list response contract | Contract | Medium | 200 | Response contains pagination fields, data array, valid resource objects when present and support object | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-005-resource-list-contract-postman-passed.png` |
-| CON-006 | TC-045 | EP-021 | GET | `/api/unknown/2` | Validate single resource response contract | Contract | Medium | 200 | Response contains resource fields id, name, year, color, pantone_value and support object | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-006-single-resource-contract-postman-passed.png` |
+| CON-001 | TC-001 | EP-001 | GET | `/api/users?page=1` | Validate users list response contract | Contract | High | 200 | Response contains pagination fields, data array, valid user objects when present and support object | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-001-users-list-contract-postman-passed.png` |
+| CON-002 | TC-002 | EP-002 | GET | `/api/users?page=2` | Validate users page 2 response contract | Contract | High | 200 | Response contains valid pagination fields, page 2, data array and support object | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-002-users-page-2-contract-postman-passed.png` |
+| CON-003 | TC-005 | EP-009 | GET | `/api/users/1` | Validate first user response contract | Contract | High | 200 | Response contains data object with id, email, first_name, last_name, avatar and support object | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-003-first-user-contract-postman-passed.png` |
+| CON-004 | TC-006 | EP-010 | GET | `/api/users/2` | Validate existing user response contract | Contract | High | 200 | Response contains expected user fields with correct JSON types and value constraints | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-004-existing-user-contract-postman-passed.png` |
+| CON-005 | TC-011 | EP-020 | GET | `/api/unknown` | Validate resource list response contract | Contract | Medium | 200 | Response contains pagination fields, data array, valid resource objects when present and support object | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-005-resource-list-contract-postman-passed.png` |
+| CON-006 | TC-012 | EP-021 | GET | `/api/unknown/2` | Validate single resource response contract | Contract | Medium | 200 | Response contains resource fields id, name, year, color, pantone_value and support object | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-006-single-resource-contract-postman-passed.png` |
 | CON-007 | TC-007 | EP-015 | POST | `/api/users` | Validate create user response contract | Contract | High | 201 | Response contains submitted name/job plus generated id and createdAt | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-007-create-user-contract-postman-passed.png` |
 | CON-008 | TC-008 | EP-016 | PUT | `/api/users/2` | Validate update user response contract | Contract | Medium | 200 | Response contains submitted name/job plus updatedAt | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-008-update-user-contract-postman-passed.png` |
 | CON-009 | TC-009 | EP-017 | PATCH | `/api/users/2` | Validate partial update response contract | Contract | Medium | 200 | Response contains submitted job plus updatedAt | Passed | `evidence/screenshots/reqres-api-testing-portfolio/contract-tests/CON-009-partial-update-contract-postman-passed.png` |
@@ -138,7 +152,7 @@ This document includes:
 
 ---
 
-## 10. Smoke Test Coverage
+## 11. Smoke Test Coverage
 
 | Smoke ID | Related Test Case ID | Endpoint ID | Method | Endpoint | Reason | Status | Evidence |
 |---|---|---|---|---|---|---|---|
@@ -149,7 +163,7 @@ This document includes:
 
 ---
 
-## 11. Regression Test Coverage
+## 12. Regression Test Coverage
 
 | Regression ID | Related Test Case ID | Endpoint ID | Method | Endpoint | Reason | Status | Evidence |
 |---|---|---|---|---|---|---|---|
@@ -164,7 +178,7 @@ This document includes:
 
 ---
 
-## 12. General Execution Steps
+## 13. General Execution Steps
 
 These steps apply to all API test cases:
 
@@ -185,7 +199,7 @@ For CI execution, the API key is provided through the GitHub Actions repository 
 
 ---
 
-## 13. Notes and Assumptions
+## 14. Notes and Assumptions
 
 - Reqres is a demo API, so create, update, patch and delete operations return simulated responses.
 - Some responses are not persisted permanently.
@@ -196,7 +210,7 @@ For CI execution, the API key is provided through the GitHub Actions repository 
 - JSON numeric fields expected to be integer values are validated as `number` type with an integer value constraint.
 - Error responses are validated to confirm they do not contain success-only payloads.
 - The collection includes a global validation to check that responses do not expose internal implementation details.
-- Evidence screenshots were captured after successful Postman execution, and CI execution evidence was captured through Newman and GitHub Actions.
+- Evidence screenshots were captured after successful Postman execution for the original 58-request suite. The 5 exploratory negative data tests are now covered by Newman XML/JSON/HTML execution evidence.
 - Newman execution is configured through GitHub Actions.
 - The Newman CI execution report is stored in `evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml`.
 - Postman Runner summary evidence is stored in `evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summary.png`.
@@ -204,7 +218,7 @@ For CI execution, the API key is provided through the GitHub Actions repository 
 
 ---
 
-## 14. Completion Notes
+## 15. Completion Notes
 
 All implemented Postman test cases were executed successfully and documented with Postman screenshots, Postman Runner summary evidence and the GitHub Actions Newman execution report.
 

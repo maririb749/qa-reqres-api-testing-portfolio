@@ -66,9 +66,9 @@ Overall implementation summary:
 | Item | Total |
 |---|---:|
 | Endpoint definitions mapped | 27 |
-| Postman folders implemented | 10 |
-| Postman requests implemented | 58 |
-| Screenshot evidence folders created | 10 |
+| Postman folders implemented | 11 |
+| Postman requests implemented | 63 |
+| Screenshot evidence folders created | 11 |
 | Newman CI report artifacts | 1 |
 | Postman Runner summary evidence | 1 |
 
@@ -92,8 +92,8 @@ Overall implementation summary:
 | EP-012 | GET | `/api/users/0` | Get user using zero ID | 404 | Boundary, Negative | Medium | 07 - Boundary Tests |
 | EP-013 | GET | `/api/users/-1` | Get user using negative ID | 404 | Boundary, Negative | Medium | 07 - Boundary Tests |
 | EP-014 | GET | `/api/users/abc` | Get user using non-numeric ID | 404 | Boundary, Negative, Error Guessing | Medium | 07 - Boundary Tests |
-| EP-015 | POST | `/api/users` | Create user | 201 | Positive, Functional, Smoke, Regression, Contract | High | 04 - Users - Create Update Delete |
-| EP-016 | PUT | `/api/users/2` | Update user | 200 | Positive, Functional, Contract | Medium | 04 - Users - Create Update Delete |
+| EP-015 | POST | `/api/users` | Create user | 201 | Positive, Functional, Smoke, Regression, Contract, Exploratory Data Validation | High | 04 - Users - Create Update Delete |
+| EP-016 | PUT | `/api/users/2` | Update user | 200 | Positive, Functional, Contract, Exploratory Data Validation | Medium | 04 - Users - Create Update Delete |
 | EP-017 | PATCH | `/api/users/2` | Partially update user | 200 | Positive, Functional, Contract | Medium | 04 - Users - Create Update Delete |
 | EP-018 | DELETE | `/api/users/2` | Delete user | 204 | Positive, Functional, Regression | Medium | 04 - Users - Create Update Delete |
 | EP-019 | DELETE | `/api/users/999999` | Delete non-existing user | 204 | Boundary, Negative, Error Guessing | Low | 07 - Boundary Tests |
@@ -122,6 +122,7 @@ Overall implementation summary:
 | 08 - Contract Tests | EP-001, EP-002, EP-009, EP-010, EP-011, EP-015, EP-016, EP-017, EP-020, EP-021, EP-022, EP-023, EP-024, EP-025, EP-026 | 15 | Validate response structure, JSON types, value constraints and error contracts |
 | 09 - Delayed Response | EP-027 | 1 | Validate delayed response behavior and basic response time threshold |
 | 10 - Regression Tests | EP-002, EP-010, EP-011, EP-015, EP-018, EP-021, EP-023, EP-025 | 8 | Re-run selected high-value scenarios after changes |
+| 11 - Data Validation and Exploratory Negative Tests | EP-015, EP-016 | 5 | Validate empty values, special characters, long strings and empty update body behavior |
 
 ---
 
@@ -130,13 +131,13 @@ Overall implementation summary:
 | Test Type | Endpoint IDs |
 |---|---|
 | Positive Testing | EP-001, EP-002, EP-003, EP-004, EP-009, EP-010, EP-015, EP-016, EP-017, EP-018, EP-020, EP-021, EP-023, EP-025 |
-| Negative Testing | EP-008, EP-011, EP-012, EP-013, EP-014, EP-019, EP-022, EP-024, EP-026 |
+| Negative Testing | EP-008, EP-011, EP-012, EP-013, EP-014, EP-015, EP-016, EP-019, EP-022, EP-024, EP-026 |
 | Boundary Testing | EP-005, EP-006, EP-007, EP-008, EP-012, EP-013, EP-014, EP-019, EP-024, EP-026 |
 | Smoke Testing | EP-002, EP-010, EP-015, EP-023 |
 | Regression Testing | EP-002, EP-010, EP-011, EP-015, EP-018, EP-021, EP-023, EP-025 |
 | Contract Testing | EP-001, EP-002, EP-009, EP-010, EP-011, EP-015, EP-016, EP-017, EP-020, EP-021, EP-022, EP-023, EP-024, EP-025, EP-026 |
 | Basic Response Time | EP-027 |
-| Error Guessing | EP-005, EP-006, EP-007, EP-008, EP-014, EP-019 |
+| Error Guessing | EP-005, EP-006, EP-007, EP-008, EP-014, EP-015, EP-016, EP-019 |
 
 ---
 
@@ -168,8 +169,8 @@ Overall implementation summary:
 | EP-012 | TC-027 |
 | EP-013 | TC-028 |
 | EP-014 | TC-029 |
-| EP-015 | TC-007, SMK-003, CON-007, REG-003 |
-| EP-016 | TC-008, CON-008 |
+| EP-015 | TC-007, TC-032, TC-033, TC-034, TC-035, SMK-003, CON-007, REG-003 |
+| EP-016 | TC-008, TC-036, CON-008 |
 | EP-017 | TC-009, CON-009 |
 | EP-018 | TC-010, REG-004 |
 | EP-019 | TC-030 |
@@ -197,31 +198,3 @@ Overall implementation summary:
 - The delayed response endpoint is intentionally excluded from the smoke and regression suites.
 - Contract tests reuse several endpoints already covered by functional tests, but their purpose is different: validating response structure, JSON types and value constraints.
 - The real API key should remain only in the local Postman environment or GitHub Actions repository secrets and should never be committed to the repository.
-
----
-
-## 10. Completion Notes
-
-This endpoint mapping was updated to reflect the completed Postman collection structure, executed test coverage, Postman evidence and GitHub Actions/Newman execution.
-
-Final coverage includes:
-
-| Area | Result |
-|---|---:|
-| Endpoint definitions mapped | 27 |
-| Postman folders implemented | 10 |
-| Postman requests implemented | 58 |
-| Smoke requests | 4 |
-| Functional positive requests | 14 |
-| Negative requests | 8 |
-| Boundary requests | 8 |
-| Contract requests | 15 |
-| Delayed response requests | 1 |
-| Regression requests | 8 |
-| Newman/GitHub Actions execution | Passed |
-
-Final result:
-
-```txt
-PASSED
-```

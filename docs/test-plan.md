@@ -208,7 +208,7 @@ The tests are organized into logical groups inside the Postman collection:
 
 ## 8. Postman Collection Structure
 
-The Postman collection is organized into 10 folders, each focused on a specific API testing area.
+The Postman collection is organized into 11 folders, each focused on a specific API testing area.
 
 | Folder | Area | Requests |
 |---|---|---:|
@@ -222,6 +222,7 @@ The Postman collection is organized into 10 folders, each focused on a specific 
 | 08 - Contract Tests | Response contract validations | 15 |
 | 09 - Delayed Response | Basic delayed response observation | 1 |
 | 10 - Regression Tests | Critical regression coverage | 8 |
+| 11 - Data Validation and Exploratory Negative Tests | Empty values, special characters, long strings and empty update body behavior | 5 |
 
 Total planned Postman requests:
 
@@ -568,22 +569,3 @@ Tests are organized and executed in the following Postman collection order:
 10. 10 - Regression Tests
 
 The delayed response folder is intentionally kept outside the smoke and regression scope because it introduces an artificial wait time.
-
----
-
-## 21. Completion Notes
-
-This test plan was updated to reflect the completed Postman collection structure, implemented request coverage, confirmed boundary behavior, environment variables, evidence organization, Newman execution and GitHub Actions workflow.
-
-Final project execution status:
-
-| Item | Result |
-|---|---:|
-| Postman folders implemented | 10 |
-| Postman requests implemented | 58 |
-| Postman Runner execution | Passed |
-| Newman/GitHub Actions execution | Passed |
-| Confirmed application bugs | 0 |
-| CI/setup observation | OBS-001 resolved |
-
-Future updates may be required if the scope, tools, endpoints or execution strategy changes.
