@@ -12,10 +12,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  newman-tests:
-    name: Run full Reqres API test suite with Newman
+  smoke-tests:
+    name: Run smoke API tests with Newman
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 10
+    env:
+      NODE_OPTIONS: --dns-result-order=ipv4first
 
     steps:
       - name: Checkout repository
@@ -26,13 +28,81 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install Newman
-        run: npm install -g newman
+      - name: Install pinned Newman dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: Validate required files
         run: |
           test -f postman/reqres-api-collection.json
           test -f postman/reqres-environment.json
+          test -f package.json
+
+      - name: Validate Reqres API key secret
+        env:
+          REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
+        run: |
+          if [ -z "$REQRES_API_KEY" ]; then
+            echo "REQRES_API_KEY secret is missing. Add it in GitHub: Settings > Secrets and variables > Actions > New repository secret."
+            exit 1
+          fi
+
+      - name: Run smoke Postman folder
+        env:
+          REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
+        run: |
+          mkdir -p evidence/reports/reqres-api-testing-portfolio/newman
+          mkdir -p evidence/reports/reqres-api-testing-portfolio/html
+
+          npm run test:api:smoke -- \
+            --env-var baseUrl="https://reqres.in" \
+            --env-var apiKey="$REQRES_API_KEY" \
+            --env-var reqresEnv="prod"
+
+      - name: Upload smoke results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-newman-results
+          path: |
+            evidence/reports/reqres-api-testing-portfolio/newman/smoke-results.json
+            evidence/reports/reqres-api-testing-portfolio/newman/smoke-results.xml
+            evidence/reports/reqres-api-testing-portfolio/html/smoke-report.html
+
+  full-regression-tests:
+    name: Run full API regression suite with Newman
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.event_name != 'pull_request'
+    env:
+      NODE_OPTIONS: --dns-result-order=ipv4first
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install pinned Newman dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Validate required files
+        run: |
+          test -f postman/reqres-api-collection.json
+          test -f postman/reqres-environment.json
+          test -f package.json
 
       - name: Validate Reqres API key secret
         env:
@@ -48,22 +118,22 @@ jobs:
           REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
         run: |
           mkdir -p evidence/reports/reqres-api-testing-portfolio/newman
+          mkdir -p evidence/reports/reqres-api-testing-portfolio/html
 
-          newman run postman/reqres-api-collection.json \
-            -e postman/reqres-environment.json \
+          npm run test:api:full -- \
             --env-var baseUrl="https://reqres.in" \
             --env-var apiKey="$REQRES_API_KEY" \
-            --env-var reqresEnv="prod" \
-            --delay-request 8000 \
-            --timeout-request 20000 \
-            --timeout 1200000 \
-            --reporters cli,json,junit \
-            --reporter-json-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.json \
-            --reporter-junit-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
+            --env-var reqresEnv="prod"
 
-      - name: Upload Newman results
+      - name: Validate selected response schemas with Ajv
+        run: npm run test:api:contracts
+
+      - name: Upload full Newman results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: newman-results
-          path: evidence/reports/reqres-api-testing-portfolio/newman/
+          name: full-newman-results
+          path: |
+            evidence/reports/reqres-api-testing-portfolio/newman/newman-results.json
+            evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml
+            evidence/reports/reqres-api-testing-portfolio/html/full-report.html
