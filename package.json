@@ -1,0 +1,18 @@
+{
+  "name": "qa-reqres-api-testing-portfolio",
+  "version": "1.1.0",
+  "private": true,
+  "description": "API testing portfolio for Reqres using Postman, Newman, GitHub Actions, and HTML reporting.",
+  "scripts": {
+    "test:api": "npm run test:api:full",
+    "test:api:contracts": "node scripts/validate-contract-schemas.js evidence/reports/reqres-api-testing-portfolio/newman/newman-results.json",
+    "test:api:smoke": "newman run postman/reqres-api-collection.json -e postman/reqres-environment.json --folder \"01 - Smoke Tests\" --delay-request 1000 --timeout-request 20000 --reporters cli,json,junit,htmlextra --reporter-json-export evidence/reports/reqres-api-testing-portfolio/newman/smoke-results.json --reporter-junit-export evidence/reports/reqres-api-testing-portfolio/newman/smoke-results.xml --reporter-htmlextra-export evidence/reports/reqres-api-testing-portfolio/html/smoke-report.html",
+    "test:api:full": "newman run postman/reqres-api-collection.json -e postman/reqres-environment.json --delay-request 8000 --timeout-request 20000 --timeout 1200000 --reporters cli,json,junit,htmlextra --reporter-json-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.json --reporter-junit-export evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml --reporter-htmlextra-export evidence/reports/reqres-api-testing-portfolio/html/full-report.html"
+  },
+  "devDependencies": {
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1",
+    "newman": "6.2.1",
+    "newman-reporter-htmlextra": "1.23.1"
+  }
+}

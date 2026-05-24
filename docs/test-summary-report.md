@@ -82,6 +82,7 @@ The API was used to validate endpoints related to:
 | 08 - Contract Tests | Response contract validations | 15 | 15 | 0 | Passed |
 | 09 - Delayed Response | Basic delayed response observation | 1 | 1 | 0 | Passed |
 | 10 - Regression Tests | Critical regression coverage | 8 | 8 | 0 | Passed |
+| 11 - Data Validation and Exploratory Negative Tests | Empty values, special characters, long strings and empty update body behavior | 5 | 5 | 0 | Passed |
 
 ---
 
@@ -89,12 +90,12 @@ The API was used to validate endpoints related to:
 
 | Metric | Result |
 |---|---:|
-| Total Postman folders executed | 10 |
-| Total Postman requests executed | 58 |
-| Total passed requests | 58 |
+| Total Postman folders executed | 11 |
+| Total Postman requests executed | 63 |
+| Total passed requests | 63 |
 | Total failed requests | 0 |
 | Total blocked requests | 0 |
-| Evidence screenshots captured | 58 |
+| Evidence screenshots captured | 58 manual screenshots; 63-request Newman XML/JSON/HTML evidence generated |
 | Newman/GitHub Actions execution | Passed |
 | Newman JUnit XML report generated | Yes |
 | Postman Runner summary evidence | Completed |
@@ -137,6 +138,7 @@ The executed test suite covered the following areas:
 | Error contract validation | Covered |
 | Basic delayed response behavior | Covered |
 | Regression coverage | Covered |
+| Data validation and exploratory negative scenarios | Covered |
 
 ---
 
@@ -235,7 +237,15 @@ evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summ
 
 ---
 
-## 12. Executed Delayed Response Test
+## 12. Executed Exploratory Negative Data Tests
+
+| Test Case Range | Area | Requests | Status |
+|---|---|---:|---|
+| TC-032 to TC-036 | Exploratory negative data validation | 5 | Passed |
+
+---
+
+## 13. Executed Delayed Response Test
 
 | Test Case ID | Endpoint | Expected Status | Validation Focus | Status |
 |---|---|---:|---|---|
@@ -245,7 +255,7 @@ The delayed response test is intentionally separated from smoke and regression s
 
 ---
 
-## 13. Executed Contract Tests
+## 14. Executed Contract Tests
 
 | Contract ID | Area | Expected Status | Status |
 |---|---|---:|---|
@@ -267,7 +277,7 @@ The delayed response test is intentionally separated from smoke and regression s
 
 ---
 
-## 14. Executed Regression Tests
+## 15. Executed Regression Tests
 
 | Regression ID | Related Test Case | Endpoint | Expected Status | Status |
 |---|---|---|---:|---|
@@ -282,7 +292,7 @@ The delayed response test is intentionally separated from smoke and regression s
 
 ---
 
-## 15. Observations
+## 16. Observations
 
 - Reqres is a demo API, so create, update, patch and delete operations return simulated responses.
 - Create/update/delete operations do not persist real data.
@@ -298,7 +308,7 @@ The delayed response test is intentionally separated from smoke and regression s
 
 ---
 
-## 16. Defects and Unexpected Behavior
+## 17. Defects and Unexpected Behavior
 
 No confirmed application defects were found during the final documented execution.
 
@@ -311,7 +321,7 @@ One CI/environment setup issue was identified during GitHub Actions setup and do
 
 ---
 
-## 17. Risks and Limitations
+## 18. Risks and Limitations
 
 | Risk or Limitation | Impact | Notes |
 |---|---|---|
@@ -323,7 +333,7 @@ One CI/environment setup issue was identified during GitHub Actions setup and do
 
 ---
 
-## 18. Deliverables Completed
+## 19. Deliverables Completed
 
 | Deliverable | Status |
 |---|---|
@@ -356,7 +366,7 @@ One CI/environment setup issue was identified during GitHub Actions setup and do
 
 ---
 
-## 19. Final Conclusion
+## 20. Final Conclusion
 
 All planned Postman API test folders were implemented, executed and evidenced successfully.
 

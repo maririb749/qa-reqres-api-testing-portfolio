@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/reqres/login-success.schema.json",
+  "title": "Reqres login success response",
+  "type": "object",
+  "required": ["token"],
+  "additionalProperties": false,
+  "properties": {
+    "token": { "type": "string", "minLength": 1 },
+    "_meta": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

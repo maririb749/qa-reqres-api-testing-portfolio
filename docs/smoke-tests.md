@@ -364,18 +364,6 @@ evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summ
 
 ---
 
-## 15. Relationship With Other Documents
-
-| Document | Relationship |
-|---|---|
-| docs/test-plan.md | Defines that smoke testing is part of the project scope |
-| docs/test-strategy.md | Defines the smoke testing strategy and execution order |
-| docs/endpoint-mapping.md | Maps the smoke endpoints and Postman folder |
-| docs/test-cases.md | Defines the detailed test cases used by this smoke suite |
-| docs/test-summary-report.md | Includes final smoke execution results |
-
----
-
 ## 16. Notes and Assumptions
 
 - Smoke tests are not intended to validate all API behaviors.
@@ -386,26 +374,3 @@ evidence/reports/reqres-api-testing-portfolio/postman-runner/postman-runner-summ
 - Reqres create operations are simulated and do not persist real data.
 - Postman test scripts follow the script quality standard defined for this project.
 - The real API key should remain only in the local Postman environment or GitHub Actions repository secrets and should never be committed to the repository.
-
----
-
-## 17. Completion Notes
-
-The smoke test suite was implemented, executed and evidenced successfully through Postman evidence screenshots and the GitHub Actions Newman execution report.
-
-Final smoke coverage:
-
-| Metric | Result |
-|---|---:|
-| Smoke requests implemented | 4 |
-| Smoke requests executed | 4 |
-| Smoke requests passed | 4 |
-| Smoke requests failed | 0 |
-| Evidence screenshots captured | 4 |
-| Newman/GitHub Actions execution | Passed |
-
-Final result:
-
-```txt
-PASSED
-```

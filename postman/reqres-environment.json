@@ -1,7 +1,8 @@
 {
     "id": "b6f2e4b8-9a72-4b7d-8f8f-reqres-env-001",
     "name": "Reqres API Environment",
-    "values": [{
+    "values": [
+        {
             "key": "baseUrl",
             "value": "https://reqres.in",
             "type": "default",
@@ -184,6 +185,24 @@
         {
             "key": "specialCharsName",
             "value": "Mariana @#$%",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "emptyUserName",
+            "value": "",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "emptyUserJob",
+            "value": "",
+            "type": "default",
+            "enabled": true
+        },
+        {
+            "key": "invalidEmailPayload",
+            "value": "not-an-email",
             "type": "default",
             "enabled": true
         }

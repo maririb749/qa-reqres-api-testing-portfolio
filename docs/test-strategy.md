@@ -122,11 +122,12 @@ Implemented folder structure:
 | 08 - Contract Tests | Response contract validations | 15 |
 | 09 - Delayed Response | Basic delayed response observation | 1 |
 | 10 - Regression Tests | Critical regression coverage | 8 |
+| 11 - Data Validation and Exploratory Negative Tests | Empty values, special characters, long strings and empty update body behavior | 5 |
 
 Total implemented requests:
 
 ```txt
-58
+63
 ```
 
 This organization demonstrates clear thinking, maintainability and professional API test structure.
@@ -288,7 +289,7 @@ Implemented boundary examples:
 
 Boundary results were confirmed during Postman execution and documented with evidence screenshots.
 
-Additional exploratory boundary data such as empty strings, special characters and very long strings may be considered for future expansion, but they are not part of the current implemented Postman request count.
+Additional exploratory data validation scenarios with empty strings, special characters and very long strings were added to the Postman collection as TC-032 to TC-036. These scenarios document controlled demo API behavior and should be executed in the next evidence refresh.
 
 Reqres is a public demo API, so some boundary behavior may differ from what would be expected in a production API. These behaviors are documented as observed behavior rather than automatically classified as defects.
 
@@ -709,42 +710,3 @@ This test strategy defines how the Reqres API Testing Portfolio project was test
 The strategy focuses on demonstrating QA thinking through organized test design, clear prioritization, positive and negative testing, boundary testing, contract validation, evidence collection and automated execution with Newman and GitHub Actions.
 
 The project now includes both manual Postman evidence and CI evidence, making it suitable for a QA portfolio.
-
----
-
-## 26. Completion Notes
-
-This test strategy was finalized and validated against the current project state.
-
-All testing approaches, design techniques, priorities, execution orders and evidence strategies are documented and aligned with:
-
-- Test Plan (`docs/test-plan.md`)
-- Endpoint Mapping (`docs/endpoint-mapping.md`)
-- Test Cases (`docs/test-cases.md`)
-- Smoke Tests (`docs/smoke-tests.md`)
-- Regression Tests (`docs/regression-tests.md`)
-- Contract Tests (`docs/contract-tests.md`)
-- Bug Reports (`docs/bug-reports.md`)
-- Test Summary Report (`docs/test-summary-report.md`)
-- Traceability Matrix (`docs/traceability-matrix.md`)
-- GitHub Actions Workflow (`.github/workflows/newman-tests.yml`)
-- Newman Report (`evidence/reports/reqres-api-testing-portfolio/newman/newman-results.xml`)
-
-Final execution status:
-
-| Item | Result |
-|---|---:|
-| Postman folders implemented | 10 |
-| Postman requests implemented | 58 |
-| Smoke requests | 4 |
-| Regression requests | 8 |
-| Contract requests | 15 |
-| Newman/GitHub Actions execution | Passed |
-| Confirmed application bugs | 0 |
-| CI/setup observation | OBS-001 resolved |
-
-Final status:
-
-```txt
-COMPLETED
-```
